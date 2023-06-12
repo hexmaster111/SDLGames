@@ -15,15 +15,18 @@ public class SdlApp
     private bool Running = true;
     private int Fps = 0;
 
-    private Action<SDL.SDL_Event> _eventHandler;
-    private Action<RenderArgs> _renderHandler;
+    private readonly EventHandler _eventHandler;
+    private readonly RenderHandler _renderHandler;
 
+    public delegate void RenderHandler(RenderArgs args);
+
+    public delegate void EventHandler(SDL.SDL_Event e);
 
 
     public SdlApp
     (
-        Action<SDL.SDL_Event> eventHandler,
-        Action<RenderArgs> renderHandler,
+        EventHandler eventHandler,
+        RenderHandler renderHandler,
         int width = 320, int height = 240
     )
     {
@@ -32,7 +35,6 @@ public class SdlApp
         _eventHandler = eventHandler;
         _renderHandler = renderHandler;
         if (!SetupSdl()) throw new Exception("Failed to setup SDL");
-
     }
 
     public SdlApp Run(int targetFps = 60)
@@ -47,10 +49,8 @@ public class SdlApp
             deltaTime = currentTime - lastTime;
             if (targetFps > 0)
             {
-
                 if (deltaTime < 1000 / targetFps)
                 {
-
                     var timeToSleep = (1000 / targetFps) - deltaTime;
                     Thread.Sleep((int)timeToSleep);
                     continue;
@@ -109,6 +109,7 @@ public class SdlApp
 
     private int[] _fpsHistory = new int[60];
     private int _fpsHistoryIndex = 0;
+
     private void RenderFps()
     {
         _fpsHistory[_fpsHistoryIndex] = Fps;
