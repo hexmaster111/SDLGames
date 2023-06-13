@@ -11,8 +11,8 @@ public abstract class Tile
     public abstract bool IsEnd { get; }
 
     internal const int SizePx = 32;
-    private int _screenXpx;
-    private int _screenYpx;
+    protected int ScreenXpx;
+    protected int ScreenYpx;
     internal TileType Type { get; set; }
 
     private int _x;
@@ -24,7 +24,7 @@ public abstract class Tile
         set
         {
             _x = value;
-            _screenXpx = _x * SizePx;
+            ScreenXpx = _x * SizePx;
         }
     }
 
@@ -34,7 +34,7 @@ public abstract class Tile
         set
         {
             _y = value;
-            _screenYpx = _y * SizePx;
+            ScreenYpx = _y * SizePx;
         }
     }
 
@@ -50,19 +50,23 @@ public abstract class Tile
         Type = type;
     }
 
-    public void Render(RenderArgs args, ref SDL_Rect viewport)
+    public virtual void Render(RenderArgs args, ref SDL_Rect viewport)
     {
         SDL_RenderSetViewport(args.RendererPtr, ref viewport);
         args.SetDrawColor(BackGround);
         var rect = new SDL_Rect
         {
-            x = _screenXpx,
-            y = _screenYpx,
+            x = ScreenXpx,
+            y = ScreenYpx,
             w = SizePx,
             h = SizePx
         };
         args.FillRect(rect);
         args.SetDrawColor(Color);
         args.DrawRect(rect);
+    }
+
+    public virtual void Update(TimeSpan deltaTime, State state)
+    {
     }
 }

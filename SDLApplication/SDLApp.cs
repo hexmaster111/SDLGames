@@ -11,47 +11,54 @@ public class SdlApp
 
     private int ScreenWidth = 320;
     private int ScreenHeight = 240;
+    private int _targetFps;
 
     private bool Running = true;
     private int Fps = 0;
 
+    private TimeOnly _lastTime = TimeOnly.MinValue;
+
     private readonly EventHandler _eventHandler;
     private readonly RenderHandler _renderHandler;
+    private readonly UpdateHandler _updateHandler;
 
     public delegate void RenderHandler(RenderArgs args);
 
     public delegate void EventHandler(SDL.SDL_Event e);
+
+    public delegate void UpdateHandler(TimeSpan deltaTime);
 
 
     public SdlApp
     (
         EventHandler eventHandler,
         RenderHandler renderHandler,
-        int width = 320, int height = 240
+        UpdateHandler updateHandler,
+        int width = 320, int height = 240, int targetFps = 60
     )
     {
         ScreenWidth = width;
         ScreenHeight = height;
         _eventHandler = eventHandler;
         _renderHandler = renderHandler;
+        _targetFps = targetFps;
+        _updateHandler = updateHandler;
         if (!SetupSdl()) throw new Exception("Failed to setup SDL");
     }
 
-    public SdlApp Run(int targetFps = 60)
+    public SdlApp Run()
     {
         long lastTime = SDL.SDL_GetTicks();
-        long currentTime = SDL.SDL_GetTicks();
-        long deltaTime;
 
         while (Running)
         {
-            currentTime = SDL.SDL_GetTicks();
-            deltaTime = currentTime - lastTime;
-            if (targetFps > 0)
+            long currentTime = SDL.SDL_GetTicks();
+            var deltaTime = currentTime - lastTime;
+            if (_targetFps > 0)
             {
-                if (deltaTime < 1000 / targetFps)
+                if (deltaTime < 1000 / _targetFps)
                 {
-                    var timeToSleep = (1000 / targetFps) - deltaTime;
+                    var timeToSleep = (1000 / _targetFps) - deltaTime;
                     Thread.Sleep((int)timeToSleep);
                     continue;
                 }
@@ -179,7 +186,26 @@ public class SdlApp
             return false;
         }
 
+        //Create a sdl timer to trigger the Update method
+        SDL.SDL_AddTimer((uint)(1000 / (_targetFps * 2)), UpdateTimerCallback, IntPtr.Zero);
 
         return true;
+    }
+
+
+    private uint UpdateTimerCallback(uint interval, nint param)
+    {
+        var now = TimeOnly.FromDateTime(DateTime.Now);
+        var deltaTime = now - _lastTime;
+        if (deltaTime.TotalMilliseconds < 2000)
+        {
+            //Too much time has passed since the last update, so we skip this one
+            _lastTime = now;
+            return interval;
+        }
+
+        _updateHandler?.Invoke(deltaTime);
+        _lastTime = now;
+        return interval;
     }
 }
