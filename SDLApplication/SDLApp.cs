@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Timers;
 using SDL2;
 
 namespace SDLApplication;
@@ -186,26 +187,23 @@ public class SdlApp
             return false;
         }
 
-        //Create a sdl timer to trigger the Update method
-        SDL.SDL_AddTimer((uint)(1000 / (_targetFps * 2)), UpdateTimerCallback, IntPtr.Zero);
+        var tmr = new System.Threading.Timer(UpdateEventTimerCb, this, TimeSpan.Zero, TimeSpan.FromMilliseconds(16));
 
         return true;
     }
 
-
-    private uint UpdateTimerCallback(uint interval, nint param)
+    private void UpdateEventTimerCb(object? state)
     {
-        var now = TimeOnly.FromDateTime(DateTime.Now);
+        var now = TimeOnly.FromDateTime(DateTime.UtcNow);
         var deltaTime = now - _lastTime;
         if (deltaTime.TotalMilliseconds < 2000)
         {
             //Too much time has passed since the last update, so we skip this one
             _lastTime = now;
-            return interval;
+            return;
         }
 
         _updateHandler?.Invoke(deltaTime);
         _lastTime = now;
-        return interval;
     }
 }

@@ -1,4 +1,5 @@
 using SDLApplication;
+using VectorTd.Creeps;
 using VectorTd.Tiles;
 using VectorTd.Ui;
 using static SDL2.SDL;
@@ -48,6 +49,7 @@ public class Game
     private void UpdateHandler(TimeSpan deltaTime)
     {
         _state.Update(deltaTime);
+        
     }
 
 
@@ -70,6 +72,17 @@ public class Game
             case SDL_EventType.SDL_MOUSEBUTTONUP:
                 break;
             case SDL_EventType.SDL_MOUSEWHEEL:
+                break;
+
+            case SDL_EventType.SDL_KEYDOWN:
+                var key = e.key.keysym.sym;
+                switch (key)
+                {
+                    case SDL_Keycode.SDLK_SPACE:
+                        _state.AddCreep(new BasicCreep());
+                        break;
+                }
+
                 break;
         }
     }
