@@ -11,7 +11,8 @@ public class State
     public const int MapSize = 15;
     public Tile[,] Map = new Tile[MapSize, MapSize];
     private SDL_Rect _viewPort;
-    private List<CreepEntity> _creeps = new List<CreepEntity>();
+    private List<CreepEntity> _creeps = new();
+    private object _creepsLock = new();
 
 
     public State(SDL_Rect viewPort)
@@ -29,17 +30,24 @@ public class State
     public void Render(RenderArgs args)
     {
         foreach (var tile in Map) tile.Render(args, ref _viewPort);
-        foreach (var creep in _creeps) creep.Render(args, ref _viewPort);
+        lock (_creepsLock)
+        {
+            foreach (var creep in _creeps)
+                creep.Render(args, ref _viewPort);
+        }
     }
 
     public void Update(TimeSpan deltaTime)
     {
         foreach (var tile in Map) tile.Update(deltaTime, this);
         var toRemove = new List<CreepEntity>();
-        foreach (var creep in _creeps)
-            if (creep.Update(deltaTime, this))
-                toRemove.Add(creep);
-        foreach (var creep in toRemove) RemoveCreep(creep);
+        lock (_creepsLock)
+        {
+            foreach (var creep in _creeps)
+                if (creep.Update(deltaTime, this))
+                    toRemove.Add(creep);
+            foreach (var creep in toRemove) _creeps.Remove(creep);
+        }
     }
 
     public void Click(int clickX, int clickY)
@@ -70,18 +78,15 @@ public class State
         }
     }
 
-    private void RemoveCreep(CreepEntity p0)
-    {
-        _creeps.Remove(p0);
-    }
 
-    public void AddCreep(CreepEntity creep)
+    public void AddCreep(CreepEntity creep) => _.Lock(_creepsLock, () =>
     {
         var startTile = Map.OfType<StartTile>().First();
         creep.SetTile(startTile);
 
         _creeps.Add(creep);
-    }
+    });
+
 
     public IEnumerable<Tile> GetTilesAround(Tile thisTile)
     {
@@ -93,5 +98,16 @@ public class State
         if (y > 0) tiles[2] = Map[x, y - 1];
         if (y < MapSize - 1) tiles[3] = Map[x, y + 1];
         return tiles;
+    }
+}
+
+public static class _
+{
+    public static void Lock(object obj, Action action)
+    {
+        lock (obj)
+        {
+            action();
+        }
     }
 }

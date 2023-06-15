@@ -196,12 +196,7 @@ public class SdlApp
     {
         var now = TimeOnly.FromDateTime(DateTime.UtcNow);
         var deltaTime = now - _lastTime;
-        if (deltaTime.TotalMilliseconds < 2000)
-        {
-            //Too much time has passed since the last update, so we skip this one
-            _lastTime = now;
-            return;
-        }
+
 
         _updateHandler?.Invoke(deltaTime);
         _lastTime = now;
