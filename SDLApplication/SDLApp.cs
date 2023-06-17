@@ -62,11 +62,14 @@ public class SdlApp
                 if (deltaTime >= 1000 / _targetFps)
                 {
                     // If we hit a breakpoint, the delta time will be huge.
-                    if (deltaTime > 1000) continue;
-                    lastRender = currentTime;
-                    Fps = (int)(1000 / deltaTime);
-                    HandleEvents();
-                    Render(deltaTime);
+                    if (deltaTime <= 1000)
+                    {
+                        lastRender = currentTime;
+                        Fps = (int)(1000 / deltaTime);
+                        HandleEvents();
+                        Render(deltaTime);
+                    }
+                    else lastRender = currentTime;
                 }
 
                 //Timer for updating the game
