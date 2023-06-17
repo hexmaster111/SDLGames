@@ -10,12 +10,7 @@ public class TowerTile : Tile
     {
     }
 
-    public override bool IsWalkable { get; } = false;
-    public override bool IsStart { get; } = false;
-    public override bool IsEnd { get; } = false;
 
-    //TODO: members for the tower
-    public override bool IsBuildable { get; } = true;
 
     private Tower? _tower;
 

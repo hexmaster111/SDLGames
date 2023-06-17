@@ -56,16 +56,43 @@ public abstract class CreepEntity
         .Where(t => t != null)
         .Cast<Tile>()
         .OrderBy(t => t.DistanceTo(state.EndTile!))
-        .FirstOrDefault(t => t.Type == TileType.Path);
+        .FirstOrDefault(t => t.Type is TileType.Path or TileType.End);
 
-    private bool _isMovingInX;
-    private bool _isMovingInY;
 
-    private List<(int x, int y)> _visitedTiles = new();
+    private List<Tile> _visitedTiles = new();
+    private Tile? _currentTargetTile;
+    bool isCentering = false;
 
     //true to remove
-    public virtual bool Update(TimeSpan deltaTime, State state)
+    public virtual bool Update(TimeSpan __, State state)
     {
+        const double deltaTime = 1d / 60;
+        if (isCentering)
+        {
+            //center the creep on the tile smoothly at the speed of the creep
+            var (dx, dy) = (XPx - _currentTargetTile!.PxPosCenter.x, YPx - _currentTargetTile!.PxPosCenter.y);
+
+            //make dx and dy be between -1 and 1
+            dx /= Math.Abs(dx);
+            dy /= Math.Abs(dy);
+
+
+            XPx -= dx * deltaTime * Speed;
+            YPx -= dy * deltaTime * Speed;
+
+
+            var isXCentered = Math.Abs(XPx - _currentTargetTile.PxPosCenter.x) < 1;
+            var isYCentered = Math.Abs(YPx - _currentTargetTile.PxPosCenter.y) < 1;
+
+            if (isXCentered && isYCentered)
+            {
+                isCentering = false;
+                _currentTargetTile = null;
+            }
+
+            return false;
+        }
+
         var tilesAround = new List<Tile?>
         {
             _.InArrayOrNull(state.Map, MapPosition.X - 1, MapPosition.Y),
@@ -76,60 +103,56 @@ public abstract class CreepEntity
 
 
         //change the color of the tiles around to red
-        tilesAround.ForEach(t => t?.ChangeColor(SdlColors.Red));
+        // tilesAround.ForEach(t => t?.ChangeColor(SdlColors.Red));
 
-
-        var nextTile = GetNextTile(tilesAround, state);
-        //Write out the tiles x and y and type all on one line
-        Console.Write($"Tiles around: {string.Join(", ", tilesAround.Select(t => t == null ? "null" : $"{t.X}, {t.Y}, {t.Type}"))}");
-        Console.WriteLine($" | X: {XPx:00.00}, Y: {YPx:00.00}, MapX: {MapPosition.X}, MapY: {MapPosition.Y} | Next tile: {nextTile?.X}, {nextTile?.Y}");
-
-        while (nextTile != null && _visitedTiles.Contains((nextTile.X, nextTile.Y)))
+        if (_currentTargetTile == null)
         {
-            tilesAround.Remove(nextTile);
-            nextTile = GetNextTile(tilesAround, state);
+            //filter out the tiles we have already visited from tiles around
+            tilesAround = tilesAround.Where(t => t != null && !_visitedTiles.Contains(t)).ToList();
+            _currentTargetTile = GetNextTile(tilesAround, state);
+            if (_currentTargetTile == null)
+            {
+                return true;
+            }
         }
 
-        if (nextTile == null)
+        if (_currentTargetTile == null)
         {
-            // Console.WriteLine($"Dying due to no next tile {XPx}, {YPx}");
-            // return true;
-            return false;
+            Debug.WriteLine("No path found");
+            return true;
         }
 
-
-        //Now we have the next tile, we need to move towards at our speed, we dont need to center in the axis we are moving in,
-        //as we want a smooth movement
-
-
-        if (_isMovingInX == false && _isMovingInY == false)
+        if (_currentTargetTile.Type == TileType.End)
         {
-            _isMovingInX = nextTile.X != MapPosition.X;
-            _isMovingInY = nextTile.Y != MapPosition.Y;
-            Debug.Assert(_isMovingInX || _isMovingInY);
-            Debug.Assert(!(_isMovingInX && _isMovingInY));
+            Debug.WriteLine("Reached end");
+            return true;
         }
 
-
-        //We want the creep to move in the center of the tiles, in one axis at a time, smoothly
-        //So we need to move in the axis we are moving in, until we are in the center of the next tile
-        var preMoveTile = (MapPosition.X, MapPosition.Y);
-        if (_isMovingInX) XPx += Speed * deltaTime.TotalSeconds * (nextTile.X > MapPosition.X ? 1 : -1);
-        if (_isMovingInY) YPx += Speed * deltaTime.TotalSeconds * (nextTile.Y > MapPosition.Y ? 1 : -1);
-
-        //Now we should check if we are in a different tile, if we are, we save the old tile, so we dont go back to it
-        var currentTile = (MapPosition.X, MapPosition.Y);
-
-        if (currentTile != preMoveTile && _visitedTiles.Contains(currentTile) == false)
+        if (_currentTargetTile != null)
         {
-            _visitedTiles.Add(preMoveTile);
-            //Set the color of the tiles around to green
-            tilesAround.ForEach(t => t?.ChangeColor(SdlColors.Green));
-        }
+            //change the color of the target tile to green
+            // _currentTargetTile.ChangeColor(SdlColors.Green);
+            var (tx, ty) = (_currentTargetTile.X - MapPosition.X, _currentTargetTile.Y - MapPosition.Y);
 
+            if (tx == 0 && ty == 0)
+            {
+                isCentering = true;
+
+                //Add to visited tiles
+                _visitedTiles.Add(_currentTargetTile);
+
+                return false;
+            }
+
+            //Move speed amount of pixels in the direction of the target tile untel we reach the center of the tile
+            var (dx, dy) = (tx * Speed * deltaTime, ty * Speed * deltaTime);
+            XPx += dx;
+            YPx += dy;
+        }
 
         return false;
     }
+
 
     public void SetTile(Tile tile)
     {

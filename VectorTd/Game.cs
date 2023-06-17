@@ -38,7 +38,7 @@ public class Game
 
     public Game()
     {
-        var map = TileLoader.LoadVMap(@"C:\Users\Hexma\Desktop\Maps\Void.vmap");
+        var map = TileLoader.LoadVMap(@"C:\Users\Hexma\Desktop\SDLGames\VectorTd\Maps\Basic.vmap");
         // var map = TileLoader.LoadVMap(@"/home/hailey/code/SDLGames/VectorTd/Maps/Basic.vmap");
         if (!string.IsNullOrEmpty(map.readErr)) throw new Exception(map.readErr);
         if (map.Item2 == null) throw new Exception("Map is null");

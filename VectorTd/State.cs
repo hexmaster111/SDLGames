@@ -71,7 +71,7 @@ public class State
         if (GlobalState.IsPlacingTower)
         {
             //Check if the tower can be placed
-            if (Map[clickX, clickY] is not TowerTile { IsBuildable: true, Tower: null } towerTile) return;
+            if (Map[clickX, clickY] is not TowerTile { Type: TileType.Tower, Tower: null } towerTile) return;
             if (GlobalState.PlacingTower == null) return;
 
             //Place the tower
@@ -90,5 +90,4 @@ public class State
 
         _creeps.Add(creep);
     });
-    
 }

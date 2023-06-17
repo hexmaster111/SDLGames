@@ -8,8 +8,5 @@ public class PathTile : Tile
     {
     }
 
-    public override bool IsWalkable { get; } = true;
-    public override bool IsBuildable { get; } = false;
-    public override bool IsStart { get; } = false;
-    public override bool IsEnd { get; } = false;
+
 }

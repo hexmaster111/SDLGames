@@ -8,8 +8,5 @@ public class EndTile : Tile
     {
     }
 
-    public override bool IsWalkable { get; } = false;
-    public override bool IsBuildable { get; } = false;
-    public override bool IsStart { get; } = false;
-    public override bool IsEnd { get; } = true;
+
 }

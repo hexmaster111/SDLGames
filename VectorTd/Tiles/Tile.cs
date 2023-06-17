@@ -5,11 +5,6 @@ namespace VectorTd.Tiles;
 
 public abstract class Tile
 {
-    public abstract bool IsWalkable { get; }
-    public abstract bool IsBuildable { get; }
-    public abstract bool IsStart { get; }
-    public abstract bool IsEnd { get; }
-
     internal const int SizePx = 32;
     protected int ScreenXpx;
     protected int ScreenYpx;
@@ -40,6 +35,7 @@ public abstract class Tile
 
     public SDL_Color Color { get; set; }
     public SDL_Color BackGround { get; set; }
+    public (int x, int y) PxPosCenter => (ScreenXpx + SizePx / 2, ScreenYpx + SizePx / 2);
 
     public Tile(int x, int y, SDL_Color color, SDL_Color backGround, TileType type)
     {
@@ -64,6 +60,8 @@ public abstract class Tile
         args.FillRect(rect);
         args.SetDrawColor(Color);
         args.DrawRect(rect);
+        //Write the coordinates of the tile in the center
+        // args.RenderText($"({X},{Y})", ScreenXpx, ScreenYpx + SizePx / 2, Color);
     }
 
     public virtual void Update(TimeSpan deltaTime, State state)
