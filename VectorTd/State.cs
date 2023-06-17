@@ -15,6 +15,10 @@ public class State
     private object _creepsLock = new();
 
 
+    public Tile? StartTile => _.GetItemOfType<Tile, StartTile>(Map);
+    public Tile? EndTile => _.GetItemOfType<Tile, EndTile>(Map);
+
+
     public State(SDL_Rect viewPort)
     {
         _viewPort = viewPort;
@@ -86,28 +90,5 @@ public class State
 
         _creeps.Add(creep);
     });
-
-
-    public IEnumerable<Tile> GetTilesAround(Tile thisTile)
-    {
-        var x = thisTile.X;
-        var y = thisTile.Y;
-        var tiles = new Tile[4];
-        if (x > 0) tiles[0] = Map[x - 1, y];
-        if (x < MapSize - 1) tiles[1] = Map[x + 1, y];
-        if (y > 0) tiles[2] = Map[x, y - 1];
-        if (y < MapSize - 1) tiles[3] = Map[x, y + 1];
-        return tiles;
-    }
-}
-
-public static class _
-{
-    public static void Lock(object obj, Action action)
-    {
-        lock (obj)
-        {
-            action();
-        }
-    }
+    
 }

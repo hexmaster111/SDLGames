@@ -69,4 +69,6 @@ public abstract class Tile
     public virtual void Update(TimeSpan deltaTime, State state)
     {
     }
+
+    public int DistanceTo(Tile tile) => Math.Abs(X - tile.X) + Math.Abs(Y - tile.Y);
 }
