@@ -60,8 +60,8 @@ public abstract class CreepEntity
 
     private bool _isMovingInX;
     private bool _isMovingInY;
-    
-    private List<(int x, int y)> _visitedTiles = new(); 
+
+    private List<(int x, int y)> _visitedTiles = new();
 
     //true to remove
     public virtual bool Update(TimeSpan deltaTime, State state)
@@ -74,20 +74,29 @@ public abstract class CreepEntity
             _.InArrayOrNull(state.Map, MapPosition.X, MapPosition.Y + 1)
         };
 
+
+        //change the color of the tiles around to red
+        tilesAround.ForEach(t => t?.ChangeColor(SdlColors.Red));
+
+
         var nextTile = GetNextTile(tilesAround, state);
+        //Write out the tiles x and y and type all on one line
+        Console.Write($"Tiles around: {string.Join(", ", tilesAround.Select(t => t == null ? "null" : $"{t.X}, {t.Y}, {t.Type}"))}");
+        Console.WriteLine($" | X: {XPx:00.00}, Y: {YPx:00.00}, MapX: {MapPosition.X}, MapY: {MapPosition.Y} | Next tile: {nextTile?.X}, {nextTile?.Y}");
 
         while (nextTile != null && _visitedTiles.Contains((nextTile.X, nextTile.Y)))
         {
             tilesAround.Remove(nextTile);
             nextTile = GetNextTile(tilesAround, state);
         }
-        
+
         if (nextTile == null)
         {
-            Console.WriteLine($"Dying due to no next tile {XPx}, {YPx}");
-            return true;
+            // Console.WriteLine($"Dying due to no next tile {XPx}, {YPx}");
+            // return true;
+            return false;
         }
-        
+
 
         //Now we have the next tile, we need to move towards at our speed, we dont need to center in the axis we are moving in,
         //as we want a smooth movement
@@ -110,16 +119,14 @@ public abstract class CreepEntity
 
         //Now we should check if we are in a different tile, if we are, we save the old tile, so we dont go back to it
         var currentTile = (MapPosition.X, MapPosition.Y);
-        
-        if (currentTile != preMoveTile)
+
+        if (currentTile != preMoveTile && _visitedTiles.Contains(currentTile) == false)
         {
             _visitedTiles.Add(preMoveTile);
+            //Set the color of the tiles around to green
+            tilesAround.ForEach(t => t?.ChangeColor(SdlColors.Green));
         }
-        
-      
 
-        Console.WriteLine(
-            $"X: {XPx:00.00}, Y: {YPx:00.00}, MapX: {MapPosition.X}, MapY: {MapPosition.Y}, NextTileX: {nextTile.X}, NextTileY: {nextTile.Y}");
 
         return false;
     }

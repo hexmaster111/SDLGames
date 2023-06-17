@@ -71,4 +71,6 @@ public abstract class Tile
     }
 
     public int DistanceTo(Tile tile) => Math.Abs(X - tile.X) + Math.Abs(Y - tile.Y);
+
+    public void ChangeColor(SDL_Color color) => Color = color;
 }
