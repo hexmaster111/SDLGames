@@ -30,7 +30,7 @@ public static class TileLoader
             y++;
         }
 
-        if (tilesFromFile.Count != 225) return ("Map size mismatch", null);
+        if (tilesFromFile.Count != 225) return ($"Map size mismatch Got {tilesFromFile.Count}, expected 225", null);
         var tiles = new Tile[State.MapSize, State.MapSize];
         foreach (var tile in tilesFromFile) tiles[tile.X, tile.Y] = tile;
         return (string.Empty, tiles);

@@ -62,7 +62,7 @@ public abstract class CreepEntity
 
         // Console.WriteLine($"{nextTile?.X}, {nextTile?.Y}");
 
-        Console.WriteLine($"North: {tilesAround[2]?.Type}, south: {tilesAround[3]?.Type}, east: {tilesAround[1]?.Type}, west: {tilesAround[0]?.Type}");
+        // Console.WriteLine($"North: {tilesAround[2]?.Type}, south: {tilesAround[3]?.Type}, east: {tilesAround[1]?.Type}, west: {tilesAround[0]?.Type}");
 
         if (nextTile == null) return true;
 

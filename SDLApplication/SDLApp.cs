@@ -49,33 +49,40 @@ public class SdlApp
 
     public SdlApp Run()
     {
-        long lastTime = SDL.SDL_GetTicks();
+        const int UPDATE_HZ = 100;
+        long lastRender = SDL.SDL_GetTicks();
+        long lastUpdate = SDL.SDL_GetTicks();
 
         while (Running)
         {
             long currentTime = SDL.SDL_GetTicks();
-            var deltaTime = currentTime - lastTime;
+            var deltaTime = currentTime - lastRender;
             if (_targetFps > 0)
             {
-                if (deltaTime < 1000 / _targetFps)
+                if (deltaTime >= 1000 / _targetFps)
                 {
-                    var timeToSleep = (1000 / _targetFps) - deltaTime;
-                    Thread.Sleep((int)timeToSleep);
-                    continue;
+                    // If we hit a breakpoint, the delta time will be huge.
+                    if (deltaTime > 1000) continue;
+                    lastRender = currentTime;
+                    Fps = (int)(1000 / deltaTime);
+                    HandleEvents();
+                    Render(deltaTime);
                 }
 
-                lastTime = currentTime;
-                Fps = (int)(1000 / deltaTime);
-            }
+                //Timer for updating the game
+                if (currentTime - lastUpdate >= 1000 / UPDATE_HZ)
+                {
+                    lastUpdate = currentTime;
+                    _updateHandler?.Invoke(TimeSpan.FromMilliseconds(1000 / UPDATE_HZ));
+                }
 
-            if (deltaTime > 1000)
-            {
-                // If we hit a breakpoint, the delta time will be huge.
-                continue;
-            }
 
-            HandleEvents();
-            Render(deltaTime);
+                //The time to sleep is made up of time last update and the last render, so they can fire on time
+                var timeToSleep = (1000 / _targetFps) - (SDL.SDL_GetTicks() - lastRender);
+                //Now for the update
+                timeToSleep = Math.Min(timeToSleep, (1000 / UPDATE_HZ) - (SDL.SDL_GetTicks() - lastUpdate));
+                if (timeToSleep > 0) SDL.SDL_Delay((uint)timeToSleep);
+            }
         }
 
         return this;
@@ -110,7 +117,8 @@ public class SdlApp
     {
         SDL.SDL_SetRenderDrawColor(RendererPtr, 0x10, 0x10, 0x00, 0xFF);
         SDL.SDL_RenderClear(RendererPtr);
-        _renderHandler?.Invoke(new RenderArgs(WindowPtr, RendererPtr, FontPtr, Fps, deltaTime, ScreenWidth, ScreenHeight));
+        _renderHandler?.Invoke(new RenderArgs(WindowPtr, RendererPtr, FontPtr, Fps, deltaTime, ScreenWidth,
+            ScreenHeight));
         RenderFps();
         SDL.SDL_RenderPresent(RendererPtr);
     }
@@ -187,12 +195,10 @@ public class SdlApp
             return false;
         }
 
-        var tmr = new System.Threading.Timer(UpdateEventTimerCb, this, TimeSpan.Zero, TimeSpan.FromMilliseconds(16));
-
         return true;
     }
 
-    private void UpdateEventTimerCb(object? state)
+    private void UpdateEventTimerCb()
     {
         var now = TimeOnly.FromDateTime(DateTime.UtcNow);
         var deltaTime = now - _lastTime;
