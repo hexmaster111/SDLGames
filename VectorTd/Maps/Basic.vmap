@@ -13,6 +13,10 @@
 #P#############
 #P#############
 #E#############
-
-[SS]3,30   // SPAWN 2 Smalls, 3 seconds apart, 30 sec wave max time
-[MM]3,30   // SPAWN 2 Mediums, 3 seconds apart, 30 sec wave max time
+W:0 START
+    TIME_LIMIT:30               # wave time limit (sec), max time the player has before the next wave comes
+    GROUP:0 START
+        TIME_OFFSET:0           # time offset (sec), time before the first enemy spawns
+        TIME_INTERVAL:1         # time interval (sec), time between each enemy spawn  
+    GROUP:0 END
+W:0 END
