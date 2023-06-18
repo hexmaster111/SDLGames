@@ -2,13 +2,18 @@
 
 public static class TileLoader
 {
+    const int MapSize = 15;
+
     public static (string readErr, Tile[,]?) LoadVMap(string path)
     {
-        var lines = File.ReadAllLines(path);
+        //Read the first 15 lines of the file
+        var lines = File.ReadAllLines(path).Take(MapSize).ToArray();
+        if (lines.Length != MapSize) return ("Map file is not the correct size", null);
+
         var tilesFromFile = new List<Tile>();
 
-        int y = 0;
-        int x = 0;
+        var y = 0;
+        var x = 0;
 
         foreach (var line in lines)
         {
