@@ -78,7 +78,7 @@ public class Game
                 switch (key)
                 {
                     case SDL_Keycode.SDLK_SPACE:
-                        _state.AddCreep(new BasicCreep());
+                        _state.AddCreep(new SmallCreep());
                         break;
                 }
 

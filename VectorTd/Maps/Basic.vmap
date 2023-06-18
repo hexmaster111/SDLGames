@@ -14,4 +14,5 @@
 #P#############
 #E#############
 
-
+[SS]3,30   // SPAWN 2 Smalls, 3 seconds apart, 30 sec wave max time
+[MM]3,30   // SPAWN 2 Mediums, 3 seconds apart, 30 sec wave max time

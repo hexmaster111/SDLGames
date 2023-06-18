@@ -1,4 +1,18 @@
-﻿namespace VectorTd.Tiles;
+﻿using VectorTd.Creeps;
+
+namespace VectorTd.Tiles;
+
+public class MapCreepQueue
+{
+    
+}
+
+
+public static class CreepFactory
+{
+    
+}
+
 
 public static class TileLoader
 {

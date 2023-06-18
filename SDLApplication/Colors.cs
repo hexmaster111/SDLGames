@@ -26,4 +26,5 @@ public static class SdlColors
     public static SDL_Color Salmon { get; } = new() { a = 255, b = 112, g = 112, r = 255 };
     public static SDL_Color DarkRed { get; } = new() { a = 255, b = 0, g = 0, r = 64 };
     public static SDL_Color Tan { get; } = new() { a = 255, b = 128, g = 192, r = 192 };
+    public static SDL_Color Pink { get; } = new() { a = 255, b = 255, g = 192, r = 192 };
 }
