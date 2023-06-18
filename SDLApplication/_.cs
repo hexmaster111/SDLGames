@@ -11,7 +11,7 @@ public static class _
 
         return default;
     }
-    
+
     public static T? InArrayOrNull<T>(T[,] array, int x, int y)
     {
         if (x < 0 || y < 0 || x >= array.GetLength(0) || y >= array.GetLength(1))
@@ -26,5 +26,10 @@ public static class _
         {
             action();
         }
+    }
+
+    public static int Distance(int x, int y, int x2, int y2)
+    {
+        return (int)Math.Sqrt(Math.Pow(x - x2, 2) + Math.Pow(y - y2, 2));
     }
 }

@@ -1,4 +1,5 @@
-﻿using SDLApplication;
+﻿using System.Collections.ObjectModel;
+using SDLApplication;
 using VectorTd.Creeps;
 using VectorTd.Tiles;
 using VectorTd.Towers;
@@ -11,8 +12,22 @@ public class State
     public const int MapSize = 15;
     public Tile[,] Map = new Tile[MapSize, MapSize];
     private SDL_Rect _viewPort;
-    private List<CreepEntity> _creeps = new();
-    private object _creepsLock = new();
+    private readonly List<Creep> _creeps = new();
+    private readonly object _creepsLock = new();
+    public readonly List<Projectile> Projectiles = new();
+    public readonly object _projectilesLock = new();
+
+
+    public IEnumerable<Creep> Creeps
+    {
+        get
+        {
+            lock (_creepsLock)
+            {
+                return _creeps.AsReadOnly();
+            }
+        }
+    }
 
 
     public Tile? StartTile => _.GetItemOfType<Tile, StartTile>(Map);
@@ -39,18 +54,33 @@ public class State
             foreach (var creep in _creeps)
                 creep.Render(args, ref _viewPort);
         }
+
+        lock (_projectilesLock)
+        {
+            foreach (var projectile in Projectiles) projectile.Render(args, ref _viewPort);
+        }
     }
 
     public void Update(TimeSpan deltaTime)
     {
         foreach (var tile in Map) tile.Update(deltaTime, this);
-        var toRemove = new List<CreepEntity>();
+        var toRemove = new List<Creep>();
         lock (_creepsLock)
         {
             foreach (var creep in _creeps)
                 if (creep.Update(deltaTime, this))
                     toRemove.Add(creep);
             foreach (var creep in toRemove) _creeps.Remove(creep);
+        }
+
+        lock (_projectilesLock)
+        {
+            var projectialsToRemove = new List<Projectile>();
+            foreach (var projectile in Projectiles)
+                if (projectile.Update(deltaTime, this))
+                    projectialsToRemove.Add(projectile);
+
+            foreach (var projectile in projectialsToRemove) Projectiles.Remove(projectile);
         }
     }
 
@@ -83,11 +113,9 @@ public class State
     }
 
 
-    public void AddCreep(CreepEntity creep) => _.Lock(_creepsLock, () =>
+    public void AddCreep(Creep creep) => _.Lock(_creepsLock, () =>
     {
-        var startTile = Map.OfType<StartTile>().First();
-        creep.SetTile(startTile);
-
+        creep.SetTile(StartTile!);
         _creeps.Add(creep);
     });
 }

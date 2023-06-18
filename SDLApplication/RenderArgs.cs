@@ -58,6 +58,16 @@ public struct RenderArgs
         SDL_DestroyTexture(textTexture);
         SDL_FreeSurface(textSurface);
     }
+
+    public void DrawLine(int x, int y, double x2, double y2, int thickness, SDL_Color color)
+    {
+        SDL_SetRenderDrawColor(RendererPtr, color.r, color.g, color.b, color.a);
+
+        for (int i = 0; i < thickness; i++)
+        {
+            SDL_RenderDrawLine(RendererPtr, x, y + i, (int)x2, (int)y2 + i);
+        }
+    }
 }
 
 public static class Renderer

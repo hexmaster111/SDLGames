@@ -5,9 +5,9 @@ using static SDL2.SDL;
 
 namespace VectorTd.Creeps;
 
-public abstract class CreepEntity
+public abstract class Creep
 {
-    public CreepEntity(SDL_Color color, double speed, double health, double maxHealth, int reward)
+    public Creep(SDL_Color color, double speed, double health, double maxHealth, int reward)
     {
         Color = color;
         Speed = speed;
@@ -23,17 +23,14 @@ public abstract class CreepEntity
     //This should center the creep on the tile
     public (int X, int Y) MapPosition
     {
-        get => ((int)(XPx + SizePx / 2d) / Tile.SizePx,
-            (int)(YPx + SizePx / 2d) / Tile.SizePx);
-
-        set => (XPx, YPx) = (value.X * Tile.SizePx + Tile.SizePx / 2d - SizePx / 2d,
-            value.Y * Tile.SizePx + Tile.SizePx / 2d - SizePx / 2d);
+        get => ((int)(XPx + SizePx / 2d) / Tile.SizePx, (int)(YPx + SizePx / 2d) / Tile.SizePx);
+        set => (XPx, YPx) = (value.X * Tile.SizePx + Tile.SizePx / 2d - SizePx / 2d, value.Y * Tile.SizePx + Tile.SizePx / 2d - SizePx / 2d);
     }
 
     public double Speed { get; private set; }
     public double Health { get; private set; }
     public double MaxHealth { get; private set; }
-    public SDL_Color Color { get; private set; }
+    public SDL_Color Color { get; internal set; }
     public int Reward { get; private set; }
 
     public virtual void Render(RenderArgs args, ref SDL_Rect viewPort)
@@ -66,6 +63,12 @@ public abstract class CreepEntity
     //true to remove
     public virtual bool Update(TimeSpan __, State state)
     {
+        if (Health <= 0)
+        {
+            state.Money += Reward;
+            return true;
+        }
+
         const double deltaTime = 1d / 60;
         if (isCentering)
         {
@@ -158,4 +161,14 @@ public abstract class CreepEntity
     {
         MapPosition = (tile.X, tile.Y);
     }
+
+    //in map units, counting from movalbe path tiles
+    public int DistanceTo(Tile tile)
+    {
+        //count how many tiles we have to go through to get to the target tile
+        var (tx, ty) = (tile.X - MapPosition.X, tile.Y - MapPosition.Y);
+        return Math.Abs(tx) + Math.Abs(ty);
+    }
+
+    public void Damage(double damage) => Health -= damage;
 }

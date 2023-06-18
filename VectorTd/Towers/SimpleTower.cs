@@ -9,11 +9,10 @@ public class SimpleTower : Tower
     {
     }
 
-    public override void Update(TimeSpan deltaTime, State state)
-    {
-        //shoot at enemies
-    }
 
+    public override double Damage { get; } = .5d;
+    public override int Range { get; } = 1;
+    public override double FireRate { get; } = 2;
     public override string Name => "Simple Tower";
     public override int Cost => 10;
 }
