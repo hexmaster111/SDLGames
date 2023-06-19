@@ -7,6 +7,27 @@ using static SDL2.SDL;
 
 namespace VectorTd;
 
+
+public class WaveControler
+{
+    private List<(int reward, List<(CreepType creepT, TimeSpan waitAfterSpawn)>)> _wave = new()
+    {
+        new(10, new List<(CreepType, TimeSpan)> { (CreepType.Small, TimeSpan.FromSeconds(1)) }),
+        new(10, new List<(CreepType, TimeSpan)> { (CreepType.Small, TimeSpan.FromSeconds(1)),
+                                                  (CreepType.Small, TimeSpan.FromSeconds(1)) }),
+    };
+
+    public void Update(TimeSpan deltaTime, State state)
+    {
+    }
+
+
+    public void Render(RenderArgs args, ref SDL_Rect viewPort)
+    {
+    }
+
+}
+
 public class State
 {
     public const int MapSize = 15;
@@ -16,7 +37,7 @@ public class State
     private readonly object _creepsLock = new();
     public readonly List<Projectile> Projectiles = new();
     public readonly object _projectilesLock = new();
-
+    private WaveControler _waveControler = new();
 
     public IEnumerable<Creep> Creeps
     {
@@ -38,8 +59,8 @@ public class State
     {
         _viewPort = viewPort;
         for (var x = 0; x < MapSize; x++)
-        for (var y = 0; y < MapSize; y++)
-            Map[x, y] = new VoidTile(x, y);
+            for (var y = 0; y < MapSize; y++)
+                Map[x, y] = new VoidTile(x, y);
     }
 
     public int Money { get; set; }
@@ -59,6 +80,8 @@ public class State
         {
             foreach (var projectile in Projectiles) projectile.Render(args, ref _viewPort);
         }
+
+        lock (_creepsLock) _waveControler.Render(args, ref _viewPort);
     }
 
     public void Update(TimeSpan deltaTime)
@@ -82,6 +105,8 @@ public class State
 
             foreach (var projectile in projectialsToRemove) Projectiles.Remove(projectile);
         }
+
+        lock (_creepsLock) _waveControler.Update(deltaTime, this);
     }
 
     public void Click(int clickX, int clickY)

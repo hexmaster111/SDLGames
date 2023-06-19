@@ -33,7 +33,8 @@ END_WAVE
 START_WAVE
     REWARD:110                  
     START_WI
-        SPAWN S,2               
+        SPAWN S,2  
+        WAIT 5         
     END_WI
 END_WAVE
 
