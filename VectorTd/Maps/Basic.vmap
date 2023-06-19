@@ -13,10 +13,28 @@
 #P#############
 #P#############
 #E#############
-W:0 START
-    TIME_LIMIT:30               # wave time limit (sec), max time the player has before the next wave comes
-    GROUP:0 START
-        TIME_OFFSET:0           # time offset (sec), time before the first enemy spawns
-        TIME_INTERVAL:1         # time interval (sec), time between each enemy spawn  
-    GROUP:0 END
-W:0 END
+
+##### MAP ENEMY TYPES #####
+# S = Small Enemy
+# M = Medium Enemy
+# L = Large Enemy
+###########################
+
+# Wave 1
+START_WAVE
+    REWARD:100                  # reward for completing the wave
+    START_WI
+        SPAWN S,1               # spawn 1 small enemie
+        WAIT 5                  # wait 5 seconds
+        SPAWN S,1               # spawn 1 small enemie
+    END_WI
+END_WAVE
+
+START_WAVE
+    REWARD:110                  
+    START_WI
+        SPAWN S,2               
+    END_WI
+END_WAVE
+
+

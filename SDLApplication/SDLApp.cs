@@ -194,6 +194,7 @@ public class SdlApp
         if (FontPtr == IntPtr.Zero)
         {
             Console.WriteLine($"Failed to load font! SDL_ttf Error: {SDL2.SDL_ttf.TTF_GetError()}");
+            Console.WriteLine($"current dir {Environment.CurrentDirectory}");
             Console.WriteLine($"Current directory: {Environment.CurrentDirectory}");
             return false;
         }
