@@ -34,9 +34,11 @@ public class WaveController
     }
 
     private MapWaveData _mapWaveData;
+    private int _currentWaveIndex = -1;
     
     public void Update(TimeSpan deltaTime, State state)
     {
+        
     }
 
     public void StartWave()
