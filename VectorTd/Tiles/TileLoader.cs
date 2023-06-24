@@ -1,4 +1,5 @@
-﻿using VectorTd.Creeps;
+﻿using System.Text;
+using VectorTd.Creeps;
 
 namespace VectorTd.Tiles;
 
@@ -20,21 +21,19 @@ public static class TileLoader
         var waveInstructions = LoadWaveInstructions(waveLines);
         if (waveInstructions.err != null) return (waveInstructions.err, null, null);
         return (null, tiles, waveInstructions.map);
-
     }
 
     private static (MapWaveData? map, string? err) LoadWaveInstructions(string[] waveLines)
     {
-        var map = new MapWaveData();
-        return (map, null);
+        try
+        {
+            return (MapWaveData.Load(waveLines), null);
+        }
+        catch (Exception e)
+        {
+            return (null, e.Message);
+        }
     }
-
-    public readonly struct MapWaveData
-    {
-
-    }
-
-
 
     private static IEnumerable<Tile> LoadTiles(string[] lines)
     {

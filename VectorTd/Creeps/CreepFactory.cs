@@ -13,5 +13,6 @@ public static class CreepFactory
 public enum CreepType 
 {
     Small, 
-    Medium
+    Medium,
+    Large
 }

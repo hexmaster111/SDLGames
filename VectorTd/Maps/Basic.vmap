@@ -20,11 +20,15 @@
 # L = Large Enemy
 ###########################
 
+#### COMMAND ARGUMENTS
+# SPAWN <enemy type>, <amount>, <delay?>
+# REWARD <amount>
+
 # Wave 1
 START_WAVE
     REWARD:100                     # reward for completing the wave
     START_WI
-        SPAWN S, 1, 5              # spawn 1 small enemie, wait 5 seconds
+        SPAWN S,1,5              # spawn 1 small enemie, wait 5 seconds
         SPAWN S,1                  # spawn 1 small enemie
     END_WI
 END_WAVE
