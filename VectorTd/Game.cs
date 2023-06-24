@@ -41,8 +41,9 @@ public class Game
         // var map = TileLoader.LoadVMap(@"C:\Users\Hexma\Desktop\SDLGames\VectorTd\Maps\Basic.vmap");
         var map = TileLoader.LoadVMap(@"/home/hailey/code/SDLGames/VectorTd/Maps/Basic.vmap");
         if (!string.IsNullOrEmpty(map.readErr)) throw new Exception(map.readErr);
-        if (map.Item2 == null) throw new Exception("Map is null");
-        _state.Map = map.Item2;
+        if (map.tiles == null) throw new Exception("Map is null");
+        _state.Map = map.tiles;
+        //TODO: _state.WaveData = map.waves;
         new SdlApp(EventHandler, RenderHandler, UpdateHandler, ScreenWidth, ScreenHeight).Run();
     }
 
@@ -79,6 +80,9 @@ public class Game
                 {
                     case SDL_Keycode.SDLK_SPACE:
                         _state.AddCreep(new SmallCreep());
+                        break;
+                    case SDL_Keycode.SDLK_w:
+                        _state.WaveController.StartWave();
                         break;
                 }
 

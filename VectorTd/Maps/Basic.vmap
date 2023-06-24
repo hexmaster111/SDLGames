@@ -22,19 +22,17 @@
 
 # Wave 1
 START_WAVE
-    REWARD:100                  # reward for completing the wave
+    REWARD:100                     # reward for completing the wave
     START_WI
-        SPAWN S,1               # spawn 1 small enemie
-        WAIT 5                  # wait 5 seconds
-        SPAWN S,1               # spawn 1 small enemie
+        SPAWN S, 1, 5              # spawn 1 small enemie, wait 5 seconds
+        SPAWN S,1                  # spawn 1 small enemie
     END_WI
 END_WAVE
 
 START_WAVE
     REWARD:110                  
     START_WI
-        SPAWN S,2  
-        WAIT 5         
+        SPAWN S,2,5    
     END_WI
 END_WAVE
 

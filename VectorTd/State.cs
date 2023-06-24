@@ -7,25 +7,41 @@ using static SDL2.SDL;
 
 namespace VectorTd;
 
-
-public class WaveControler
+public record MapWaveData(MapWaveData.WaveData[] Waves)
 {
-    private List<(int reward, List<(CreepType creepT, TimeSpan waitAfterSpawn)>)> _wave = new()
+    public record WaveData(int Reward, WaveData.CreepSpawnInfo[] CreepSpawnInfos)
     {
-        new(10, new List<(CreepType, TimeSpan)> { (CreepType.Small, TimeSpan.FromSeconds(1)) }),
-        new(10, new List<(CreepType, TimeSpan)> { (CreepType.Small, TimeSpan.FromSeconds(1)),
-                                                  (CreepType.Small, TimeSpan.FromSeconds(1)) }),
+        public record CreepSpawnInfo(CreepType CreepType, TimeSpan WaitAfterSpawn);
     };
+};
 
+public class WaveController
+{
+    public WaveController()
+    {
+        _mapWaveData = new(new[]
+        {
+            new MapWaveData.WaveData(100, new[]
+            {
+                new MapWaveData.WaveData.CreepSpawnInfo(CreepType.Small, TimeSpan.Zero)
+            }),
+            new MapWaveData.WaveData(100, new[]
+            {
+                new MapWaveData.WaveData.CreepSpawnInfo(CreepType.Small, TimeSpan.FromSeconds(1)),
+                new MapWaveData.WaveData.CreepSpawnInfo(CreepType.Small, TimeSpan.Zero)
+            }),
+        });
+    }
+
+    private MapWaveData _mapWaveData;
+    
     public void Update(TimeSpan deltaTime, State state)
     {
     }
 
-
-    public void Render(RenderArgs args, ref SDL_Rect viewPort)
+    public void StartWave()
     {
     }
-
 }
 
 public class State
@@ -37,7 +53,7 @@ public class State
     private readonly object _creepsLock = new();
     public readonly List<Projectile> Projectiles = new();
     public readonly object _projectilesLock = new();
-    private WaveControler _waveControler = new();
+    public WaveController WaveController { get; } = new();
 
     public IEnumerable<Creep> Creeps
     {
@@ -51,21 +67,20 @@ public class State
     }
 
 
-    public Tile? StartTile => _.GetItemOfType<Tile, StartTile>(Map);
-    public Tile? EndTile => _.GetItemOfType<Tile, EndTile>(Map);
+    public Tile? StartTile => _.GetFirstItemOfType<Tile, StartTile>(Map);
+    public Tile? EndTile => _.GetFirstItemOfType<Tile, EndTile>(Map);
 
 
     public State(SDL_Rect viewPort)
     {
         _viewPort = viewPort;
         for (var x = 0; x < MapSize; x++)
-            for (var y = 0; y < MapSize; y++)
-                Map[x, y] = new VoidTile(x, y);
+        for (var y = 0; y < MapSize; y++)
+            Map[x, y] = new VoidTile(x, y);
     }
 
     public int Money { get; set; }
     public int Lives { get; set; }
-
 
     public void Render(RenderArgs args)
     {
@@ -80,8 +95,6 @@ public class State
         {
             foreach (var projectile in Projectiles) projectile.Render(args, ref _viewPort);
         }
-
-        lock (_creepsLock) _waveControler.Render(args, ref _viewPort);
     }
 
     public void Update(TimeSpan deltaTime)
@@ -106,7 +119,7 @@ public class State
             foreach (var projectile in projectialsToRemove) Projectiles.Remove(projectile);
         }
 
-        lock (_creepsLock) _waveControler.Update(deltaTime, this);
+        lock (_creepsLock) WaveController.Update(deltaTime, this);
     }
 
     public void Click(int clickX, int clickY)
@@ -116,7 +129,8 @@ public class State
         clickY -= _viewPort.y;
 
         //Check if the click is in the viewport
-        if (clickX < 0 || clickX > _viewPort.w || clickY < 0 || clickY > _viewPort.h) throw new Exception("Click outside of viewport");
+        if (clickX < 0 || clickX > _viewPort.w || clickY < 0 || clickY > _viewPort.h)
+            throw new Exception("Click outside of viewport");
 
         //convert to grid coordinates
         clickX /= Tile.SizePx;

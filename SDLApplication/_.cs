@@ -2,7 +2,7 @@
 
 public static class _
 {
-    public static TWanted? GetItemOfType<TBase, TWanted>(TBase[,] items)
+    public static TWanted? GetFirstItemOfType<TBase, TWanted>(TBase[,] items)
     {
         foreach (var item in items)
         {
@@ -28,8 +28,6 @@ public static class _
         }
     }
 
-    public static int Distance(int x, int y, int x2, int y2)
-    {
-        return (int)Math.Sqrt(Math.Pow(x - x2, 2) + Math.Pow(y - y2, 2));
-    }
+    public static int Distance(int x, int y, int x2, int y2) =>
+        (int)Math.Sqrt(Math.Pow(x - x2, 2) + Math.Pow(y - y2, 2));
 }

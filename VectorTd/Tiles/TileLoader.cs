@@ -6,7 +6,7 @@ public static class TileLoader
 {
     const int MapSize = 15;
 
-    public static (string? readErr, Tile[,]?, MapWaveData?) LoadVMap(string path)
+    public static (string? readErr, Tile[,]? tiles, MapWaveData? waves) LoadVMap(string path)
     {
         var lines = File.ReadAllLines(path).Take(MapSize).ToArray();
         if (lines.Length != MapSize) return ("Map file is not the correct size", null, null);
