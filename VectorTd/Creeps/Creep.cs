@@ -49,16 +49,44 @@ public abstract class Creep
     }
 
 
-    private static Tile? GetNextTile(IEnumerable<Tile?> tiles, State state) => tiles
-        .Where(t => t != null)
-        .Cast<Tile>()
-        .OrderBy(t => t.DistanceTo(state.EndTile!))
-        .FirstOrDefault(t => t.Type is TileType.Path or TileType.End);
+    private static Tile? GetNextTile(IEnumerable<Tile?> tiles, State state)
+    {
+        var t = tiles
+            .Where(t => t != null)
+            .Cast<Tile>()
+            .OrderBy(t => t.DistanceTo(state.EndTile!))
+            .Where(t => t.Type is TileType.Path or TileType.End);
+
+        var tls = t.ToArray();
+        if (!tls.Any()) return null;
+
+        if (tls.Length >= 1)
+        {
+            var r = new Random();
+            var i = r.Next(0, tls.Length);
+
+            var tile = tls[i];
+            var dir = tile.Direction;
+            if (dir != Direction.NotSet)
+            {
+                var (x, y) = (tile.X, tile.Y);
+                var nextTile = _.InArrayOrNull(state.Map, x + dir.XAddr(), y + dir.YAdder());
+                if (nextTile != null && nextTile.Type is TileType.Path or TileType.End)
+                {
+                    return nextTile;
+                }
+            }
+
+            return tile;
+        }
+
+        return tls.First();
+    }
 
 
-    private List<Tile> _visitedTiles = new();
+    private readonly List<Tile> _visitedTiles = new();
     private Tile? _currentTargetTile;
-    bool isCentering = false;
+    bool _isCentering = false;
 
     //true to remove
     public virtual bool Update(TimeSpan __, State state)
@@ -70,7 +98,7 @@ public abstract class Creep
         }
 
         const double deltaTime = 1d / 60;
-        if (isCentering)
+        if (_isCentering)
         {
             //center the creep on the tile smoothly at the speed of the creep
             var (dx, dy) = (XPx - _currentTargetTile!.PxPosCenter.x, YPx - _currentTargetTile!.PxPosCenter.y);
@@ -89,7 +117,7 @@ public abstract class Creep
 
             if (isXCentered && isYCentered)
             {
-                isCentering = false;
+                _isCentering = false;
                 _currentTargetTile = null;
             }
 
@@ -139,7 +167,7 @@ public abstract class Creep
 
             if (tx == 0 && ty == 0)
             {
-                isCentering = true;
+                _isCentering = true;
 
                 //Add to visited tiles
                 _visitedTiles.Add(_currentTargetTile);

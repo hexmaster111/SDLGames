@@ -15,5 +15,5 @@ public class BasicTower : Tower
     
 
     public override string Name => "Basic Tower";
-    public override int Cost => 10;
+    public override int Cost => 50;
 }

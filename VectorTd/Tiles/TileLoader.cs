@@ -51,6 +51,10 @@ public static class TileLoader
                     'T' => TileFactory.Create(TileType.Tower, x, y),
                     'S' => TileFactory.Create(TileType.Start, x, y),
                     'E' => TileFactory.Create(TileType.End, x, y),
+                    '>' => TileFactory.Create(TileType.Path, x, y, Direction.Right),
+                    '<' => TileFactory.Create(TileType.Path, x, y, Direction.Left),
+                    '^' => TileFactory.Create(TileType.Path, x, y, Direction.Up),
+                    'V' => TileFactory.Create(TileType.Path, x, y, Direction.Down),
                     _ => throw new ArgumentOutOfRangeException(nameof(ch), ch, null)
                 };
                 x++;

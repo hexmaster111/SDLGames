@@ -10,14 +10,14 @@ public static class TowerFactory
 {
     public enum TowerType
     {
+        Simple,
         Basic,
-        Simple
     }
 
     public static Tower? CreateTower(int x, int y, TowerType type) => type switch
     {
-        TowerType.Basic => new BasicTower(x, y),
         TowerType.Simple => new SimpleTower(x, y),
+        TowerType.Basic => new BasicTower(x, y),
         _ => null
     };
 }
@@ -30,8 +30,8 @@ public abstract class Tower
 
 
     public int SizePx { get; }
-    public SDL_Color Color { get; set; }
-    public TowerFactory.TowerType Type { get; set; }
+    public SDL_Color Color { get; }
+    public TowerFactory.TowerType Type { get; }
 
     public int X { get; internal set; }
 
@@ -94,8 +94,8 @@ public abstract class Tower
 
     public static Tower[] Towers { get; } =
     {
+        new SimpleTower(0, 0),
         new BasicTower(0, 0),
-        new SimpleTower(0, 0)
     };
 
     public abstract string Name { get; }

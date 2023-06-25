@@ -1,7 +1,7 @@
 ######S########
-######PPP######
-######TTP######
-#####PPPP######
+###PPPPPP######
+###P##TTP######
+###PPVPPP######
 #####P#########
 #####P#########
 #####P#########
@@ -9,10 +9,21 @@
 #############P#
 #####PPPPPP##P#
 #####P####P##P#
-#PPPPP####PPPP#
+#PPPP<PPPPPPPP#
 #P#############
 #P#############
 #E#############
+
+##### MAP LEGEND #####
+# S = Start
+# E = End
+# P = Path
+# T = Tower
+# < = Force Left Path
+# > = Force Right Path
+# ^ = Force Up Path
+# v = Force Down Path
+######################
 
 ##### MAP ENEMY TYPES #####
 # S = Small Enemy
@@ -20,16 +31,24 @@
 # L = Large Enemy
 ###########################
 
-#### COMMAND ARGUMENTS
-# SPAWN <enemy type>, <amount>, <delay?>
+#### COMMAND ARGUMENTS####
+### LEGEND
+# <required>
+# [optional]
+###
+# SPAWN <enemy type>, <amount>, [delay?]
 # REWARD <amount>
+########################
+
+
+
 
 # Wave 1
 START_WAVE
-    REWARD:100                     # reward for completing the wave
+    REWARD:100                        # reward for completing the wave
     START_WI
-        SPAWN S,1,5              # spawn 1 small enemie, wait 5 seconds
-        SPAWN S,1                  # spawn 1 small enemie
+        SPAWN S,1,.75                     # spawn 1 small enemie, wait 5 seconds
+        SPAWN S,1,.75                     # spawn 1 small enemie
     END_WI
 END_WAVE
 
@@ -43,7 +62,35 @@ START_WAVE
         SPAWN S,2,.5
         SPAWN S,2,.5
         SPAWN S,2,.5
+        SPAWN S,2,.5
+        SPAWN S,2,.5
     END_WI
 END_WAVE
 
 
+START_WAVE
+    REWARD:110                  
+    START_WI
+        SPAWN M,2,.5
+        SPAWN M,2,.5
+        SPAWN M,2,.5
+        SPAWN M,2,.5
+    END_WI
+END_WAVE
+
+START_WAVE
+    REWARD:110                  
+    START_WI
+        SPAWN M,2,.25
+        SPAWN M,2,.25
+        SPAWN M,2,.25
+        SPAWN M,2,.25
+        SPAWN M,2,.25
+        SPAWN M,2,.25
+        SPAWN M,2,.25
+        SPAWN M,2,.25
+        SPAWN M,2,.25
+        SPAWN M,2,.25
+        SPAWN M,2,.25
+    END_WI
+END_WAVE

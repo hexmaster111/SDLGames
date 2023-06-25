@@ -36,6 +36,7 @@ public abstract class Tile
     public SDL_Color Color { get; set; }
     public SDL_Color BackGround { get; set; }
     public (int x, int y) PxPosCenter => (ScreenXpx + SizePx / 2, ScreenYpx + SizePx / 2);
+    public Direction Direction { get; set; }
 
     public Tile(int x, int y, SDL_Color color, SDL_Color backGround, TileType type)
     {

@@ -11,4 +11,11 @@ public abstract class TileFactory
         TileType.End => new EndTile(x, y),
         _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
     };
+
+    public static Tile Create(TileType path, int x, int y, Direction right)
+    {
+        var tile = Create(path, x, y);
+        tile.Direction = right;
+        return tile;
+    }
 }

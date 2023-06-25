@@ -10,7 +10,7 @@ public class SimpleTower : Tower
     }
 
 
-    public override double Damage { get; } = .5d;
+    public override double Damage { get; } = .25d;
     public override int Range { get; } = 1;
     public override double FireRate { get; } = 2;
     public override string Name => "Simple Tower";

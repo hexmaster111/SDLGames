@@ -6,6 +6,7 @@ public static class CreepFactory
     {
         CreepType.Small => new SmallCreep(),
         CreepType.Medium => new MediumCreep(),
+        CreepType.Large => new LargeCreep(),
         _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
     };
 }

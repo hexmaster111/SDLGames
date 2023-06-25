@@ -1,4 +1,6 @@
-﻿using VectorTd.Creeps;
+﻿using SDL2;
+using SDLApplication;
+using VectorTd.Creeps;
 
 namespace VectorTd;
 
@@ -41,17 +43,12 @@ public class WaveController
             return;
         }
 
-        if (_timeSinceLastCreepSpawn >= _mapWaveData.Waves[_currentWaveIndex].CreepSpawnInfos[_currentCreepSpawnInfoIndex].WaitAfterSpawn)
+        var c = _mapWaveData.Waves[_currentWaveIndex].CreepSpawnInfos[_currentCreepSpawnInfoIndex];
+        if (_timeSinceLastCreepSpawn >= c.WaitAfterSpawn)
         {
-            Console.WriteLine(
-                $"WAVE[{_currentWaveIndex}] Spawned creep {_currentCreepSpawnInfoIndex} next spawn in {_mapWaveData.Waves[_currentWaveIndex].CreepSpawnInfos[_currentCreepSpawnInfoIndex].WaitAfterSpawn}");
+            Console.WriteLine($"WAVE[{_currentWaveIndex}] Spawned creep {_currentCreepSpawnInfoIndex} - {c.WaitAfterSpawn}");
             _timeSinceLastCreepSpawn = TimeSpan.Zero;
-            Creep creep = _mapWaveData.Waves[_currentWaveIndex].CreepSpawnInfos[_currentCreepSpawnInfoIndex].CreepType switch
-            {
-                CreepType.Small => new SmallCreep(),
-                CreepType.Medium => new MediumCreep(),
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            var creep = CreepFactory.Create(c.CreepType);
             state.AddCreep(creep);
             _currentCreepSpawnInfoIndex++;
             if (_currentCreepSpawnInfoIndex >= _mapWaveData.Waves[_currentWaveIndex].CreepSpawnInfos.Length)

@@ -16,7 +16,7 @@ public class State
     private readonly object _creepsLock = new();
     public readonly List<Projectile> Projectiles = new();
     private readonly object _projectilesLock = new();
-    public WaveController WaveController { get; set; }
+    public WaveController WaveController { get; private set; }
 
     public IEnumerable<Creep> Creeps
     {
