@@ -100,4 +100,30 @@ public abstract class Tower
 
     public abstract string Name { get; }
     public abstract int Cost { get; }
+
+    public void RenderPlacing(RenderArgs args, ref SDL_Rect viewport, int mouseX, int mouseY)
+    {
+        SDL_RenderSetViewport(args.RendererPtr, ref viewport);
+        args.SetDrawColor(Color);
+        var rect = new SDL_Rect
+        {
+            x = mouseX - SizePx / 2,
+            y = mouseY - SizePx / 2,
+            w = SizePx,
+            h = SizePx
+        };
+        args.FillRect(rect);
+
+        //Render the range of the tower
+        args.SetDrawColor(Color);
+        var rangeRect = new SDL_Rect
+        {
+            x = mouseX - Range * Tile.SizePx + Tile.SizePx / 2,
+            y = mouseY - Range * Tile.SizePx + Tile.SizePx / 2,
+            w = (Range * 2 + 1) * Tile.SizePx + Tile.SizePx / 2,
+            h = (Range * 2 + 1) * Tile.SizePx + Tile.SizePx / 2
+        };
+
+        args.DrawRect(rangeRect);
+    }
 }

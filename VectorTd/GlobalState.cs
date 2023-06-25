@@ -24,5 +24,12 @@ public class GlobalState
             h = Game.ScreenHeight
         };
         SDL.SDL_RenderSetViewport(args.RendererPtr, ref viewport);
+        
+        
+        if(IsPlacingTower && PlacingTower != null)
+        {
+            PlacingTower.RenderPlacing(args, ref viewport, MouseX, MouseY);
+        }
+        
     }
 }

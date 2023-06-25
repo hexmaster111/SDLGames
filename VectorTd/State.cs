@@ -11,6 +11,8 @@ public class State
 {
     public const int MapSize = 15;
     public Tile[,] Map = new Tile[MapSize, MapSize];
+    public int Money { get; set; }
+    public int Lives { get; set; }
     private SDL_Rect _viewPort;
     private readonly List<Creep> _creeps = new();
     private readonly object _creepsLock = new();
@@ -42,8 +44,6 @@ public class State
             Map[x, y] = new VoidTile(x, y);
     }
 
-    public int Money { get; set; }
-    public int Lives { get; set; }
 
     public void Render(RenderArgs args)
     {

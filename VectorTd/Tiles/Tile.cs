@@ -8,7 +8,7 @@ public abstract class Tile
     internal const int SizePx = 32;
     protected int ScreenXpx;
     protected int ScreenYpx;
-    internal TileType Type { get; set; }
+    internal TileType Type { get; }
 
     private int _x;
     private int _y;

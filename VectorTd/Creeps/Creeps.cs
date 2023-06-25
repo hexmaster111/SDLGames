@@ -12,7 +12,7 @@ public class SmallCreep : Creep
 
 public class MediumCreep : Creep
 {
-    public MediumCreep() : base(SdlColors.Pink, 25, 2, 2, 2)
+    public MediumCreep() : base(SdlColors.Pink, 55, 2, 2, 2)
     {
     }
 }
@@ -20,7 +20,7 @@ public class MediumCreep : Creep
 
 public class LargeCreep : Creep
 {
-    public LargeCreep() : base(SdlColors.DarkYellow, 30, 4, 4, 4)
+    public LargeCreep() : base(SdlColors.DarkYellow, 50, 4, 4, 4)
     {
     }
 }

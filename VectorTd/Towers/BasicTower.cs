@@ -10,7 +10,7 @@ public class BasicTower : Tower
     }
 
     public override double Damage { get; } = 1;
-    public override int Range { get; } = 1;
+    public override int Range { get; } = 5;
     public override double FireRate { get; } = 1d;
     
 

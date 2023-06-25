@@ -4,6 +4,7 @@ namespace SDLApplication;
 
 public static class SdlColors
 {
+    public static SDL_Color Transparent { get; } = new() { a = 0, b = 0, g = 0, r = 0 };
     public static SDL_Color Black { get; } = new() { a = 255, b = 0, g = 0, r = 0 };
     public static SDL_Color White { get; } = new() { a = 255, b = 255, g = 255, r = 255 };
     public static SDL_Color Red { get; } = new() { a = 255, b = 0, g = 0, r = 255 };
