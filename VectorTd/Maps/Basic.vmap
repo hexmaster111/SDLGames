@@ -36,7 +36,13 @@ END_WAVE
 START_WAVE
     REWARD:110                  
     START_WI
-        SPAWN S,2,5    
+        SPAWN S,2,.5
+        SPAWN S,2,.5
+        SPAWN S,2,.5
+        SPAWN S,2,.5
+        SPAWN S,2,.5
+        SPAWN S,2,.5
+        SPAWN S,2,.5
     END_WI
 END_WAVE
 

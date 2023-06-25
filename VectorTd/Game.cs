@@ -43,7 +43,7 @@ public class Game
         if (!string.IsNullOrEmpty(map.readErr)) throw new Exception(map.readErr);
         if (map.tiles == null) throw new Exception("Map is null");
         _state.Map = map.tiles;
-        //TODO: _state.WaveData = map.waves;
+        _state.SetWave(map.waves);
         new SdlApp(EventHandler, RenderHandler, UpdateHandler, ScreenWidth, ScreenHeight).Run();
     }
 
