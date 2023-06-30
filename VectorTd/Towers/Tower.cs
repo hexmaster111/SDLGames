@@ -8,16 +8,23 @@ namespace VectorTd.Towers;
 
 public static class TowerFactory
 {
+
+    public static Tower[] RefrenceTowers { get; } =
+      {
+        new DevSimpleTower(0, 0),
+        new DevGodTower(0, 0),
+    };
+
     public enum TowerType
     {
-        Simple,
-        Basic,
+        DEV_Simple,
+        DEV_God,
     }
 
     public static Tower? CreateTower(int x, int y, TowerType type) => type switch
     {
-        TowerType.Simple => new SimpleTower(x, y),
-        TowerType.Basic => new BasicTower(x, y),
+        TowerType.DEV_Simple => new DevSimpleTower(x, y),
+        TowerType.DEV_God => new DevGodTower(x, y),
         _ => null
     };
 }
@@ -92,11 +99,7 @@ public abstract class Tower
         // foreach (var creep in state.Creeps.Except(creepsInRange)) creep.Color = SdlColors.White;
     }
 
-    public static Tower[] Towers { get; } =
-    {
-        new SimpleTower(0, 0),
-        new BasicTower(0, 0),
-    };
+
 
     public abstract string Name { get; }
     public abstract int Cost { get; }

@@ -18,7 +18,7 @@ public class InGameUi
     public InGameUi(SDL_Rect viewPort)
     {
         _viewPort = viewPort;
-        _towerRenderInfos = Tower.Towers.Select((t, i) => new TowerRenderInfo(t.Name, t.Cost, i * FontSpace + 20)).ToArray();
+        _towerRenderInfos = TowerFactory.RefrenceTowers.Select((t, i) => new TowerRenderInfo(t.Name, t.Cost, i * FontSpace + 20)).ToArray();
     }
 
 
@@ -55,7 +55,6 @@ public class InGameUi
 
         if (GlobalState.IsPlacingTower)
         {
-            //Render a cancel button
             args.RenderText("Cancel", _viewPort.w / 2, _viewPort.h / 4, SdlColors.White, SdlColors.DarkRed);
         }
     }
@@ -75,15 +74,15 @@ public class InGameUi
             return;
         }
 
-        
+
         var tower = _towerRenderInfos.FirstOrDefault(t => t.Y <= y && t.Y + 20 >= y);
         if (tower != null)
         {
             GlobalState.IsPlacingTower = true;
-            GlobalState.PlacingTower = Tower.Towers.First(t => t.Name == tower.Name);
+            GlobalState.PlacingTower = TowerFactory.RefrenceTowers.First(t => t.Name == tower.Name);
             Console.WriteLine($"Clicked InGameUi {x}, {y}");
         }
-        
-        
+
+
     }
 }
