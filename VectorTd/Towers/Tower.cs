@@ -107,11 +107,15 @@ public abstract class Tower
     public void RenderPlacing(RenderArgs args, ref SDL_Rect viewport, int mouseX, int mouseY)
     {
         SDL_RenderSetViewport(args.RendererPtr, ref viewport);
-        args.SetDrawColor(Color);
+        // args.SetDrawColor(Color);
+        args.SetDrawColor(SdlColors.Green);
+        var towerCenterX = mouseX - SizePx / 2;
+        var towerCenterY = mouseY - SizePx / 2;
+
         var rect = new SDL_Rect
         {
-            x = mouseX - SizePx / 2,
-            y = mouseY - SizePx / 2,
+            x = towerCenterX,
+            y = towerCenterY,
             w = SizePx,
             h = SizePx
         };
@@ -119,12 +123,13 @@ public abstract class Tower
 
         //Render the range of the tower
         args.SetDrawColor(Color);
+        var rangePx = Range * Tile.SizePx;
         var rangeRect = new SDL_Rect
         {
-            x = mouseX - Range * Tile.SizePx + Tile.SizePx / 2,
-            y = mouseY - Range * Tile.SizePx + Tile.SizePx / 2,
-            w = (Range * 2 + 1) * Tile.SizePx + Tile.SizePx / 2,
-            h = (Range * 2 + 1) * Tile.SizePx + Tile.SizePx / 2
+            x = towerCenterX - rangePx,
+            y = towerCenterY - rangePx,
+            w = rangePx * 2 + Tile.SizePx / 2,
+            h = rangePx * 2 + Tile.SizePx / 2
         };
 
         args.DrawRect(rangeRect);
