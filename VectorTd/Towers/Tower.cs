@@ -58,10 +58,17 @@ public abstract class Tower
         //render a rectangle
         SDL_RenderSetViewport(args.RendererPtr, ref viewPort);
         args.SetDrawColor(Color);
+
+        var towerCenterPx = SizePx / 2;
+        var xPx = X * Tile.SizePx;
+        var yPx = Y * Tile.SizePx;
+        var centerOffset = Tile.SizePx / 2;
+
+
         var rect = new SDL_Rect
         {
-            x = X * Tile.SizePx + Tile.SizePx / 2 - SizePx / 2,
-            y = Y * Tile.SizePx + Tile.SizePx / 2 - SizePx / 2,
+            x = xPx + centerOffset - towerCenterPx,
+            y = yPx + centerOffset - towerCenterPx,
             w = SizePx,
             h = SizePx
         };
@@ -69,13 +76,18 @@ public abstract class Tower
     }
 
     //If a tower has a range of 1, it can hit all the tiles within 1 tile of it, including diagonals
-    protected List<Creep> GetCreepsInRange(State state) => state.Creeps
-        .Where(c => c.MapPosition.X >= X - Range && c.MapPosition.X <= X + Range &&
-                    c.MapPosition.Y >= Y - Range && c.MapPosition.Y <= Y + Range)
-        .ToList();
+    protected List<Creep> GetCreepsInRange(State state)
+    {
+        return state.Creeps.Where(
+            c => c.MapPosition.X >= X - Range &&
+            c.MapPosition.X <= X + Range &&
+            c.MapPosition.Y >= Y - Range &&
+             c.MapPosition.Y <= Y + Range).ToList();
+    }
 
     private DateTime _lastFireTime = DateTime.MinValue;
     private Creep? _creepBeingShot;
+    private bool IsCooledDown() => (DateTime.Now - _lastFireTime).TotalSeconds > FireRate;
 
     public virtual void Update(TimeSpan deltaTime, State state)
     {
@@ -86,7 +98,7 @@ public abstract class Tower
             .First();
 
 
-        if ((DateTime.Now - _lastFireTime).TotalSeconds < FireRate) return;
+        if (!IsCooledDown()) return;
         _lastFireTime = DateTime.Now;
         _creepBeingShot = creepClosestToEnd;
 
@@ -107,8 +119,7 @@ public abstract class Tower
     public void RenderPlacing(RenderArgs args, ref SDL_Rect viewport, int mouseX, int mouseY)
     {
         SDL_RenderSetViewport(args.RendererPtr, ref viewport);
-        // args.SetDrawColor(Color);
-        args.SetDrawColor(SdlColors.Green);
+        args.SetDrawColor(Color);
         var towerCenterX = mouseX - SizePx / 2;
         var towerCenterY = mouseY - SizePx / 2;
 
