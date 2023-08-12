@@ -32,16 +32,16 @@ public class State
     }
 
 
-    public Tile? StartTile => _.GetFirstItemOfType<Tile, StartTile>(Map);
-    public Tile? EndTile => _.GetFirstItemOfType<Tile, EndTile>(Map);
+    public Tile? StartTile => _.GetFirstItemOfType<StartTile>(Map);
+    public Tile? EndTile => _.GetFirstItemOfType<EndTile>(Map);
 
 
     public State(SDL_Rect viewPort)
     {
         _viewPort = viewPort;
         for (var x = 0; x < MapSize; x++)
-        for (var y = 0; y < MapSize; y++)
-            Map[x, y] = new VoidTile(x, y);
+            for (var y = 0; y < MapSize; y++)
+                Map[x, y] = new VoidTile(x, y);
     }
 
 

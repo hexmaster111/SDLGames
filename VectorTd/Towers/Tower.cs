@@ -57,8 +57,8 @@ public abstract class Tower
     {
         //render a rectangle
         SDL_RenderSetViewport(args.RendererPtr, ref viewPort);
-        args.SetDrawColor(Color);
 
+        args.SetDrawColor(Color);
         var towerCenterPx = SizePx / 2;
         var xPx = X * Tile.SizePx;
         var yPx = Y * Tile.SizePx;
@@ -72,6 +72,21 @@ public abstract class Tower
             w = SizePx,
             h = SizePx
         };
+        args.FillRect(rect);
+
+
+        //Little bar for the cooldown
+        rect.x = xPx + centerOffset - towerCenterPx;
+        rect.y = yPx + centerOffset - towerCenterPx - 4;
+        rect.w = (int)(SizePx * GetCoolDownPercent());
+        rect.h = 2;
+
+        args.SetDrawColor(IsCooledDown() switch
+        {
+            true => SdlColors.Green,
+            false => SdlColors.Red
+        });
+
         args.FillRect(rect);
     }
 
@@ -88,6 +103,7 @@ public abstract class Tower
     private DateTime _lastFireTime = DateTime.MinValue;
     private Creep? _creepBeingShot;
     private bool IsCooledDown() => (DateTime.Now - _lastFireTime).TotalSeconds > FireRate;
+    private double GetCoolDownPercent() => Math.Clamp((DateTime.Now - _lastFireTime).TotalSeconds / FireRate, 0, 1);
 
     public virtual void Update(TimeSpan deltaTime, State state)
     {

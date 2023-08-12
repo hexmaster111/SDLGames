@@ -10,7 +10,7 @@ public class DevGodTower : Tower
     }
 
     public override double Damage { get; } = 100;
-    public override int Range { get; } = 100;
+    public override int Range { get; } = 5;
     public override double FireRate { get; } = .125;
 
 
