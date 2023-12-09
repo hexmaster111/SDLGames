@@ -18,6 +18,7 @@ public class Game
     public GlobalState GlobalState = new();
     private State _state = new State(GridViewport);
     private readonly InGameUi _inGameUi = new(SidebarViewport);
+    public readonly SdlApp App;
 
     //Create two viewports, one for the grid and one for the sidebar 
     public static SDL_Rect GridViewport { get; } = new()
@@ -36,15 +37,14 @@ public class Game
         h = InGameUi.Height
     };
 
-    public Game()
+    public Game(string mapPath)
     {
-        // var map = TileLoader.LoadVMap(@"C:\Users\Hexma\Desktop\SDLGames\VectorTd\Maps\Basic.vmap");
-        var map = TileLoader.LoadVMap(@"/home/hailey/code/SDLGames/VectorTd/Maps/Basic.vmap");
+        var map = TileLoader.LoadVMap(mapPath);
         if (!string.IsNullOrEmpty(map.readErr)) throw new Exception(map.readErr);
         if (map.tiles == null) throw new Exception("Map is null");
         _state.Map = map.tiles;
         _state.SetWave(map.waves);
-        new SdlApp(EventHandler, RenderHandler, UpdateHandler, ScreenWidth, ScreenHeight).Run();
+        App = new SdlApp(EventHandler, RenderHandler, UpdateHandler, ScreenWidth, ScreenHeight);
     }
 
     private void UpdateHandler(TimeSpan deltaTime)

@@ -15,4 +15,13 @@
       <PackageReference Include="ImGui.NET" Version="1.89.5.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Maps\Basic.vmap">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Maps\ZiggyZagy.vmap">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

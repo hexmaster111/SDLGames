@@ -9,18 +9,26 @@ public static class TileLoader
 
     public static (string? readErr, Tile[,]? tiles, MapWaveData? waves) LoadVMap(string path)
     {
-        var lines = File.ReadAllLines(path).Take(MapSize).ToArray();
-        if (lines.Length != MapSize) return ("Map file is not the correct size", null, null);
-        var tilesFromFile = LoadTiles(lines).ToList();
-        if (tilesFromFile.Count != State.MapSize * State.MapSize)
-            return ($"Map size mismatch Got {tilesFromFile.Count}, expected 225", null, null);
-        var tiles = new Tile[State.MapSize, State.MapSize];
-        foreach (var tile in tilesFromFile) tiles[tile.X, tile.Y] = tile;
+        try
+        {
+            var lines = File.ReadAllLines(path).Take(MapSize).ToArray();
+            if (lines.Length != MapSize) return ("Map file is not the correct size", null, null);
+            var tilesFromFile = LoadTiles(lines).ToList();
+            if (tilesFromFile.Count != State.MapSize * State.MapSize)
+                return ($"Map size mismatch Got {tilesFromFile.Count}, expected 225", null, null);
+            var tiles = new Tile[State.MapSize, State.MapSize];
+            foreach (var tile in tilesFromFile) tiles[tile.X, tile.Y] = tile;
 
-        var waveLines = File.ReadAllLines(path).Skip(MapSize).ToArray();
-        var waveInstructions = LoadWaveInstructions(waveLines);
-        if (waveInstructions.err != null) return (waveInstructions.err, null, null);
-        return (null, tiles, waveInstructions.map);
+            var waveLines = File.ReadAllLines(path).Skip(MapSize).ToArray();
+            var waveInstructions = LoadWaveInstructions(waveLines);
+            if (waveInstructions.err != null) return (waveInstructions.err, null, null);
+            return (null, tiles, waveInstructions.map);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return (e.Message, null, null);
+        }
     }
 
     private static (MapWaveData? map, string? err) LoadWaveInstructions(string[] waveLines)
