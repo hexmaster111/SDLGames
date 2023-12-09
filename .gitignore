@@ -19,6 +19,6 @@ SDLApplication/obj/Debug/net7.0/refint/SDLApplication.dll
 SDLApplication/bin/Debug/net7.0/SDLApplication.deps.json
 SDLApplication/bin/Debug/net7.0/SDLApplication.dll
 SDLApplication/bin/Debug/net7.0/SDLApplication.pdb
-*bin*
-*obj*
+bin
+obj
 
