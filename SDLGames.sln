@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDLApplication", "SDLApplic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VectorTd", "VectorTd\VectorTd.csproj", "{AE52FDF1-51D9-4927-A883-CD985A20E551}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapGenTest", "Crawler\MapGenTest\MapGenTest.csproj", "{AB500E33-A762-4BCD-90BF-9F5B418C8E4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,5 +22,9 @@ Global
 		{AE52FDF1-51D9-4927-A883-CD985A20E551}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE52FDF1-51D9-4927-A883-CD985A20E551}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE52FDF1-51D9-4927-A883-CD985A20E551}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB500E33-A762-4BCD-90BF-9F5B418C8E4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB500E33-A762-4BCD-90BF-9F5B418C8E4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB500E33-A762-4BCD-90BF-9F5B418C8E4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB500E33-A762-4BCD-90BF-9F5B418C8E4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

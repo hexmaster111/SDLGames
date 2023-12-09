@@ -2,7 +2,7 @@
 
 public static class _
 {
-    public static TWanted? GetFirstItemOfType<TWanted>(object[,] items)
+    public static TWanted? GetFirstOfType<TWanted>(object[,] items)
     {
         foreach (var item in items)
         {

@@ -7,11 +7,11 @@ namespace SDLApplication;
 public class SdlApp
 {
     private IntPtr WindowPtr = IntPtr.Zero;
-    private IntPtr RendererPtr = IntPtr.Zero;
+    public IntPtr RendererPtr { get; private set; } = IntPtr.Zero;
     private IntPtr FontPtr = IntPtr.Zero;
 
-    private int ScreenWidth = 320;
-    private int ScreenHeight = 240;
+    public int ScreenWidth = 320;
+    public int ScreenHeight = 240;
     private int _targetFps;
 
     private bool Running = true;
@@ -120,7 +120,8 @@ public class SdlApp
     {
         SDL.SDL_SetRenderDrawColor(RendererPtr, 0x10, 0x10, 0x00, 0xFF);
         SDL.SDL_RenderClear(RendererPtr);
-        _renderHandler?.Invoke(new RenderArgs(WindowPtr, RendererPtr, FontPtr, Fps, deltaTime, ScreenWidth, ScreenHeight));
+        _renderHandler?.Invoke(new RenderArgs(WindowPtr, RendererPtr, FontPtr, Fps, deltaTime, ScreenWidth,
+            ScreenHeight));
         RenderFps();
         SDL.SDL_RenderPresent(RendererPtr);
     }
@@ -168,10 +169,13 @@ public class SdlApp
 
         Console.WriteLine($"SDL V{ver.major}.{ver.minor}.{ver.patch} initialized");
 
+
         var res = SDL.SDL_CreateWindowAndRenderer(ScreenWidth, ScreenHeight,
             SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN,
             out WindowPtr,
-            out RendererPtr);
+            out var tmpRenderPtrOut);
+
+        RendererPtr = tmpRenderPtrOut;
 
         if (res < 0)
         {

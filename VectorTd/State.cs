@@ -32,8 +32,8 @@ public class State
     }
 
 
-    public Tile? StartTile => _.GetFirstItemOfType<StartTile>(Map);
-    public Tile? EndTile => _.GetFirstItemOfType<EndTile>(Map);
+    public Tile? StartTile => _.GetFirstOfType<StartTile>(Map);
+    public Tile? EndTile => _.GetFirstOfType<EndTile>(Map);
 
 
     public State(SDL_Rect viewPort)
