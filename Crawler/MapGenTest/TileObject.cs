@@ -5,7 +5,7 @@ namespace MapGenTest;
 internal class TileObject
 {
     public SDL.SDL_Point Point;
-    public Sprite Sprite;
+    public required Sprite Sprite;
 
     public void Update(long now)
     {

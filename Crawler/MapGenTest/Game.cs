@@ -50,6 +50,18 @@ internal class Game
             Point = new SDL_Point() { x = 2, y = 2 }
         };
 
+        var slime = new TileObject()
+        {
+            Sprite = assetFactory.NewSprite(GameAssetType.EntitySlimeLv0),
+            Point = new SDL_Point() { x = 3, y = 6 }
+        };
+        
+        var zombie = new TileObject()
+        {
+            Sprite = assetFactory.NewSprite(GameAssetType.EntityZombieLv0),
+            Point = new SDL_Point() { x = 7, y = 7 }
+        };
+
         for (int i = 0; i < 10; i++)
         {
             if (i == 2) continue;
@@ -66,6 +78,8 @@ internal class Game
 
         TileObjects.Add(fire);
         TileObjects.Add(_testDoor);
+        TileObjects.Add(slime);
+        TileObjects.Add(zombie);
         TileObjects.Add(_player);
     }
 
@@ -117,17 +131,10 @@ internal class Game
             case SDL_EventType.SDL_KEYUP:
                 KeyEvent(e);
                 break;
-
-
-            case SDL_EventType.SDL_MOUSEMOTION:
-                break;
-            case SDL_EventType.SDL_MOUSEBUTTONDOWN:
-                break;
-            case SDL_EventType.SDL_MOUSEBUTTONUP:
-                break;
-            case SDL_EventType.SDL_MOUSEWHEEL:
-                break;
-
+            case SDL_EventType.SDL_MOUSEMOTION: break;
+            case SDL_EventType.SDL_MOUSEBUTTONDOWN: break;
+            case SDL_EventType.SDL_MOUSEBUTTONUP: break;
+            case SDL_EventType.SDL_MOUSEWHEEL: break;
             default: throw new ArgumentOutOfRangeException();
         }
     }

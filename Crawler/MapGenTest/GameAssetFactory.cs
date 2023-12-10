@@ -11,6 +11,8 @@ public class GameAssetFactory
     private IntPtr _torchTexturePtr = IntPtr.Zero;
     private IntPtr _floorStoneTexturePtr = IntPtr.Zero;
     private IntPtr _wallStoneDoorTexturePtr = IntPtr.Zero;
+    private IntPtr _entitySlimeLv0 = IntPtr.Zero;
+    private IntPtr _entityZombieLb0 = IntPtr.Zero;
     private int GridAssetWidth => (int)(32 * _game.GameScaleWidth);
     private int GridAssetHeight => (int)(32 * _game.GameScaleHeight);
 
@@ -30,10 +32,23 @@ public class GameAssetFactory
         _torchTexturePtr = LoadGameAssetTexture("Assets/TORCH.png", rendererPtr);
         _floorStoneTexturePtr = LoadGameAssetTexture("Assets/WALL_STONE.png", rendererPtr);
         _wallStoneDoorTexturePtr = LoadGameAssetTexture("Assets/WALL_STONE_DOOR.png", rendererPtr);
+        _entitySlimeLv0 = LoadGameAssetTexture("Assets/ENTITY_SLIME_LV0.png", rendererPtr);
+        _entityZombieLb0 = LoadGameAssetTexture("Assets/ENTITY_ZOMBIE_LV0.png", rendererPtr);
     }
 
+    internal Sprite NewSprite(GameAssetType newAssetType) => newAssetType switch
+    {
+        GameAssetType.Player => new Sprite(_playerTexturePtr, GridAssetWidth, GridAssetHeight),
+        GameAssetType.Torch => new AnimatedSprite(_torchTexturePtr, GridAssetWidth, GridAssetHeight, 5),
+        GameAssetType.WallStone => new Sprite(_floorStoneTexturePtr, GridAssetWidth, GridAssetHeight),
+        GameAssetType.WallStoneDoor =>
+            new StatefulSprite(_wallStoneDoorTexturePtr, GridAssetWidth, GridAssetHeight, 2, 1),
+        GameAssetType.EntitySlimeLv0 => new AnimatedSprite(_entitySlimeLv0, GridAssetWidth, GridAssetHeight, 4),
+        GameAssetType.EntityZombieLv0 => new AnimatedSprite(_entityZombieLb0, GridAssetWidth, GridAssetHeight, 2),
+        _ => throw new ArgumentOutOfRangeException(nameof(newAssetType), newAssetType, null)
+    };
 
-    public static IntPtr LoadGameAssetTexture(string path, IntPtr renderPtr)
+    private static IntPtr LoadGameAssetTexture(string path, IntPtr renderPtr)
     {
         IntPtr tmpSurfacePtr;
         if ((tmpSurfacePtr = IMG_Load(path)) == IntPtr.Zero) ThrowFailedToLoad(path);
@@ -43,22 +58,6 @@ public class GameAssetFactory
         SDL_FreeSurface(tmpSurfacePtr);
         return retSurfacePtr;
     }
-
-
-    internal Sprite NewSprite(GameAssetType newAssetType) => newAssetType switch
-    {
-        GameAssetType.Player => new Sprite(_playerTexturePtr, GridAssetWidth, GridAssetHeight),
-        GameAssetType.Torch => new AnimatedSprite(_torchTexturePtr, GridAssetWidth, GridAssetHeight, 5),
-        GameAssetType.WallStone => new Sprite(_floorStoneTexturePtr, GridAssetWidth, GridAssetHeight),
-        GameAssetType.WallStoneDoor => new StatefulSprite(
-            _wallStoneDoorTexturePtr,
-            GridAssetWidth,
-            GridAssetHeight,
-            2,
-            1
-        ),
-        _ => throw new ArgumentOutOfRangeException(nameof(newAssetType), newAssetType, null)
-    };
 }
 
 public enum GameAssetType
@@ -66,5 +65,7 @@ public enum GameAssetType
     Player,
     Torch,
     WallStone,
-    WallStoneDoor
+    WallStoneDoor,
+    EntitySlimeLv0,
+    EntityZombieLv0
 }

@@ -21,18 +21,9 @@ internal static class Program
         App.Run();
     }
 
-    private static void UpdateHandler(TimeSpan _, long now)
-    {
-        Game.Update(now);
-    }
+    private static void UpdateHandler(TimeSpan _, long now) => Game.Update(now);
 
-    private static void RenderHandler(RenderArgs args)
-    {
-        Game.Render(args);
-    }
+    private static void RenderHandler(RenderArgs args) => Game.Render(args);
 
-    private static void EventHandler(SDL.SDL_Event e)
-    {
-        Game.Event(e);
-    }
+    private static void EventHandler(SDL.SDL_Event e) => Game.Event(e);
 }
