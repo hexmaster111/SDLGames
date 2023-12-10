@@ -13,7 +13,7 @@ internal class Game
     public const int WorldWidth = 25;
     public List<TileObject> TileObjects = new();
     private readonly TileObject _player;
-    private readonly GameAssetFactory _assetFactoryFactory;
+    private readonly TileObject _testDoor;
 
     public State State = new()
     {
@@ -30,40 +30,32 @@ internal class Game
         GameScaleWidth = 1.0f / ((float)idealWidth / Program.App.ScreenWidth);
 
 
-        _assetFactoryFactory = new GameAssetFactory(this);
-        _assetFactoryFactory.LoadTextures(Program.App.RendererPtr);
+        var assetFactory = new GameAssetFactory(this);
+        assetFactory.LoadTextures(Program.App.RendererPtr);
 
         _player = new TileObject
         {
-            Sprite = _assetFactoryFactory.NewSprite(GameAssetType.Player),
+            Sprite = assetFactory.NewSprite(GameAssetType.Player),
+        };
+
+        _testDoor = new TileObject()
+        {
+            Sprite = assetFactory.NewSprite(GameAssetType.WallStoneDoor),
+            Point = new SDL_Point() { x = 9, y = 2 }
         };
 
         var fire = new TileObject()
         {
-            Sprite = _assetFactoryFactory.NewSprite(GameAssetType.Torch),
-            Point = new SDL_Point()
-            {
-                x = 2, y = 2
-            }
+            Sprite = assetFactory.NewSprite(GameAssetType.Torch),
+            Point = new SDL_Point() { x = 2, y = 2 }
         };
 
         for (int i = 0; i < 10; i++)
         {
-            // for (int j = 0; j < 10; j++)
-            // {
-            //     var floor = new TileObject()
-            //     {
-            //         Sprite = _assetFactoryFactory.NewSprite(GameAssetType.FloorStone),
-            //         Point = new SDL_Point()
-            //         {
-            //             x = i, y = j
-            //         }
-            //     };
-            //     TileObjects.Add(floor);
-            // }
+            if (i == 2) continue;
             var wall = new TileObject()
             {
-                Sprite = _assetFactoryFactory.NewSprite(GameAssetType.WallStone),
+                Sprite = assetFactory.NewSprite(GameAssetType.WallStone),
                 Point = new SDL_Point()
                 {
                     x = 9, y = i
@@ -72,8 +64,9 @@ internal class Game
             TileObjects.Add(wall);
         }
 
-        TileObjects.Add(_player);
         TileObjects.Add(fire);
+        TileObjects.Add(_testDoor);
+        TileObjects.Add(_player);
     }
 
     public void Update(long now)
@@ -164,6 +157,7 @@ internal class Game
             if (key.sym == SDL_Keycode.SDLK_RIGHT) _player.Move(Direction.W, 1);
             if (key.sym == SDL_Keycode.SDLK_UP) _player.Move(Direction.N, 1);
             if (key.sym == SDL_Keycode.SDLK_DOWN) _player.Move(Direction.S, 1);
+            if (key.sym == SDL_Keycode.SDLK_d) ((StatefulSprite)_testDoor.Sprite).SetState(1);
         }
     }
 }

@@ -3,13 +3,12 @@ using static SDL2.SDL;
 
 namespace MapGenTest;
 
-internal class AnimatedSprite(IntPtr texturePtr, int singleFrameWidth, int singleFrameHeight, int frameCount)
+internal class AnimatedSprite(IntPtr texturePtr, int singleFrameWidth, int singleFrameHeight, int animationFrameCount)
     : Sprite(texturePtr, singleFrameWidth, singleFrameHeight)
 {
-    private readonly int _frameCount = frameCount;
     private int _currentFrameIndex;
 
-    private SDL_Rect _currentSpriteRect = new()
+    protected SDL_Rect CurrentSpriteRect = new()
     {
         x = 0,
         y = 0,
@@ -21,12 +20,12 @@ internal class AnimatedSprite(IntPtr texturePtr, int singleFrameWidth, int singl
 
     private void NextFrame()
     {
-        _currentSpriteRect.y += GridSpriteImageSize;
+        CurrentSpriteRect.y += GridSpriteImageSize;
 
         _currentFrameIndex++;
-        if (_currentFrameIndex >= _frameCount)
+        if (_currentFrameIndex >= animationFrameCount)
         {
-            _currentSpriteRect.y = 0;
+            CurrentSpriteRect.y = 0;
             _currentFrameIndex = 0;
         }
     }
@@ -43,7 +42,7 @@ internal class AnimatedSprite(IntPtr texturePtr, int singleFrameWidth, int singl
     {
         _rect.x = pos.x;
         _rect.y = pos.y;
-        SDL_RenderCopy(renderArgs.RendererPtr, _texturePtr, ref _currentSpriteRect, ref _rect);
+        SDL_RenderCopy(renderArgs.RendererPtr, _texturePtr, ref CurrentSpriteRect, ref _rect);
     }
 }
 
@@ -67,5 +66,16 @@ internal class Sprite
         _rect.x = pos.x;
         _rect.y = pos.y;
         SDL_RenderCopy(renderArgs.RendererPtr, _texturePtr, IntPtr.Zero, ref _rect);
+    }
+}
+
+internal class
+    StatefulSprite(IntPtr texturePrt, int gridAssetWidth, int gridAssetHeight, int stateCount, int animationFrames)
+    : AnimatedSprite(texturePrt, gridAssetWidth, gridAssetHeight, animationFrames)
+{
+    public void SetState(int stateNumber)
+    {
+        if (stateNumber > stateCount) throw new Exception("State Out of range");
+        CurrentSpriteRect.x = GridSpriteImageSize * stateNumber;
     }
 }
