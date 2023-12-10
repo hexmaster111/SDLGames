@@ -7,6 +7,11 @@ internal class TileObject
     public SDL.SDL_Point Point;
     public Sprite Sprite;
 
+    public void Update(long now)
+    {
+        if (Sprite is AnimatedSprite animatedSprite) animatedSprite.Update(now);
+    }
+
     public void Move(Direction direction, int spaces)
     {
         switch (direction)

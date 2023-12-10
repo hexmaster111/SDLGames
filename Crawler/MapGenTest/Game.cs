@@ -1,7 +1,4 @@
 ﻿using System.Numerics;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SDLApplication;
 using static SDL2.SDL;
 
@@ -12,8 +9,8 @@ internal class Game
     public float GameScaleWidth = 1.0f;
     public float GameScaleHeight = 1.0f;
 
-    public const int WorldHeight = 25;
-    public const int WorldWidth = 50;
+    public const int WorldHeight = 15;
+    public const int WorldWidth = 25;
     public List<TileObject> TileObjects = new();
     private readonly TileObject _player;
     private readonly GameAssetFactory _assetFactoryFactory;
@@ -40,9 +37,49 @@ internal class Game
         {
             Sprite = _assetFactoryFactory.NewSprite(GameAssetType.Player),
         };
+
+        var fire = new TileObject()
+        {
+            Sprite = _assetFactoryFactory.NewSprite(GameAssetType.Torch),
+            Point = new SDL_Point()
+            {
+                x = 2, y = 2
+            }
+        };
+
+        for (int i = 0; i < 10; i++)
+        {
+            // for (int j = 0; j < 10; j++)
+            // {
+            //     var floor = new TileObject()
+            //     {
+            //         Sprite = _assetFactoryFactory.NewSprite(GameAssetType.FloorStone),
+            //         Point = new SDL_Point()
+            //         {
+            //             x = i, y = j
+            //         }
+            //     };
+            //     TileObjects.Add(floor);
+            // }
+            var wall = new TileObject()
+            {
+                Sprite = _assetFactoryFactory.NewSprite(GameAssetType.WallStone),
+                Point = new SDL_Point()
+                {
+                    x = 9, y = i
+                }
+            };
+            TileObjects.Add(wall);
+        }
+
         TileObjects.Add(_player);
+        TileObjects.Add(fire);
     }
 
+    public void Update(long now)
+    {
+        foreach (var tileObject in TileObjects) tileObject.Update(now);
+    }
 
     public void Render(RenderArgs args)
     {

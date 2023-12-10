@@ -13,6 +13,7 @@ public class SdlApp
     public int ScreenWidth = 320;
     public int ScreenHeight = 240;
     private int _targetFps;
+    private int _targetUpdatesPerSec;
 
     private bool Running = true;
     private int Fps = 0;
@@ -27,7 +28,7 @@ public class SdlApp
 
     public delegate void EventHandler(SDL.SDL_Event e);
 
-    public delegate void UpdateHandler(TimeSpan deltaTime);
+    public delegate void UpdateHandler(TimeSpan deltaTime, long now);
 
 
     public SdlApp
@@ -35,7 +36,7 @@ public class SdlApp
         EventHandler eventHandler,
         RenderHandler renderHandler,
         UpdateHandler updateHandler,
-        int width = 320, int height = 240, int targetFps = 60
+        int width = 320, int height = 240, int targetFps = 60, int targetUpdatesPerSec = 100
     )
     {
         ScreenWidth = width;
@@ -44,48 +45,34 @@ public class SdlApp
         _renderHandler = renderHandler;
         _targetFps = targetFps;
         _updateHandler = updateHandler;
+        _targetUpdatesPerSec = targetUpdatesPerSec;
         if (!SetupSdl()) throw new Exception("Failed to setup SDL");
     }
 
     public SdlApp Run()
     {
-        const int UPDATE_HZ = 100;
         long lastRender = SDL.SDL_GetTicks();
-        long lastUpdate = SDL.SDL_GetTicks();
+
+        SimpleTimer renderTimer = new(1000 / 10);
+        SimpleTimer updateTimer = new(1000 / 4);
 
         while (Running)
         {
             long currentTime = SDL.SDL_GetTicks();
-            var deltaTime = currentTime - lastRender;
-            if (_targetFps > 0)
+
+            if (updateTimer.Evaluate(currentTime))
+                _updateHandler.Invoke(TimeSpan.FromMilliseconds(1000 / _targetUpdatesPerSec), currentTime);
+            if (renderTimer.Evaluate(currentTime))
             {
-                if (deltaTime >= 1000 / _targetFps)
-                {
-                    // If we hit a breakpoint, the delta time will be huge.
-                    if (deltaTime <= 1000)
-                    {
-                        lastRender = currentTime;
-                        Fps = (int)(1000 / deltaTime);
-                        HandleEvents();
-                        Render(deltaTime);
-                    }
-                    else lastRender = currentTime;
-                }
-
-                //Timer for updating the game
-                if (currentTime - lastUpdate >= 1000 / UPDATE_HZ)
-                {
-                    lastUpdate = currentTime;
-                    _updateHandler?.Invoke(TimeSpan.FromMilliseconds(1000 / UPDATE_HZ));
-                }
-
-
-                //The time to sleep is made up of time last update and the last render, so they can fire on time
-                var timeToSleep = (1000 / _targetFps) - (SDL.SDL_GetTicks() - lastRender);
-                //Now for the update
-                timeToSleep = Math.Min(timeToSleep, (1000 / UPDATE_HZ) - (SDL.SDL_GetTicks() - lastUpdate));
-                if (timeToSleep > 0) SDL.SDL_Delay((uint)timeToSleep);
+                var deltaTime = currentTime - lastRender;
+                RenderFps();
+                Render(deltaTime);
             }
+
+            var minTime = Math.Min(updateTimer.SleepTimeMs, renderTimer.SleepTimeMs);
+            if (0 > minTime) continue;
+            HandleEvents();
+            SDL.SDL_Delay((uint)minTime);
         }
 
         return this;
@@ -204,14 +191,31 @@ public class SdlApp
 
         return true;
     }
+}
 
-    private void UpdateEventTimerCb()
+public class SimpleTimer
+{
+    private readonly long _delay;
+    private long _lastFireTime;
+    private long _fireRate;
+
+    public SimpleTimer(long delay)
     {
-        var now = TimeOnly.FromDateTime(DateTime.UtcNow);
-        var deltaTime = now - _lastTime;
+        _delay = delay;
+    }
 
+    public long SleepTimeMs { get; private set; }
 
-        _updateHandler?.Invoke(deltaTime);
-        _lastTime = now;
+    public bool Evaluate(long now)
+    {
+        if (now - _lastFireTime < _fireRate)
+        {
+            SleepTimeMs = _fireRate - (now - _lastFireTime);
+            return false;
+        }
+
+        _lastFireTime = now;
+        _fireRate = _delay;
+        return true;
     }
 }

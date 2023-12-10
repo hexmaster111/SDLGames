@@ -47,7 +47,7 @@ public class Game
         App = new SdlApp(EventHandler, RenderHandler, UpdateHandler, ScreenWidth, ScreenHeight);
     }
 
-    private void UpdateHandler(TimeSpan deltaTime)
+    private void UpdateHandler(TimeSpan deltaTime, long _)
     {
         _state.Update(deltaTime);
     }
