@@ -14,6 +14,8 @@ internal class Game
     public List<TileObject> TileObjects = new();
     private readonly TileObject _player;
     private readonly TileObject _testDoor;
+    private readonly PlayerInvntoyHandler _invhdlr = new();
+
 
     public State State = new()
     {
@@ -88,15 +90,14 @@ internal class Game
             default: throw new ArgumentOutOfRangeException();
         }
     }
-
     private void RenderInventory(RenderArgs args)
     {
+        _invhdlr.Render(args, State.PlayerInventory);
     }
 
     private void InventoryKeyEvent(SDL_Event sdlEvent)
     {
-        if (sdlEvent is { type: SDL_EventType.SDL_KEYDOWN, key.keysym.sym: SDL_Keycode.SDLK_ESCAPE })
-            State.KeyboardInputFocus = State.KeyboardInputLocation.Game;
+        _invhdlr.KeyEvent(sdlEvent, State);
     }
 
     private static T Map<T>(T x, T inMin, T inMax, T outMin, T outMax) where T : INumber<T> =>
@@ -176,5 +177,22 @@ internal class Game
                 State.KeyboardInputFocus = State.KeyboardInputLocation.Inventory;
             }
         }
+    }
+}
+
+internal class PlayerInvntoyHandler
+{
+    internal void KeyEvent(SDL_Event sdlEvent, State state)
+    {
+        if (sdlEvent.key.keysym.sym == SDL_Keycode.SDLK_ESCAPE &&
+        sdlEvent.key.state == 1)
+        {
+            state.KeyboardInputFocus = State.KeyboardInputLocation.Game;
+        }
+    }
+
+    internal void Render(RenderArgs args, Inventory inv)
+    {
+
     }
 }

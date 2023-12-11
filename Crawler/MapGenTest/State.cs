@@ -1,22 +1,26 @@
 ﻿namespace MapGenTest;
 
-public class Inventory
+public class Inventory(string name, int size)
 {
-    public required string Name;
 
+    public string Name { get; } = name;
+    public int Size { get; } = size;
+    public List<Item> Items { get; } = [];
 }
 
 
-public class Item
+public struct Item
 {
-    public enum ItemType { Stick, Dagger, ShortSward }
+    public ItemType Type { get; init; }
 }
 
+public enum ItemType { Stick, Dagger, ShortSward }
 
-public struct State
+
+public class State
 {
-    public KeyboardInputLocation KeyboardInputFocus { get; set; }
-
+    public KeyboardInputLocation KeyboardInputFocus;
+    public Inventory PlayerInventory = new("Player", 10);
 
     public enum KeyboardInputLocation
     {
