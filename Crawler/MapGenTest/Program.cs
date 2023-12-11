@@ -14,8 +14,8 @@ internal static class Program
     {
         App = new SdlApp(EventHandler, RenderHandler, UpdateHandler,
             targetFps: 10,
-            height: 960,
-            width: 1600,
+            height: 600,
+            width: 800,
             targetUpdatesPerSec: 20);
         Game = new Game();
         App.Run();
