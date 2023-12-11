@@ -28,62 +28,27 @@ internal class Game
 
         GameScaleHeight = 1.0f / ((float)idealHeight / Program.App.ScreenHeight);
         GameScaleWidth = 1.0f / ((float)idealWidth / Program.App.ScreenWidth);
-        var assetFactory = new GameObjectFactory(this);
+        var assetFactory = new TileObjectFactory(this);
         assetFactory.LoadTextures(Program.App.RendererPtr);
 
-        _player = new TileObject
-        {
-            Sprite = assetFactory.NewSprite(GameObjectType.Player),
-        };
-
-        _testDoor = new TileObject()
-        {
-            Sprite = assetFactory.NewSprite(GameObjectType.WallStoneDoor),
-            Point = new SDL_Point() { x = 9, y = 2 }
-        };
-
-        var fire = new TileObject()
-        {
-            Sprite = assetFactory.NewSprite(GameObjectType.Torch),
-            Point = new SDL_Point() { x = 2, y = 2 }
-        };
-
-        var slime = new TileObject()
-        {
-            Sprite = assetFactory.NewSprite(GameObjectType.EntitySlimeLv0),
-            Point = new SDL_Point() { x = 3, y = 6 }
-        };
-
-        var zombie = new TileObject()
-        {
-            Sprite = assetFactory.NewSprite(GameObjectType.EntityZombieLv0),
-            Point = new SDL_Point() { x = 7, y = 7 }
-        };
-
-        var pot = new TileObject()
-        {
-            Sprite = assetFactory.NewSprite(GameObjectType.ContainerPot),
-            Point = new SDL_Point() { x = 3, y = 5 }
-        };
-
-        var chest = new TileObject()
-        {
-            Sprite = assetFactory.NewSprite(GameObjectType.ContainerChestWood),
-            Point = new SDL_Point() { x = 3, y = 4 }
-
-        };
-
+        _player = assetFactory.NewTile(GameObjectType.Player);
+        _testDoor = assetFactory.NewTile(GameObjectType.WallStoneDoor);
+        _testDoor.Point = new SDL_Point() { x = 5, y = 4 };
+        var fire = assetFactory.NewTile(GameObjectType.Torch);
+        fire.Point = new SDL_Point() { x = 4, y = 4 };
+        var slime = assetFactory.NewTile(GameObjectType.EntitySlimeLv0);
+        slime.Point = new SDL_Point() { x = 3, y = 4 };
+        var zombie = assetFactory.NewTile(GameObjectType.EntityZombieLv0);
+        zombie.Point = new SDL_Point() { x = 3, y = 5 };
+        var pot = assetFactory.NewTile(GameObjectType.ContainerPot);
+        pot.Point = new SDL_Point() { x = 2, y = 4 };
+        var chest = assetFactory.NewTile(GameObjectType.ContainerChestWood);
+        chest.Point = new SDL_Point() { x = 2, y = 5 };
         for (int i = 0; i < 10; i++)
         {
             if (i == 2) continue;
-            var wall = new TileObject()
-            {
-                Sprite = assetFactory.NewSprite(GameObjectType.WallStone),
-                Point = new SDL_Point()
-                {
-                    x = 9, y = i
-                }
-            };
+            var wall = assetFactory.NewTile(GameObjectType.WallStone);
+            wall.Point = new SDL_Point() { x = 9, y = i };
             TileObjects.Add(wall);
         }
 
@@ -120,8 +85,7 @@ internal class Game
             case State.KeyboardInputLocation.Inventory:
                 RenderInventory(args);
                 break;
-            default:
-                throw new ArgumentOutOfRangeException();
+            default: throw new ArgumentOutOfRangeException();
         }
     }
 
@@ -131,6 +95,8 @@ internal class Game
 
     private void InventoryKeyEvent(SDL_Event sdlEvent)
     {
+        if (sdlEvent is { type: SDL_EventType.SDL_KEYDOWN, key.keysym.sym: SDL_Keycode.SDLK_ESCAPE })
+            State.KeyboardInputFocus = State.KeyboardInputLocation.Game;
     }
 
     private static T Map<T>(T x, T inMin, T inMax, T outMin, T outMax) where T : INumber<T> =>

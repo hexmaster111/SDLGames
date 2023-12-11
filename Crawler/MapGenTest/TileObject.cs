@@ -7,6 +7,7 @@ internal class TileObject
     public SDL.SDL_Point Point;
     public required Sprite Sprite;
 
+
     public void Update(long now)
     {
         if (Sprite is AnimatedSprite animatedSprite) animatedSprite.Update(now);
