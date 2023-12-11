@@ -30,6 +30,12 @@
       <None Update="Assets\ENTITY_ZOMBIE_LV0.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Assets\CONTAINOR_POT.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\CONTAINOR_CHEST_WOOD.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

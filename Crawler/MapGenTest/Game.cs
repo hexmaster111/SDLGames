@@ -28,38 +28,49 @@ internal class Game
 
         GameScaleHeight = 1.0f / ((float)idealHeight / Program.App.ScreenHeight);
         GameScaleWidth = 1.0f / ((float)idealWidth / Program.App.ScreenWidth);
-
-
-        var assetFactory = new GameAssetFactory(this);
+        var assetFactory = new GameObjectFactory(this);
         assetFactory.LoadTextures(Program.App.RendererPtr);
 
         _player = new TileObject
         {
-            Sprite = assetFactory.NewSprite(GameAssetType.Player),
+            Sprite = assetFactory.NewSprite(GameObjectType.Player),
         };
 
         _testDoor = new TileObject()
         {
-            Sprite = assetFactory.NewSprite(GameAssetType.WallStoneDoor),
+            Sprite = assetFactory.NewSprite(GameObjectType.WallStoneDoor),
             Point = new SDL_Point() { x = 9, y = 2 }
         };
 
         var fire = new TileObject()
         {
-            Sprite = assetFactory.NewSprite(GameAssetType.Torch),
+            Sprite = assetFactory.NewSprite(GameObjectType.Torch),
             Point = new SDL_Point() { x = 2, y = 2 }
         };
 
         var slime = new TileObject()
         {
-            Sprite = assetFactory.NewSprite(GameAssetType.EntitySlimeLv0),
+            Sprite = assetFactory.NewSprite(GameObjectType.EntitySlimeLv0),
             Point = new SDL_Point() { x = 3, y = 6 }
         };
-        
+
         var zombie = new TileObject()
         {
-            Sprite = assetFactory.NewSprite(GameAssetType.EntityZombieLv0),
+            Sprite = assetFactory.NewSprite(GameObjectType.EntityZombieLv0),
             Point = new SDL_Point() { x = 7, y = 7 }
+        };
+
+        var pot = new TileObject()
+        {
+            Sprite = assetFactory.NewSprite(GameObjectType.ContainerPot),
+            Point = new SDL_Point() { x = 3, y = 5 }
+        };
+
+        var chest = new TileObject()
+        {
+            Sprite = assetFactory.NewSprite(GameObjectType.ContainerChestWood),
+            Point = new SDL_Point() { x = 3, y = 4 }
+
         };
 
         for (int i = 0; i < 10; i++)
@@ -67,7 +78,7 @@ internal class Game
             if (i == 2) continue;
             var wall = new TileObject()
             {
-                Sprite = assetFactory.NewSprite(GameAssetType.WallStone),
+                Sprite = assetFactory.NewSprite(GameObjectType.WallStone),
                 Point = new SDL_Point()
                 {
                     x = 9, y = i
@@ -78,6 +89,8 @@ internal class Game
 
         TileObjects.Add(fire);
         TileObjects.Add(_testDoor);
+        TileObjects.Add(pot);
+        TileObjects.Add(chest);
         TileObjects.Add(slime);
         TileObjects.Add(zombie);
         TileObjects.Add(_player);
@@ -88,13 +101,36 @@ internal class Game
         foreach (var tileObject in TileObjects) tileObject.Update(now);
     }
 
-    public void Render(RenderArgs args)
+    public void RenderGame(RenderArgs args)
     {
         foreach (var tileObject in TileObjects)
         {
             var screenXy = ToScreenPoint(tileObject.Point);
             tileObject.Sprite.Render(screenXy, args);
         }
+    }
+
+    public void Render(RenderArgs args)
+    {
+        switch (State.KeyboardInputFocus)
+        {
+            case State.KeyboardInputLocation.Game:
+                RenderGame(args);
+                break;
+            case State.KeyboardInputLocation.Inventory:
+                RenderInventory(args);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void RenderInventory(RenderArgs args)
+    {
+    }
+
+    private void InventoryKeyEvent(SDL_Event sdlEvent)
+    {
     }
 
     private static T Map<T>(T x, T inMin, T inMax, T outMin, T outMax) where T : INumber<T> =>
@@ -151,6 +187,9 @@ internal class Game
             case State.KeyboardInputLocation.Game:
                 GameKeyEvent(e);
                 break;
+            case State.KeyboardInputLocation.Inventory:
+                InventoryKeyEvent(e);
+                break;
             default: throw new ArgumentOutOfRangeException();
         }
     }
@@ -165,6 +204,11 @@ internal class Game
             if (key.sym == SDL_Keycode.SDLK_UP) _player.Move(Direction.N, 1);
             if (key.sym == SDL_Keycode.SDLK_DOWN) _player.Move(Direction.S, 1);
             if (key.sym == SDL_Keycode.SDLK_d) ((StatefulSprite)_testDoor.Sprite).SetState(1);
+
+            if (key.sym == SDL_Keycode.SDLK_i)
+            {
+                State.KeyboardInputFocus = State.KeyboardInputLocation.Inventory;
+            }
         }
     }
 }
