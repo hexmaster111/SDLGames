@@ -7,6 +7,6 @@ internal class
     public void SetState(int stateNumber)
     {
         if (stateNumber > stateCount) throw new Exception("State Out of range");
-        CurrentSpriteRect.x = GridSpriteImageSize * stateNumber;
+        CurrentSpriteRect.x = NextFrameIncAmount * stateNumber;
     }
 }

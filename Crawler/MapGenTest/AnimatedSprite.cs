@@ -14,8 +14,9 @@ internal class AnimatedSprite(
         singleFrameHeight)
 {
     private int _currentFrameIndex;
+    public int NextFrameIncAmount = GridSpriteImageSize;
 
-    protected SDL.SDL_Rect CurrentSpriteRect = new()
+    public SDL.SDL_Rect CurrentSpriteRect = new()
     {
         x = 0,
         y = 0,
@@ -27,7 +28,7 @@ internal class AnimatedSprite(
 
     private void NextFrame()
     {
-        CurrentSpriteRect.y += GridSpriteImageSize;
+        CurrentSpriteRect.y += NextFrameIncAmount;
 
         _currentFrameIndex++;
         if (_currentFrameIndex >= animationFrameCount)

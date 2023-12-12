@@ -10,6 +10,8 @@ public class TileObjectFactory
     private readonly TextureWrapper _entityZombieLv0 = new() { TexturePath = "Assets/ENTITY_ZOMBIE_LV0.png" };
     private readonly TextureWrapper _containerPot = new() { TexturePath = "Assets/CONTAINOR_POT.png" };
     private readonly TextureWrapper _containerChestWood = new() { TexturePath = "Assets/CONTAINOR_CHEST_WOOD.png" };
+    public static readonly TextureWrapper FontWrapper = new() { TexturePath = "Assets/FONT.png" };
+
 
 
     private int GridAssetWidth => (int)(32 * _game.GameScaleWidth);
@@ -29,6 +31,7 @@ public class TileObjectFactory
         _entityZombieLv0.Load(rendererPtr);
         _containerPot.Load(rendererPtr);
         _containerChestWood.Load(rendererPtr);
+        FontWrapper.Load(rendererPtr);
     }
 
     internal TileObject NewTile(GameObjectType newObjectType) => new()

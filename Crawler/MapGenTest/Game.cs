@@ -12,9 +12,9 @@ internal class Game
     public const int WorldHeight = 15;
     public const int WorldWidth = 25;
     public List<TileObject> TileObjects = new();
-    private readonly TileObject _player;
+    private TileObject _player;
     private readonly TileObject _testDoor;
-    private readonly PlayerInvntoyHandler _invhdlr = new();
+    private readonly PlayerInventoryHandler _invhdlr;
 
 
     public State State = new()
@@ -32,7 +32,7 @@ internal class Game
         GameScaleWidth = 1.0f / ((float)idealWidth / Program.App.ScreenWidth);
         var assetFactory = new TileObjectFactory(this);
         assetFactory.LoadTextures(Program.App.RendererPtr);
-
+        _invhdlr = new PlayerInventoryHandler();
         _player = assetFactory.NewTile(GameObjectType.Player);
         _testDoor = assetFactory.NewTile(GameObjectType.WallStoneDoor);
         _testDoor.Point = new SDL_Point() { x = 5, y = 4 };
@@ -61,6 +61,29 @@ internal class Game
         TileObjects.Add(slime);
         TileObjects.Add(zombie);
         TileObjects.Add(_player);
+        State.Player.Inventory.Items.Add(new Item()
+        {
+            Modifier = ItemModifier.Normal,
+            Type = ItemType.Stick
+        });
+
+        State.Player.Inventory.Items.Add(new Item()
+        {
+            Modifier = ItemModifier.Normal,
+            Type = ItemType.Dagger
+        });
+
+        State.Player.Inventory.Items.Add(new Item()
+        {
+            Modifier = ItemModifier.Normal,
+            Type = ItemType.ShortSward
+        });
+
+        State.Player.Inventory.Items.Add(new Item()
+        {
+            Modifier = ItemModifier.Zesty,
+            Type = ItemType.Ranch
+        });
     }
 
     public void Update(long now)
@@ -90,9 +113,14 @@ internal class Game
             default: throw new ArgumentOutOfRangeException();
         }
     }
+
     private void RenderInventory(RenderArgs args)
     {
-        _invhdlr.Render(args, State.PlayerInventory);
+        _invhdlr.Render(args, State.Player, new SDL_Rect()
+        {
+            h = Program.App.ScreenHeight,
+            w = Program.App.ScreenWidth,
+        });
     }
 
     private void InventoryKeyEvent(SDL_Event sdlEvent)
@@ -177,22 +205,5 @@ internal class Game
                 State.KeyboardInputFocus = State.KeyboardInputLocation.Inventory;
             }
         }
-    }
-}
-
-internal class PlayerInvntoyHandler
-{
-    internal void KeyEvent(SDL_Event sdlEvent, State state)
-    {
-        if (sdlEvent.key.keysym.sym == SDL_Keycode.SDLK_ESCAPE &&
-        sdlEvent.key.state == 1)
-        {
-            state.KeyboardInputFocus = State.KeyboardInputLocation.Game;
-        }
-    }
-
-    internal void Render(RenderArgs args, Inventory inv)
-    {
-
     }
 }
