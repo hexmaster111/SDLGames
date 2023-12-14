@@ -4,20 +4,25 @@ public class Inventory(int size)
 {
     public int Capacity { get; } = size;
     public List<Item> Items { get; } = new();
+
+    public PlayerArmorSlots ArmorSlots { get; } = new();
+}
+
+public class PlayerArmorSlots
+{
+    public Item Head { get; set; }
+    public Item Chest { get; set; }
+    public Item Legs { get; set; }
+    public Item Feet { get; set; }
+    public Item Hands { get; set; }
+    public Item LeftHand { get; set; }
+    public Item RightHand { get; set; }
 }
 
 public struct Item
 {
     public ItemModifier Modifier { get; init; }
-    public ItemType Type { get; init; }
-}
-
-public enum ItemType
-{
-    Stick,
-    Dagger,
-    ShortSward,
-    Ranch,
+    public GameObjectType Type { get; init; }
 }
 
 public enum ItemModifier
@@ -62,7 +67,7 @@ public struct PlayerStats
     public int Strength;
     public int Arcane;
     public int Wisdom;
-    public int Charisma;
+    public int Rizz;
 }
 
 public class State

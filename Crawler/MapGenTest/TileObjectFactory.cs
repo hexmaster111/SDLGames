@@ -10,16 +10,20 @@ public class TileObjectFactory
     private readonly TextureWrapper _entityZombieLv0 = new() { TexturePath = "Assets/ENTITY_ZOMBIE_LV0.png" };
     private readonly TextureWrapper _containerPot = new() { TexturePath = "Assets/CONTAINOR_POT.png" };
     private readonly TextureWrapper _containerChestWood = new() { TexturePath = "Assets/CONTAINOR_CHEST_WOOD.png" };
+    private readonly TextureWrapper _itemStick = new() { TexturePath = "Assets/ITEMS/STICK.png" };
+    private readonly TextureWrapper _itemDagger = new() { TexturePath = "Assets/ITEMS/DAGGER.png" };
+    private readonly TextureWrapper _itemShortSward = new() { TexturePath = "Assets/ITEMS/SHORTSWORD.png" };
+    private readonly TextureWrapper _itemRanch = new() { TexturePath = "Assets/ITEMS/RANCH.png" };
     public static readonly TextureWrapper FontWrapper = new() { TexturePath = "Assets/FONT.png" };
 
 
+    private int GridAssetWidth => (int)(32 * Game.GameScaleWidth);
+    private int GridAssetHeight => (int)(32 * Game.GameScaleHeight);
 
-    private int GridAssetWidth => (int)(32 * _game.GameScaleWidth);
-    private int GridAssetHeight => (int)(32 * _game.GameScaleHeight);
 
-    private readonly Game _game;
-
-    internal TileObjectFactory(Game game) => _game = game;
+    internal TileObjectFactory()
+    {
+    }
 
     public void LoadTextures(IntPtr rendererPtr)
     {
@@ -31,30 +35,42 @@ public class TileObjectFactory
         _entityZombieLv0.Load(rendererPtr);
         _containerPot.Load(rendererPtr);
         _containerChestWood.Load(rendererPtr);
+        _itemStick.Load(rendererPtr);
+        _itemDagger.Load(rendererPtr);
+        _itemShortSward.Load(rendererPtr);
+        _itemRanch.Load(rendererPtr);
         FontWrapper.Load(rendererPtr);
     }
 
+    internal Sprite NewSprite(GameObjectType t) => t switch
+    {
+        GameObjectType.Player =>
+            new Sprite(_playerTexture.TexturePtr, GridAssetWidth, GridAssetHeight),
+        GameObjectType.Torch =>
+            new AnimatedSprite(_torchTexture.TexturePtr, GridAssetWidth, GridAssetHeight, 5),
+        GameObjectType.WallStone =>
+            new Sprite(_floorStoneTexture.TexturePtr, GridAssetWidth, GridAssetHeight),
+        GameObjectType.WallStoneDoor =>
+            new StatefulSprite(_wallStoneDoorTexture.TexturePtr, GridAssetWidth, GridAssetHeight, 2, 1),
+        GameObjectType.EntitySlimeLv0 =>
+            new AnimatedSprite(_entitySlimeLv0.TexturePtr, GridAssetWidth, GridAssetHeight, 4),
+        GameObjectType.EntityZombieLv0 =>
+            new AnimatedSprite(_entityZombieLv0.TexturePtr, GridAssetWidth, GridAssetHeight, 2),
+        GameObjectType.ContainerPot =>
+            new Sprite(_containerPot.TexturePtr, GridAssetWidth, GridAssetHeight),
+        GameObjectType.ContainerChestWood =>
+            new StatefulSprite(_containerChestWood.TexturePtr, GridAssetWidth, GridAssetHeight, 2, 1),
+        GameObjectType.Stick => new Sprite(_itemStick.TexturePtr, GridAssetWidth, GridAssetHeight),
+        GameObjectType.Dagger => new Sprite(_itemDagger.TexturePtr, GridAssetWidth, GridAssetHeight),
+        GameObjectType.ShortSward => new Sprite(_itemShortSward.TexturePtr, GridAssetWidth, GridAssetHeight),
+        GameObjectType.Ranch => new Sprite(_itemRanch.TexturePtr, GridAssetWidth, GridAssetHeight),
+
+        _ => throw new ArgumentOutOfRangeException()
+    };
+
+
     internal TileObject NewTile(GameObjectType newObjectType) => new()
     {
-        Sprite = newObjectType switch
-        {
-            GameObjectType.Player =>
-                new Sprite(_playerTexture.TexturePtr, GridAssetWidth, GridAssetHeight),
-            GameObjectType.Torch =>
-                new AnimatedSprite(_torchTexture.TexturePtr, GridAssetWidth, GridAssetHeight, 5),
-            GameObjectType.WallStone =>
-                new Sprite(_floorStoneTexture.TexturePtr, GridAssetWidth, GridAssetHeight),
-            GameObjectType.WallStoneDoor =>
-                new StatefulSprite(_wallStoneDoorTexture.TexturePtr, GridAssetWidth, GridAssetHeight, 2, 1),
-            GameObjectType.EntitySlimeLv0 =>
-                new AnimatedSprite(_entitySlimeLv0.TexturePtr, GridAssetWidth, GridAssetHeight, 4),
-            GameObjectType.EntityZombieLv0 =>
-                new AnimatedSprite(_entityZombieLv0.TexturePtr, GridAssetWidth, GridAssetHeight, 2),
-            GameObjectType.ContainerPot =>
-                new Sprite(_containerPot.TexturePtr, GridAssetWidth, GridAssetHeight),
-            GameObjectType.ContainerChestWood =>
-                new StatefulSprite(_containerChestWood.TexturePtr, GridAssetWidth, GridAssetHeight, 2, 1),
-            _ => throw new ArgumentOutOfRangeException(nameof(newObjectType), newObjectType, null)
-        }
+        Sprite = NewSprite(newObjectType)
     };
 }

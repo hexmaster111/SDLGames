@@ -6,8 +6,9 @@ namespace MapGenTest;
 
 internal class Game
 {
-    public float GameScaleWidth = 1.0f;
-    public float GameScaleHeight = 1.0f;
+    public static float GameScaleWidth = 1.0f;
+    public static float GameScaleHeight = 1.0f;
+    public static TileObjectFactory TileOjbectFactory { get; private set; }
 
     public const int WorldHeight = 15;
     public const int WorldWidth = 25;
@@ -30,7 +31,7 @@ internal class Game
 
         GameScaleHeight = 1.0f / ((float)idealHeight / Program.App.ScreenHeight);
         GameScaleWidth = 1.0f / ((float)idealWidth / Program.App.ScreenWidth);
-        var assetFactory = new TileObjectFactory(this);
+        var assetFactory = TileOjbectFactory = new TileObjectFactory();
         assetFactory.LoadTextures(Program.App.RendererPtr);
         _invhdlr = new PlayerInventoryHandler();
         _player = assetFactory.NewTile(GameObjectType.Player);
@@ -64,27 +65,34 @@ internal class Game
         State.Player.Inventory.Items.Add(new Item()
         {
             Modifier = ItemModifier.Normal,
-            Type = ItemType.Stick
+            Type = GameObjectType.Stick
         });
 
         State.Player.Inventory.Items.Add(new Item()
         {
             Modifier = ItemModifier.Normal,
-            Type = ItemType.Dagger
+            Type = GameObjectType.Dagger
         });
 
         State.Player.Inventory.Items.Add(new Item()
         {
             Modifier = ItemModifier.Normal,
-            Type = ItemType.ShortSward
+            Type = GameObjectType.ShortSward
         });
 
         State.Player.Inventory.Items.Add(new Item()
         {
             Modifier = ItemModifier.Zesty,
-            Type = ItemType.Ranch
+            Type = GameObjectType.Ranch
         });
+
+        State.Player.Inventory.ArmorSlots.Hands = new Item()
+        {
+            Modifier = ItemModifier.Normal,
+            Type = GameObjectType.Ranch
+        };
     }
+
 
     public void Update(long now)
     {

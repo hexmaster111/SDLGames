@@ -2,6 +2,8 @@
 
 public enum GameObjectType
 {
+    Nothing,
+    
     Player,
     Torch,
     WallStone,
@@ -9,5 +11,10 @@ public enum GameObjectType
     EntitySlimeLv0,
     EntityZombieLv0,
     ContainerPot,
-    ContainerChestWood
+    ContainerChestWood,
+
+    Stick,
+    Dagger,
+    ShortSward,
+    Ranch,
 }

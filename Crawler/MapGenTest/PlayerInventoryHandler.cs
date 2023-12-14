@@ -15,34 +15,53 @@ internal class PlayerInventoryHandler
 
         if (sdlEvent.key.keysym.sym == SDL_Keycode.SDLK_DOWN && sdlEvent.key.state == 1)
         {
-            lb.SelectedIndex++;
+            _lb.SelectedIndex++;
         }
 
         if (sdlEvent.key.keysym.sym == SDL_Keycode.SDLK_UP && sdlEvent.key.state == 1)
         {
-            lb.SelectedIndex--;
+            _lb.SelectedIndex--;
         }
     }
 
-    private TextBlock InvTitleTb = new("", new SDL_Point());
-    private ListBox lb = new();
+    private TextBlock _invTitleTb = new("", new SDL_Point());
+    private TextBlock _equippedTitleTb = new("", new SDL_Point());
+    private ListBox _lb = new();
+    private EquippedItemBox _selectedItemBox = new();
 
 
     internal void Render(RenderArgs ra, Player player, SDL_Rect viewPort)
     {
         var inv = player.Inventory;
         var invTitle = $"Inventory ({inv.Items.Count}/{inv.Capacity})";
-        InvTitleTb.Text = invTitle;
-        InvTitleTb.Pos = new SDL_Point()
-            { x = viewPort.w / 2 - invTitle.Length * InvTitleTb.FontSizeDest / 2, y = viewPort.y };
-        InvTitleTb.Render(ra);
+        _invTitleTb.Text = invTitle;
+        _invTitleTb.Pos = new SDL_Point
+        {
+            x = viewPort.w / 2 - invTitle.Length * _invTitleTb.FontSizeDest / 2,
+            y = viewPort.y + viewPort.h / 2
+        };
+        _invTitleTb.Render(ra);
 
-        var invItemPos = new SDL_Point()
-            { x = viewPort.x, y = viewPort.y + InvTitleTb.Pos.y + InvTitleTb.FontSizeDest };
+        var invItemPos = new SDL_Point
+        {
+            x = viewPort.x,
+            y = viewPort.y + _invTitleTb.Pos.y + _invTitleTb.FontSizeDest
+        };
 
-        lb.Items = player.Inventory.Items.Select(x => $"{x.Modifier} {x.Type}").ToList();
-        lb.Pos = invItemPos;
+        _lb.Items = player.Inventory.Items.Select(x => $"{x.Modifier} {x.Type}").ToList();
+        _lb.Pos = invItemPos;
+        _equippedTitleTb.Text = "Equipped";
+        _lb.Render(ra);
+        _selectedItemBox.Item = player.Inventory.Items[_lb.SelectedIndex];
 
-        lb.Render(ra);
+
+        _selectedItemBox.Pos = new SDL_Point
+        {
+            x = viewPort.x,
+            y = (int)(viewPort.y + (1 / 8f * (viewPort.h / 2f)))
+        };
+
+
+        _selectedItemBox.Render(ra);
     }
 }

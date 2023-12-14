@@ -8,7 +8,7 @@ internal class Sprite
     public const int GridSpriteImageSize = 32;
 
     protected readonly IntPtr _texturePtr;
-    protected SDL_Rect _rect;
+    protected internal SDL_Rect _rect;
 
     public Sprite(IntPtr texturePtr, int singleFrameWidth, int singleFrameHeight)
     {
