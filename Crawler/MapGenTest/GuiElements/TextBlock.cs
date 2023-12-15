@@ -16,7 +16,7 @@ public class TextBlock : IGuiElement
 
     public TextBlock(string text, SDL.SDL_Point pos)
     {
-        _sprite = new(TileObjectFactory.FontWrapper.TexturePtr, FontSizeDest, FontSizeDest, 128, 1)
+        _sprite = new(GameAssetFactory.FontWrapper.TexturePtr, FontSizeDest, FontSizeDest, 128, 1)
         {
             CurrentSpriteRect = new SDL.SDL_Rect() { w = FontSizeSrc, h = FontSizeSrc, },
             NextFrameIncAmount = FontSizeSrc

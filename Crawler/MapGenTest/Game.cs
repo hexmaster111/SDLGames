@@ -8,7 +8,7 @@ internal class Game
 {
     public static float GameScaleWidth = 1.0f;
     public static float GameScaleHeight = 1.0f;
-    public static TileObjectFactory TileOjbectFactory { get; private set; }
+    public static GameAssetFactory Assets { get; private set; }
 
     public const int WorldHeight = 15;
     public const int WorldWidth = 25;
@@ -31,7 +31,7 @@ internal class Game
 
         GameScaleHeight = 1.0f / ((float)idealHeight / Program.App.ScreenHeight);
         GameScaleWidth = 1.0f / ((float)idealWidth / Program.App.ScreenWidth);
-        var assetFactory = TileOjbectFactory = new TileObjectFactory();
+        var assetFactory = Assets = new GameAssetFactory();
         assetFactory.LoadTextures(Program.App.RendererPtr);
         _invhdlr = new PlayerInventoryHandler();
         _player = assetFactory.NewTile(GameObjectType.Player);

@@ -1,6 +1,6 @@
 ﻿namespace MapGenTest;
 
-public class TileObjectFactory
+public class GameAssetFactory
 {
     private readonly TextureWrapper _playerTexture = new() { TexturePath = "Assets/PLAYER.png" };
     private readonly TextureWrapper _torchTexture = new() { TexturePath = "Assets/TORCH.png" };
@@ -21,7 +21,7 @@ public class TileObjectFactory
     private int GridAssetHeight => (int)(32 * Game.GameScaleHeight);
 
 
-    internal TileObjectFactory()
+    internal GameAssetFactory()
     {
     }
 

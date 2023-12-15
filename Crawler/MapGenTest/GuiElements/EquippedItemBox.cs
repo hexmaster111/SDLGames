@@ -16,7 +16,7 @@ public class EquippedItemBox : IGuiElement
             _item = value;
             _sprite = null;
             if (_item.Type == GameObjectType.Nothing) return;
-            _sprite = Game.TileOjbectFactory.NewSprite(_item.Type);
+            _sprite = Game.Assets.NewSprite(_item.Type);
 
             var size = MeasureSize();
 
