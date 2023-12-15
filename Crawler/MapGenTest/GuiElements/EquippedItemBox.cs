@@ -40,12 +40,14 @@ public class EquippedItemBox : IGuiElement
 
     public void Render(RenderArgs ra)
     {
-        //fill in the background
-        var size = MeasureSize();
-        
+        //There is a little bit of an important order, the first time we render,
+        // calling _sprite.Render sets _sprit._rect.x && .y, causing the little
+        // shift to occur.
+        _sprite?.Render(Pos, ra);
+        var size = _sprite?._rect ?? default; // _sprite is a ptr, _rect is a value type, default is 0,0,0,0
         SDL.SDL_SetRenderDrawColor(ra.RendererPtr, 0, 0, 0, 255);
         SDL.SDL_RenderFillRect(ra.RendererPtr, ref size);
         _sprite?.Render(Pos, ra);
-        
+
     }
 }
