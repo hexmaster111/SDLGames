@@ -31,6 +31,8 @@ public class TextBlock : IGuiElement
     public SDL.SDL_Point Pos { get; set; }
 
 
+    public Visibility Visibility { get; set; }
+
     public SDL.SDL_Rect MeasureSize()
     {
         var h = Text.MeasureFontHeight(FontSizeDest);
@@ -40,6 +42,8 @@ public class TextBlock : IGuiElement
 
     public void Render(RenderArgs ra)
     {
+        if (Visibility != Visibility.Visible) return;
+
         if (string.IsNullOrWhiteSpace(Text)) return;
         var sr = new StringReader(Text);
         int r;

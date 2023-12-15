@@ -22,6 +22,8 @@ public class ListBox : IGuiElement
     public List<string> Items { get; set; } = new();
     public int FontSizeDest { get; set; } = Style.FontSize;
 
+    public Visibility Visibility { get; set; } = Visibility.Visible;
+
     public SDL.SDL_Rect MeasureSize()
     {
         var h = Items.Count * FontSizeDest;
@@ -29,8 +31,9 @@ public class ListBox : IGuiElement
         return new SDL.SDL_Rect { w = w, h = h };
     }
 
-    public void Render(RenderArgs ra)
+    public virtual void Render(RenderArgs ra)
     {
+        if (Visibility != Visibility.Visible) return;
         var pos = Pos;
         int i = 0;
         foreach (var item in Items)
@@ -47,5 +50,24 @@ public class ListBox : IGuiElement
             pos.y += FontSizeDest;
             i++;
         }
+    }
+}
+
+public class ContextMenu : ListBox
+{
+    public override void Render(RenderArgs ra)
+    {
+        if (Visibility == Visibility.Hidden) return;
+        //Render the Background
+        var size = base.MeasureSize();
+        size = size with
+        {
+            x = Pos.x,
+            y = Pos.y
+        };
+        
+        ra.SetDrawColor(SdlColors.Teal);
+        ra.FillRect(size);
+        base.Render(ra);
     }
 }

@@ -32,6 +32,8 @@ public class EquippedItemBox : IGuiElement
 
     public SDL.SDL_Point Pos { get; set; }
 
+    public Visibility Visibility { get; set; }
+
     public SDL.SDL_Rect MeasureSize()
     {
         if (_sprite == null) return new SDL.SDL_Rect();
@@ -40,6 +42,8 @@ public class EquippedItemBox : IGuiElement
 
     public void Render(RenderArgs ra)
     {
+        if (Visibility != Visibility.Visible) return;
+        
         //There is a little bit of an important order, the first time we render,
         // calling _sprite.Render sets _sprit._rect.x && .y, causing the little
         // shift to occur.

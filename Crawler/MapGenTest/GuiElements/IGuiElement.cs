@@ -10,10 +10,12 @@ public static class Style
 
 public interface IGuiElement
 {
+    public Visibility Visibility { get; set; }
     public SDL.SDL_Rect MeasureSize();
     public void Render(RenderArgs ra);
 }
 
+public enum Visibility { Visible, Hidden }
 
 public static class Ext
 {
