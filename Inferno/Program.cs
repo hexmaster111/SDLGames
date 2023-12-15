@@ -9,14 +9,15 @@ internal static class Program
 {
     internal static Game Game;
     internal static SdlApp App;
+    const int TargetFps = 20;
 
     public static void Main(string[] args)
     {
         App = new SdlApp(EventHandler, RenderHandler, UpdateHandler,
-            targetFps: 30,
+            targetFps: 20,
             height: 600,
             width: 800,
-            targetUpdatesPerSec: 10);
+            targetUpdatesPerSec: TargetFps * 2);
         Game = new Game();
         App.Run();
     }

@@ -166,11 +166,11 @@ public class SdlApp
         {
             x = 0,
             y = 0,
-            w = 100 ,
+            w = 100,
             h = 24 / 2
         };
-        
-        
+
+
         SDL.SDL_RenderCopy(RendererPtr, fpsTexture, IntPtr.Zero, ref fpsRect);
         SDL.SDL_DestroyTexture(fpsTexture);
         SDL.SDL_FreeSurface(FPSSurface);
@@ -189,9 +189,15 @@ public class SdlApp
 
         Console.WriteLine($"SDL V{ver.major}.{ver.minor}.{ver.patch} initialized");
 
+        var fullScreenArgPresent = Environment.GetCommandLineArgs().Any(arg => arg == "--fullscreen");
+
+        var fullScreenFlag = fullScreenArgPresent
+            ? SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN | SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN_DESKTOP
+            : SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN;
+
 
         var res = SDL.SDL_CreateWindowAndRenderer(ScreenWidth, ScreenHeight,
-            SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN,
+            fullScreenFlag,
             out WindowPtr,
             out var tmpRenderPtrOut);
 

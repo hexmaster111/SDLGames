@@ -1,6 +1,4 @@
 ﻿using MapGenTest.GuiElements;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SDLApplication;
 using static SDL2.SDL;
 
