@@ -5,7 +5,7 @@ namespace MapGenTest.GuiElements;
 
 public class ListBox : IGuiElement
 {
-    private int _selectedIndex = 2;
+    private int _selectedIndex = 0;
     public SDL.SDL_Point Pos { get; set; }
 
     public int SelectedIndex
@@ -53,8 +53,17 @@ public class ListBox : IGuiElement
     }
 }
 
-public class ContextMenu : ListBox
+public class ContextMenu<T> : ListBox where T : struct, Enum
 {
+    private readonly List<T> _options = new();
+    public T SelectedItem => _options[SelectedIndex];
+
+    public void AddOption(T opt)
+    {
+        _options.Add(opt);
+        Items.Add(opt.ToString());
+    }
+
     public override void Render(RenderArgs ra)
     {
         if (Visibility == Visibility.Hidden) return;
@@ -65,7 +74,7 @@ public class ContextMenu : ListBox
             x = Pos.x,
             y = Pos.y
         };
-        
+
         ra.SetDrawColor(SdlColors.Teal);
         ra.FillRect(size);
         base.Render(ra);

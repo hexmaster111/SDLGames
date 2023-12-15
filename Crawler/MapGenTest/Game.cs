@@ -4,16 +4,21 @@ using static SDL2.SDL;
 
 namespace MapGenTest;
 
+internal class TileObjectCollection : List<TileObject>
+{
+}
+
 internal class Game
 {
+    public static Game Inst { get; private set; }
     public static float GameScaleWidth = 1.0f;
     public static float GameScaleHeight = 1.0f;
     public static GameAssetFactory Assets { get; private set; }
 
     public const int WorldHeight = 15;
     public const int WorldWidth = 25;
-    public List<TileObject> TileObjects = new();
-    private TileObject _player;
+    public TileObjectCollection TileObjects = new();
+
     private readonly TileObject _testDoor;
     private readonly PlayerInventoryHandler _invhdlr;
 
@@ -23,11 +28,14 @@ internal class Game
         KeyboardInputFocus = State.KeyboardInputLocation.Game
     };
 
+    internal readonly TileObject _player;
+
 
     public Game()
     {
         var idealHeight = WorldHeight * Sprite.GridSpriteImageSize;
         var idealWidth = WorldWidth * Sprite.GridSpriteImageSize;
+        Inst = this;
 
         GameScaleHeight = 1.0f / ((float)idealHeight / Program.App.ScreenHeight);
         GameScaleWidth = 1.0f / ((float)idealWidth / Program.App.ScreenWidth);
@@ -62,34 +70,44 @@ internal class Game
         TileObjects.Add(slime);
         TileObjects.Add(zombie);
         TileObjects.Add(_player);
-        State.Player.Inventory.Items.Add(new Item()
+        State.Player.PlayerInventory.Items.Add(new Item()
         {
             Modifier = ItemModifier.Normal,
-            Type = GameObjectType.Stick
+            Type = GameObjectType.Stick,
+            EquitablePositions = ItemEquitablePositions.Hands,
+            ItemType = ItemType.Weapon
         });
 
-        State.Player.Inventory.Items.Add(new Item()
+        State.Player.PlayerInventory.Items.Add(new Item()
         {
             Modifier = ItemModifier.Normal,
-            Type = GameObjectType.Dagger
+            Type = GameObjectType.Dagger,
+            EquitablePositions = ItemEquitablePositions.Hands,
+            ItemType = ItemType.Weapon
         });
 
-        State.Player.Inventory.Items.Add(new Item()
+        State.Player.PlayerInventory.Items.Add(new Item()
         {
             Modifier = ItemModifier.Normal,
-            Type = GameObjectType.ShortSward
+            Type = GameObjectType.ShortSward,
+            EquitablePositions = ItemEquitablePositions.Hands,
+            ItemType = ItemType.Weapon
         });
 
-        State.Player.Inventory.Items.Add(new Item()
+        State.Player.PlayerInventory.Items.Add(new Item()
         {
             Modifier = ItemModifier.Zesty,
-            Type = GameObjectType.Ranch
+            Type = GameObjectType.Ranch,
+            EquitablePositions = ItemEquitablePositions.NoWhere,
+            ItemType = ItemType.Potion
         });
 
-        State.Player.Inventory.ArmorSlots.Hands = new Item()
+        State.Player.PlayerInventory.ArmorSlots.Hands = new Item()
         {
             Modifier = ItemModifier.Normal,
-            Type = GameObjectType.Ranch
+            Type = GameObjectType.ShortSward,
+            EquitablePositions = ItemEquitablePositions.Hands,
+            ItemType = ItemType.Weapon
         };
     }
 
@@ -208,9 +226,15 @@ internal class Game
             if (key.sym == SDL_Keycode.SDLK_DOWN) _player.Move(Direction.S, 1);
             if (key.sym == SDL_Keycode.SDLK_d) ((StatefulSprite)_testDoor.Sprite).SetState(1);
 
+            //inventory
             if (key.sym == SDL_Keycode.SDLK_i)
             {
                 State.KeyboardInputFocus = State.KeyboardInputLocation.Inventory;
+            }
+
+            //Grab / pickup
+            if (key.sym == SDL_Keycode.SDLK_g)
+            {
             }
         }
     }

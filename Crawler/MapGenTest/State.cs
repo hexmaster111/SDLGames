@@ -1,28 +1,62 @@
 ﻿namespace MapGenTest;
 
-public class Inventory(int size)
+public class PlayerInventory(int cap)
 {
-    public int Capacity { get; } = size;
+    public int Capacity { get; } = cap;
+
+    /// <summary>
+    ///     Items in the players bag
+    /// </summary>
     public List<Item> Items { get; } = new();
 
-    public PlayerArmorSlots ArmorSlots { get; } = new();
+    /// <summary>
+    ///     Places the player will have there armor
+    /// </summary>
+    public PlayerBodySlots<Item> ArmorSlots { get; } = new();
+
+    public void DropItem(int itemIndex, State state)
+    {
+        var item = Items[itemIndex];
+        var tile = Game.Assets.NewTile(item.Type);
+        tile.Point = Game.Inst._player.Point;
+        Game.Inst.TileObjects.Add(tile);
+        state.Player.PlayerInventory.Items.RemoveAt(itemIndex);
+    }
 }
 
-public class PlayerArmorSlots
+public class PlayerBodySlots<T> where T : struct
 {
-    public Item Head { get; set; }
-    public Item Chest { get; set; }
-    public Item Legs { get; set; }
-    public Item Feet { get; set; }
-    public Item Hands { get; set; }
-    public Item LeftHand { get; set; }
-    public Item RightHand { get; set; }
+    public T Head { get; set; }
+    public T Chest { get; set; }
+    public T Legs { get; set; }
+    public T Hands { get; set; }
+    public T Feet { get; set; }
 }
 
 public struct Item
 {
-    public ItemModifier Modifier { get; init; }
-    public GameObjectType Type { get; init; }
+    public required ItemModifier Modifier { get; init; }
+    public required GameObjectType Type { get; init; }
+    public required ItemType ItemType { get; init; }
+    public required ItemEquitablePositions EquitablePositions { get; init; }
+}
+
+[Flags]
+public enum ItemEquitablePositions
+{
+    NoWhere = 1 << 0,
+    Head = 1 << 1,
+    Chest = 1 << 2,
+    Legs = 1 << 3,
+    Feet = 1 << 4,
+    Hands = 1 << 5,
+}
+
+public enum ItemType
+{
+    Weapon,
+    Armor,
+    Potion
 }
 
 public enum ItemModifier
@@ -36,11 +70,11 @@ public class Player
     public Player(string name)
     {
         Name = name;
-        Inventory = new Inventory(10);
+        PlayerInventory = new PlayerInventory(10);
     }
 
     public string Name { get; set; }
-    public Inventory Inventory { get; set; }
+    public PlayerInventory PlayerInventory { get; set; }
     public PlayerStats Stats { get; set; } = new();
 }
 
