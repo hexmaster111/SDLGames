@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using MapGenTest.GuiElements;
 using SDLApplication;
 using static SDL2.SDL;
 
@@ -6,6 +7,9 @@ namespace MapGenTest;
 
 internal class TileObjectCollection : List<TileObject>
 {
+    public TileObject[] FindItemsAt(SDL_Point mapPos) =>
+        this.Where(x => x.Point.x == mapPos.x && x.Point.y == mapPos.y)
+            .ToArray();
 }
 
 internal class Game
@@ -21,7 +25,6 @@ internal class Game
 
     private readonly TileObject _testDoor;
     private readonly PlayerInventoryHandler _invhdlr;
-
 
     public State State = new()
     {
@@ -136,8 +139,52 @@ internal class Game
             case State.KeyboardInputLocation.Inventory:
                 RenderInventory(args);
                 break;
+            case State.KeyboardInputLocation.GrabDialog:
+                RenderGrabDialog(args);
+                break;
+
             default: throw new ArgumentOutOfRangeException();
         }
+    }
+
+
+    private ListBox _grabDialogLb = new()
+    {
+        Background = SdlColors.Teal,
+    };
+
+    private TextBlock _grabDialogTb = new("Grab what?", new SDL_Point())
+    {
+        Visibility = Visibility.Visible
+    };
+
+
+    private void RenderGrabDialog(RenderArgs args)
+    {
+        var playerPos = _player.Point;
+        var items = TileObjects.FindItemsAt(playerPos).Where(x => x.Type != GameObjectType.Player).ToArray();
+        var viewBox = new SDL_Rect()
+        {
+            h = Program.App.ScreenHeight,
+            w = Program.App.ScreenWidth,
+        };
+
+        _grabDialogLb.Items = items.Select(x => $"{x.Type}").ToList();
+        _grabDialogLb.Pos = new SDL_Point()
+        {
+            x = viewBox.w / 2 - _grabDialogLb.MeasureSize().w / 2,
+            y = viewBox.h / 2 - _grabDialogLb.MeasureSize().h / 2,
+        };
+
+        _grabDialogTb.Pos = new SDL_Point()
+        {
+            x = viewBox.w / 2 - _grabDialogTb.MeasureSize().w / 2,
+            y = viewBox.y + viewBox.h / 2 - _grabDialogTb.MeasureSize().h / 2 - _grabDialogLb.MeasureSize().h,
+        };
+
+        RenderGame(args);
+        _grabDialogTb.Render(args);
+        _grabDialogLb.Render(args);
     }
 
     private void RenderInventory(RenderArgs args)
@@ -211,7 +258,40 @@ internal class Game
             case State.KeyboardInputLocation.Inventory:
                 InventoryKeyEvent(e);
                 break;
+
+            case State.KeyboardInputLocation.GrabDialog:
+                GrabDialogKeyEvent(e);
+                break;
             default: throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void GrabDialogKeyEvent(SDL_Event sdlEvent)
+    {
+        if (sdlEvent.key.state == 0) return;
+        switch (sdlEvent.key.keysym.sym)
+        {
+            case SDL_Keycode.SDLK_DOWN:
+                _grabDialogLb.SelectedIndex++;
+                break;
+            case SDL_Keycode.SDLK_UP:
+                _grabDialogLb.SelectedIndex--;
+                break;
+            case SDL_Keycode.SDLK_RETURN:
+                var playerPos = _player.Point;
+                var items = TileObjects.FindItemsAt(playerPos).Where(x => x.Type != GameObjectType.Player).ToArray();
+                if (_grabDialogLb.SelectedIndex < 0 || _grabDialogLb.SelectedIndex >= items.Length) break;
+                var selectedItem = items[_grabDialogLb.SelectedIndex];
+                var itemTile = (ItemTileObject)selectedItem;
+                State.Player.PlayerInventory.Items.Add(itemTile.Item);
+                TileObjects.Remove(selectedItem);
+                if (items.Length == 1) State.KeyboardInputFocus = State.KeyboardInputLocation.Game;
+                else _grabDialogLb.SelectedIndex = 0;
+                break;
+
+            default:
+                State.KeyboardInputFocus = State.KeyboardInputLocation.Game;
+                break;
         }
     }
 
@@ -235,6 +315,12 @@ internal class Game
             //Grab / pickup
             if (key.sym == SDL_Keycode.SDLK_g)
             {
+                var playerPos = _player.Point;
+                var items = TileObjects
+                    .FindItemsAt(playerPos)
+                    .Where(x => x.GetType() == typeof(ItemTileObject)) // only items
+                    .ToArray();
+                if (items.Length > 0) State.KeyboardInputFocus = State.KeyboardInputLocation.GrabDialog;
             }
         }
     }

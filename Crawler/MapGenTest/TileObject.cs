@@ -2,11 +2,16 @@
 
 namespace MapGenTest;
 
+internal class ItemTileObject : TileObject
+{
+    public required Item Item { get; set; }
+}
+
 internal class TileObject
 {
     public SDL.SDL_Point Point;
     public required Sprite Sprite;
-
+    public required GameObjectType Type;
 
     public void Update(long now)
     {

@@ -1,4 +1,6 @@
-﻿namespace MapGenTest;
+﻿using SDL2;
+
+namespace MapGenTest;
 
 public class GameAssetFactory
 {
@@ -69,8 +71,28 @@ public class GameAssetFactory
     };
 
 
-    internal TileObject NewTile(GameObjectType newObjectType) => new()
+    internal TileObject NewTile(GameObjectType newObjectType, object? arg1 = null)
     {
-        Sprite = NewSprite(newObjectType)
-    };
+        var sprite = NewSprite(newObjectType);
+
+        if (newObjectType == GameObjectType.Dagger || newObjectType == GameObjectType.ShortSward ||
+            newObjectType == GameObjectType.Stick || newObjectType == GameObjectType.Ranch)
+        {
+            if (arg1 is not Item item) throw new ArgumentNullException(nameof(arg1) + " is not an Item");
+            return new ItemTileObject
+            {
+                Sprite = sprite,
+                Type = newObjectType,
+                Point = new SDL.SDL_Point(),
+                Item = item
+            };
+        }
+
+        return new TileObject
+        {
+            Sprite = sprite,
+            Type = newObjectType,
+            Point = new SDL.SDL_Point()
+        };
+    }
 }

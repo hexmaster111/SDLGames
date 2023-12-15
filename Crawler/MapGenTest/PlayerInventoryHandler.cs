@@ -8,7 +8,12 @@ namespace MapGenTest;
 
 internal enum InventoryHandlerPart
 {
-    ItemsList, ItemContextMenu
+    ItemsList,
+    ItemContextMenu
+}
+
+internal class GrabItemsDialogHandler
+{
 }
 
 internal class PlayerInventoryHandler
@@ -64,7 +69,7 @@ internal class PlayerInventoryHandler
                 _activePart = InventoryHandlerPart.ItemsList;
                 break;
             case ItemContextMenuAction.Equip:
-                
+
                 break;
             case ItemContextMenuAction.Quaff:
                 break;
@@ -119,17 +124,22 @@ internal class PlayerInventoryHandler
 
     private readonly TextBlock _invTitleTb = new("", new SDL_Point());
     private readonly TextBlock _equippedTitleTb = new("", new SDL_Point());
+
     private readonly ListBox _itemLb = new();
+
     private readonly EquippedItemBox _selectedItemBox = new();
 
     private readonly ContextMenu<ItemContextMenuAction> _selectedItemContextMenu = new()
     {
         Visibility = Visibility.Hidden,
+        Background = SdlColors.Teal,
     };
 
     private enum ItemContextMenuAction
     {
-        Drop, Equip, Quaff,
+        Drop,
+        Equip,
+        Quaff,
     }
 
     internal void Render(RenderArgs ra, Player player, SDL_Rect viewPort)

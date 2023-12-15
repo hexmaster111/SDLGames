@@ -17,7 +17,7 @@ public class PlayerInventory(int cap)
     public void DropItem(int itemIndex, State state)
     {
         var item = Items[itemIndex];
-        var tile = Game.Assets.NewTile(item.Type);
+        var tile = Game.Assets.NewTile(item.Type, item);
         tile.Point = Game.Inst._player.Point;
         Game.Inst.TileObjects.Add(tile);
         state.Player.PlayerInventory.Items.RemoveAt(itemIndex);
@@ -113,6 +113,7 @@ public class State
     public enum KeyboardInputLocation
     {
         Game,
-        Inventory
+        Inventory,
+        GrabDialog,
     }
 }
