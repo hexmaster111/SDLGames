@@ -13,10 +13,10 @@ internal static class Program
     public static void Main(string[] args)
     {
         App = new SdlApp(EventHandler, RenderHandler, UpdateHandler,
-            targetFps: 60,
+            targetFps: 30,
             height: 600,
             width: 800,
-            targetUpdatesPerSec: 60);
+            targetUpdatesPerSec: 10);
         Game = new Game();
         App.Run();
     }

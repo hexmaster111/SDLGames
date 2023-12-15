@@ -16,9 +16,8 @@ public class SdlApp
     private int _targetUpdatesPerSec;
 
     private bool Running = true;
-    private int Fps = 0;
-
-    private TimeOnly _lastTime = TimeOnly.MinValue;
+    private int frameCount = 0;
+    private int updateCount = 0;
 
     private readonly EventHandler _eventHandler;
     private readonly RenderHandler _renderHandler;
@@ -49,29 +48,44 @@ public class SdlApp
         if (!SetupSdl()) throw new Exception("Failed to setup SDL");
     }
 
+
     public SdlApp Run()
     {
         long lastRender = SDL.SDL_GetTicks();
 
-        SimpleTimer renderTimer = new(1000 / 10);
-        SimpleTimer updateTimer = new(1000 / 4);
+        SimpleTimer renderTimer = new(1000 / _targetFps);
+        SimpleTimer updateTimer = new(1000 / _targetUpdatesPerSec);
+        SimpleTimer oneSecTmr = new(1000);
 
         while (Running)
         {
+            HandleEvents();
             long currentTime = SDL.SDL_GetTicks();
 
             if (updateTimer.Evaluate(currentTime))
+            {
                 _updateHandler.Invoke(TimeSpan.FromMilliseconds(1000 / _targetUpdatesPerSec), currentTime);
+                updateCount++;
+            }
+
             if (renderTimer.Evaluate(currentTime))
             {
                 var deltaTime = currentTime - lastRender;
                 RenderFps();
+                frameCount++;
                 Render(deltaTime);
+            }
+
+            if (oneSecTmr.Evaluate(currentTime))
+            {
+                FpsSample();
+                UpsSample();
+                frameCount = 0;
+                updateCount = 0;
             }
 
             var minTime = Math.Min(updateTimer.SleepTimeMs, renderTimer.SleepTimeMs);
             if (0 > minTime) continue;
-            HandleEvents();
             SDL.SDL_Delay((uint)minTime);
         }
 
@@ -107,27 +121,44 @@ public class SdlApp
     {
         SDL.SDL_SetRenderDrawColor(RendererPtr, 0x10, 0x10, 0x00, 0xFF);
         SDL.SDL_RenderClear(RendererPtr);
-        _renderHandler?.Invoke(new RenderArgs(WindowPtr, RendererPtr, FontPtr, Fps, deltaTime, ScreenWidth,
+        _renderHandler?.Invoke(new RenderArgs(WindowPtr, RendererPtr, FontPtr, frameCount, deltaTime, ScreenWidth,
             ScreenHeight));
         RenderFps();
         SDL.SDL_RenderPresent(RendererPtr);
     }
 
-    private int[] _fpsHistory = new int[60];
+    private int[] _fpsHistory = new int[10]; //Seconds of average
     private int _fpsHistoryIndex = 0;
 
-    private void RenderFps()
+    private int[] _upsHistory = new int[10]; //Seconds of average
+    private int _upsHistoryIndex = 0;
+
+    private void FpsSample()
     {
-        _fpsHistory[_fpsHistoryIndex] = Fps;
+        _fpsHistory[_fpsHistoryIndex] = frameCount;
         _fpsHistoryIndex++;
         if (_fpsHistoryIndex >= _fpsHistory.Length)
         {
             _fpsHistoryIndex = 0;
         }
+    }
 
+    private void UpsSample()
+    {
+        _upsHistory[_upsHistoryIndex] = updateCount;
+        _upsHistoryIndex++;
+        if (_upsHistoryIndex >= _upsHistory.Length)
+        {
+            _upsHistoryIndex = 0;
+        }
+    }
+
+    private void RenderFps()
+    {
         var avgFps = _fpsHistory.Average();
+        var avgUps = _upsHistory.Average();
 
-        var fpsText = $"FPS: {avgFps:00}";
+        var fpsText = $"FPS: {avgFps:00} UPS: {avgUps:00}";
         var FPSSurface = SDL2.SDL_ttf.TTF_RenderText_Solid(FontPtr, fpsText,
             new SDL.SDL_Color() { r = 0xFF, g = 0xFF, b = 0xFF, a = 0xFF });
         var fpsTexture = SDL.SDL_CreateTextureFromSurface(RendererPtr, FPSSurface);
@@ -135,9 +166,11 @@ public class SdlApp
         {
             x = 0,
             y = 0,
-            w = 100 / 2,
+            w = 100 ,
             h = 24 / 2
         };
+        
+        
         SDL.SDL_RenderCopy(RendererPtr, fpsTexture, IntPtr.Zero, ref fpsRect);
         SDL.SDL_DestroyTexture(fpsTexture);
         SDL.SDL_FreeSurface(FPSSurface);
@@ -189,33 +222,6 @@ public class SdlApp
             return false;
         }
 
-        return true;
-    }
-}
-
-public class SimpleTimer
-{
-    private readonly long _delay;
-    private long _lastFireTime;
-    private long _fireRate;
-
-    public SimpleTimer(long delay)
-    {
-        _delay = delay;
-    }
-
-    public long SleepTimeMs { get; private set; }
-
-    public bool Evaluate(long now)
-    {
-        if (now - _lastFireTime < _fireRate)
-        {
-            SleepTimeMs = _fireRate - (now - _lastFireTime);
-            return false;
-        }
-
-        _lastFireTime = now;
-        _fireRate = _delay;
         return true;
     }
 }
