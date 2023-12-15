@@ -1,4 +1,4 @@
-﻿namespace MapGenTest;
+﻿namespace Inferno;
 
 internal class
     StatefulSprite(IntPtr texturePrt, int gridAssetWidth, int gridAssetHeight, int stateCount, int animationFrames)

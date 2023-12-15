@@ -1,8 +1,8 @@
-﻿using MapGenTest.GuiElements;
+﻿using Inferno.GuiElements;
 using SDLApplication;
 using static SDL2.SDL;
 
-namespace MapGenTest;
+namespace Inferno;
 
 internal enum InventoryHandlerPart
 {

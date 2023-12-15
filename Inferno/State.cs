@@ -1,4 +1,4 @@
-﻿namespace MapGenTest;
+﻿namespace Inferno;
 
 public class PlayerInventory(int cap)
 {

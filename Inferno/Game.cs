@@ -1,9 +1,9 @@
 ﻿using System.Numerics;
-using MapGenTest.GuiElements;
+using Inferno.GuiElements;
 using SDLApplication;
 using static SDL2.SDL;
 
-namespace MapGenTest;
+namespace Inferno;
 
 internal class TileObjectCollection : List<TileObject>
 {

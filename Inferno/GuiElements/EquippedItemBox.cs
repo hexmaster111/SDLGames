@@ -1,7 +1,7 @@
 ﻿using SDL2;
 using SDLApplication;
 
-namespace MapGenTest.GuiElements;
+namespace Inferno.GuiElements;
 
 public class EquippedItemBox : IGuiElement
 {

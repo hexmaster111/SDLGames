@@ -1,6 +1,6 @@
 ﻿using SDL2;
 
-namespace MapGenTest;
+namespace Inferno;
 
 internal class ItemTileObject : TileObject
 {

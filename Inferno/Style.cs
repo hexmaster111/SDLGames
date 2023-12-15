@@ -1,2 +1,2 @@
-﻿namespace MapGenTest;
+﻿namespace Inferno;
 

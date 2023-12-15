@@ -1,7 +1,7 @@
 ﻿using SDLApplication;
 using static SDL2.SDL;
 
-namespace MapGenTest;
+namespace Inferno;
 
 internal class Sprite
 {

@@ -1,8 +1,7 @@
-﻿using MapGenTest.GuiElements;
-using SDL2;
+﻿using SDL2;
 using SDLApplication;
 
-namespace MapGenTest;
+namespace Inferno.GuiElements;
 
 public class TextBlock : IGuiElement
 {

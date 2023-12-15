@@ -1,4 +1,4 @@
-﻿namespace MapGenTest;
+﻿namespace Inferno;
 
 public enum Direction
 {

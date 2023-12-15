@@ -1,7 +1,7 @@
 ﻿using SDL2;
 using SDLApplication;
 
-namespace MapGenTest;
+namespace Inferno;
 
 internal class AnimatedSprite(
         IntPtr texturePtr,

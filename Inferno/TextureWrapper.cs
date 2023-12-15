@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using SDL2;
 
-namespace MapGenTest;
+namespace Inferno;
 
 public class TextureWrapper
 {
