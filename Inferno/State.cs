@@ -35,7 +35,6 @@ public class PlayerBodySlots<T> where T : struct
 
 public struct Item
 {
-    public required ItemModifier Modifier { get; init; }
     public required GameObjectType Type { get; init; }
     public required ItemType ItemType { get; init; }
     public required ItemEquitablePositions EquitablePositions { get; init; }
@@ -59,11 +58,7 @@ public enum ItemType
     Potion
 }
 
-public enum ItemModifier
-{
-    Normal,
-    Zesty
-}
+
 
 public class Player
 {

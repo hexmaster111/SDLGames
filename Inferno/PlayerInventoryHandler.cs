@@ -158,7 +158,7 @@ internal class PlayerInventoryHandler
             y = viewPort.y + _invTitleTb.Pos.y + _invTitleTb.FontSizeDest
         };
 
-        _itemLb.Items = player.PlayerInventory.Items.Select(x => $"{x.Modifier} {x.Type}").ToList();
+        _itemLb.Items = player.PlayerInventory.Items.Select(x => $"{x.Type}").ToList();
         _itemLb.Pos = invItemPos;
         _equippedTitleTb.Text = "Equipped";
         _itemLb.Render(ra);

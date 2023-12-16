@@ -75,7 +75,6 @@ internal class Game
         TileObjects.Add(_player);
         State.Player.PlayerInventory.Items.Add(new Item()
         {
-            Modifier = ItemModifier.Normal,
             Type = GameObjectType.Stick,
             EquitablePositions = ItemEquitablePositions.Hands,
             ItemType = ItemType.Weapon
@@ -83,7 +82,6 @@ internal class Game
 
         State.Player.PlayerInventory.Items.Add(new Item()
         {
-            Modifier = ItemModifier.Normal,
             Type = GameObjectType.Dagger,
             EquitablePositions = ItemEquitablePositions.Hands,
             ItemType = ItemType.Weapon
@@ -91,7 +89,6 @@ internal class Game
 
         State.Player.PlayerInventory.Items.Add(new Item()
         {
-            Modifier = ItemModifier.Normal,
             Type = GameObjectType.ShortSward,
             EquitablePositions = ItemEquitablePositions.Hands,
             ItemType = ItemType.Weapon
@@ -99,7 +96,6 @@ internal class Game
 
         State.Player.PlayerInventory.Items.Add(new Item()
         {
-            Modifier = ItemModifier.Zesty,
             Type = GameObjectType.Ranch,
             EquitablePositions = ItemEquitablePositions.NoWhere,
             ItemType = ItemType.Potion
@@ -107,7 +103,6 @@ internal class Game
 
         State.Player.PlayerInventory.ArmorSlots.Hands = new Item()
         {
-            Modifier = ItemModifier.Normal,
             Type = GameObjectType.ShortSward,
             EquitablePositions = ItemEquitablePositions.Hands,
             ItemType = ItemType.Weapon
