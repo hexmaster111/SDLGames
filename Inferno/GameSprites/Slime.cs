@@ -2,7 +2,7 @@
 
 namespace Inferno.GameSprites;
 
-public class Torch() : GameSprite<StatefulAnimatedTextureWrapper>(Textures.Torch)
+public class Slime() : GameSprite<StatefulAnimatedTextureWrapper>(Textures.EntitySlimeLv0)
 {
     private SimpleTimer _textureTimer = new(250);
 

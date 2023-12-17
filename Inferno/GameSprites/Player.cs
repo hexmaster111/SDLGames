@@ -1,4 +1,6 @@
-﻿namespace Inferno.GameSprites;
+﻿using Inferno.GameFramework;
+
+namespace Inferno.GameSprites;
 
 public class Player(string name) : GameSprite<TextureWrapper>(Textures.Player)
 {

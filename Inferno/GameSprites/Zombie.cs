@@ -2,9 +2,9 @@
 
 namespace Inferno.GameSprites;
 
-public class Torch() : GameSprite<StatefulAnimatedTextureWrapper>(Textures.Torch)
+public class Zombie() : GameSprite<StatefulAnimatedTextureWrapper>(Textures.EntityZombieLv0)
 {
-    private SimpleTimer _textureTimer = new(250);
+    private SimpleTimer _textureTimer = new(500);
 
     public override void Update(long now)
     {

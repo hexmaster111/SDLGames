@@ -40,26 +40,69 @@ internal static class Program
 
 
         _camera = new SDL_Rect { x = 0, y = 0, w = ScreenWidthPx, h = ScreenHeightPx };
-        Player player = new("d505");
-        Pot pot = new();
-        Torch torch = new();
 
-        player.GridPosX = 10;
-        player.GridPosY = 10;
+        Player player = new("d505")
+        {
+            GridPosX = 10,
+            GridPosY = 10
+        };
 
-        pot.GridPosX = 15;
-        pot.GridPosY = 15;
+        Pot pot = new()
+        {
+            GridPosX = 15,
+            GridPosY = 15
+        };
 
-        torch.GridPosX = 5;
-        torch.GridPosY = 5;
+        Torch torch = new()
+        {
+            GridPosX = 5,
+            GridPosY = 5
+        };
+
+        Slime slime = new()
+        {
+            GridPosX = 3,
+            GridPosY = 3
+        };
         
+        Zombie zombie = new()
+        {
+            GridPosX = 4,
+            GridPosY = 3
+        };
+
+        ContainerChestWood chest = new()
+        {
+            GridPosX = 5,
+            GridPosY = 6
+        };
 
         _focusedSprite = player;
 
-        _sprites.Add(player);
         _sprites.Add(pot);
         _sprites.Add(torch);
+        _sprites.Add(slime);
+        _sprites.Add(zombie);
+        _sprites.Add(chest);
 
+        for (int i = 0; i < 5; i++)
+        {
+            _sprites.Add(new WallStone()
+            {
+                GridPosX = 20 + i,
+                GridPosY = 20
+            });
+        }
+
+
+        _sprites.Add(new WallStoneDoor()
+        {
+            GridPosX = 20,
+            GridPosY = 21
+        });
+
+
+        _sprites.Add(player);
         App.Run();
     }
 
