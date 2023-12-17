@@ -1,15 +1,26 @@
 ﻿namespace Inferno.GameSprites;
 
-public abstract class GameSprite
+public interface IGameSprite
 {
-    internal GameSprite(TextureWrapper texture)
+    int PosXPx { get; set; }
+    int PosYPx { get; set; }
+    int GridPosX { get; set; }
+    int GridPosY { get; set; }
+    void Render(int camXPx, int camYPx);
+    void Update(long now);
+}
+
+public abstract class GameSprite<T> : IGameSprite
+    where T : TextureWrapper
+{
+    internal GameSprite(T texture)
     {
         _texture = texture;
     }
 
-    private readonly TextureWrapper _texture;
-    public int PosXPx { get; internal set; }
-    public int PosYPx { get; internal set; }
+    internal readonly T _texture;
+    public int PosXPx { get; set; }
+    public int PosYPx { get; set; }
 
     public int GridPosX
     {
@@ -27,5 +38,9 @@ public abstract class GameSprite
     public virtual void Render(int camXPx, int camYPx)
     {
         _texture.Render(PosXPx - camXPx, PosYPx - camYPx);
+    }
+
+    public virtual void Update(long now)
+    {
     }
 }

@@ -25,11 +25,11 @@ internal static class Program
 
     private static SDL_Rect _camera;
 
-    private static readonly List<GameSprite> _sprites = new();
+    private static readonly List<IGameSprite> _sprites = new();
 
-    private static GameSprite _focusedSprite;
-    
-    
+    private static IGameSprite _focusedSprite;
+
+
     public static void Main(string[] args)
     {
         App = new SdlApp(EventHandler, RenderHandler, UpdateHandler,
@@ -40,21 +40,35 @@ internal static class Program
 
 
         _camera = new SDL_Rect { x = 0, y = 0, w = ScreenWidthPx, h = ScreenHeightPx };
-        Player _dot = new("d505");
-        Pot _pot = new();
-        _pot.PosXPx = 30;
-        _pot.PosYPx = 30;
+        Player player = new("d505");
+        Pot pot = new();
+        Torch torch = new();
 
-        _focusedSprite = _dot;
+        player.GridPosX = 10;
+        player.GridPosY = 10;
 
-        _sprites.Add(_dot);
-        _sprites.Add(_pot);
+        pot.GridPosX = 15;
+        pot.GridPosY = 15;
+
+        torch.GridPosX = 5;
+        torch.GridPosY = 5;
+        
+
+        _focusedSprite = player;
+
+        _sprites.Add(player);
+        _sprites.Add(pot);
+        _sprites.Add(torch);
 
         App.Run();
     }
 
     private static void UpdateHandler(TimeSpan _, long now)
     {
+        foreach (var sprite in _sprites)
+        {
+            sprite.Update(now);
+        }
     }
 
     private static void RenderHandler(RenderArgs args)

@@ -2,19 +2,16 @@
 
 internal static class Textures
 {
-    // internal static readonly TextureWrapper DotTexture = new("dot.bmp");
-    // internal static readonly TextureWrapper PotTexture = new("CONTAINOR_POT.png");
-
     internal static readonly TextureWrapper Player = new("Assets/PLAYER.png");
-    internal static readonly TextureWrapper PotTexture = new("Assets/CONTAINOR_POT.png");
-    private static readonly TextureWrapper _torchTexture = new("Assets/TORCH.png");
-    private static readonly TextureWrapper _floorStoneTexture = new("Assets/WALL_STONE.png");
-    private static readonly TextureWrapper _wallStoneDoorTexture = new("Assets/WALL_STONE_DOOR.png");
-    private static readonly TextureWrapper _entitySlimeLv0 = new("Assets/ENTITY_SLIME_LV0.png");
-    private static readonly TextureWrapper _entityZombieLv0 = new("Assets/ENTITY_ZOMBIE_LV0.png");
-    private static readonly TextureWrapper _containerChestWood = new("Assets/CONTAINOR_CHEST_WOOD.png");
-    private static readonly TextureWrapper _itemStick = new("Assets/ITEMS/STICK.png");
-    private static readonly TextureWrapper _itemDagger = new("Assets/ITEMS/DAGGER.png");
-    private static readonly TextureWrapper _itemShortSward = new("Assets/ITEMS/SHORTSWORD.png");
-    private static readonly TextureWrapper _itemRanch = new("Assets/ITEMS/RANCH.png");
+    internal static readonly TextureWrapper Pot = new("Assets/CONTAINOR_POT.png");
+    internal static readonly StatefulAnimatedTextureWrapper Torch = new("Assets/TORCH.png", 32, 5);
+    internal static readonly TextureWrapper FloorStone = new("Assets/WALL_STONE.png");
+    internal static readonly TextureWrapper WallStoneDoor = new("Assets/WALL_STONE_DOOR.png");
+    internal static readonly TextureWrapper EntitySlimeLv0 = new("Assets/ENTITY_SLIME_LV0.png");
+    internal static readonly TextureWrapper EntityZombieLv0 = new("Assets/ENTITY_ZOMBIE_LV0.png");
+    internal static readonly TextureWrapper ContainerChestWood = new("Assets/CONTAINOR_CHEST_WOOD.png");
+    internal static readonly TextureWrapper ItemStick = new("Assets/ITEMS/STICK.png");
+    internal static readonly TextureWrapper ItemDagger = new("Assets/ITEMS/DAGGER.png");
+    internal static readonly TextureWrapper ItemShortSward = new("Assets/ITEMS/SHORTSWORD.png");
+    internal static readonly TextureWrapper ItemRanch = new("Assets/ITEMS/RANCH.png");
 }
