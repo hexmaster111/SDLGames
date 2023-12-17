@@ -1,13 +1,13 @@
 ﻿Classes
 =======
+
 All classes start with 48 skill points
 
 # Soldier
 
-![soldier](./img/image18.jpg)
-![soldier](./img/image13.jpg)
+<img src="./img/image18.jpg" title="" alt="soldier" width="271"> <img src="./img/image13.jpg" title="" alt="soldier" width="270">
 
-| Stat | Starting Value | 
+| Stat | Starting Value |
 |------|----------------|
 | HP   | ??             |
 | MP   | ??             |
@@ -37,10 +37,9 @@ a job in wanderer's rest the had a payout of a literal wish being fulfilled they
 
 # Paladin
 
-![paladin](./img/image20.jpg)
-![paladin](./img/image6.jpg)
+![paladin](./img/image20.jpg) ![paladin](./img/image6.jpg)
 
-| Stat | Starting Value | 
+| Stat | Starting Value |
 |------|----------------|
 | HP   | ??             |
 | MP   | ??             |
@@ -59,8 +58,7 @@ a job in wanderer's rest the had a payout of a literal wish being fulfilled they
 
 # Occultist
 
-![occultist](./img/image2.jpg)
-![occultist](./img/image15.jpg)
+<img src="./img/image2.jpg" title="" alt="occultist" width="229">![occultist](./img/image15.jpg)
 
 | Stat | Starting Value |
 |------|----------------|
@@ -81,10 +79,9 @@ a job in wanderer's rest the had a payout of a literal wish being fulfilled they
 
 # Arcanist
 
-![arcanist](./img/image17.jpg)
-![arcanist](./img/image23.jpg)
+![arcanist](./img/image17.jpg)  ![arcanist](./img/image23.jpg)
 
-| Stat | Starting Value | 
+| Stat | Starting Value |
 |------|----------------|
 | HP   | ??             |
 | MP   | ??             |
@@ -103,10 +100,9 @@ a job in wanderer's rest the had a payout of a literal wish being fulfilled they
 
 # Treasure Hunter
 
-![treasure hunter](./img/image12.jpg)
-![treasure hunter](./img/image21.jpg)
+![treasure hunter](./img/image12.jpg)![treasure hunter](./img/image21.jpg)
 
-| Stat | Starting Value | 
+| Stat | Starting Value |
 |------|----------------|
 | HP   | ??             |
 | MP   | ??             |
@@ -123,13 +119,11 @@ a job in wanderer's rest the had a payout of a literal wish being fulfilled they
 |-------|--------|-------------|
 |       |        |             |
 
-
 # Grave Warden
 
-![grave worden](./img/image5.jpg)
-![grave worden](./img/image7.jpg)
+![grave worden](./img/image5.jpg)![grave worden](./img/image7.jpg)
 
-| Stat | Starting Value | 
+| Stat | Starting Value |
 |------|----------------|
 | HP   | ??             |
 | MP   | ??             |

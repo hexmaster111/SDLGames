@@ -6,20 +6,20 @@ and because we aren’t planning to make a 1 for 1 DnD clone.
 
 # Combat
 
-1) Turn order is determined (see initiative stat)
+1) Turn order is determined by [ini](#initiative-ini)
 2) Player (who’s turn it is) get to do three things
     1) 1 Action
-    2) Attack
-    3) Defend
-    4) Cast Spell
-    5) Help Teammate
-    6) Cunning Action
-        1) Taunt - Try to draw agro
-        2) Hide - Try to lose agro
-    7) Run Away
-3) 1 Class Action
-4) Item Usage (optional)
-5) Repeat until there is one team standing
+        1) Attack
+        2) Defend
+        3) Cast Spell
+        4) Help Teammate
+        5) Cunning Action
+            1) Taunt - Try to draw agro
+            2) Hide - Try to lose agro
+        6) Run Away
+    2) 1 Class Action
+    3) Item Usage
+3) Repeat until there is one team standing
 
 # Modifiers (Concept)
 
@@ -36,7 +36,7 @@ healed.
 | Modifier | Description | Impacted Skills | Duration |
 |----------|-------------|-----------------|----------|
 | Plagued  | -2 to all   | All             | n-turns  |
-|          |             |                 |          |
+| Blessed  |             |                 |          |
 
 # Checks (Concept)
 
