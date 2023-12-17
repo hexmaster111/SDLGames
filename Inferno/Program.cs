@@ -33,7 +33,7 @@ internal static class Program
     public static void Main(string[] args)
     {
         App = new SdlApp(EventHandler, RenderHandler, UpdateHandler,
-            targetFps: 20,
+            targetFps: TargetFps,
             width: ScreenWidthPx,
             height: ScreenHeightPx,
             targetUpdatesPerSec: TargetFps);
@@ -64,7 +64,7 @@ internal static class Program
             GridPosX = 3,
             GridPosY = 3
         };
-        
+
         Zombie zombie = new()
         {
             GridPosX = 4,

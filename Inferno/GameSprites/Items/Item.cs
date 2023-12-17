@@ -1,5 +1,5 @@
 ﻿namespace Inferno.GameSprites.Items;
 
-public class Item(TextureWrapper texture) : GameSprite<TextureWrapper>(texture)
+public class Item(TextureWrapper texture) : GameObject<TextureWrapper>(texture)
 {
 }

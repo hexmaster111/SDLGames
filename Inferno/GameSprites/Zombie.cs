@@ -2,7 +2,7 @@
 
 namespace Inferno.GameSprites;
 
-public class Zombie() : GameSprite<StatefulAnimatedTextureWrapper>(Textures.EntityZombieLv0)
+public class Zombie() : GameObject<StatefulAnimatedTextureWrapper>(Textures.EntityZombieLv0)
 {
     private SimpleTimer _textureTimer = new(500);
 

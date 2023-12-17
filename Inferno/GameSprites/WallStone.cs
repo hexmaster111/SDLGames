@@ -1,3 +1,3 @@
 ﻿namespace Inferno.GameSprites;
 
-public class WallStone() : GameSprite<TextureWrapper>(Textures.FloorStone);
+public class WallStone() : GameObject<TextureWrapper>(Textures.FloorStone);

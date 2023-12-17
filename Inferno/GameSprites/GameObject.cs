@@ -1,6 +1,6 @@
 ﻿namespace Inferno.GameSprites;
 
-public interface IGameSprite
+public interface IGameObject
 {
     int PosXPx { get; set; }
     int PosYPx { get; set; }
@@ -10,10 +10,10 @@ public interface IGameSprite
     void Update(long now);
 }
 
-public abstract class GameSprite<T> : IGameSprite
+public abstract class GameObject<T> : IGameObject
     where T : TextureWrapper
 {
-    internal GameSprite(T texture)
+    internal GameObject(T texture)
     {
         _texture = texture;
     }

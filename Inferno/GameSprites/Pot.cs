@@ -1,3 +1,3 @@
 ﻿namespace Inferno.GameSprites;
 
-public class Pot() : GameSprite<TextureWrapper>(Textures.Pot);
+public class Pot() : GameObject<TextureWrapper>(Textures.Pot);
