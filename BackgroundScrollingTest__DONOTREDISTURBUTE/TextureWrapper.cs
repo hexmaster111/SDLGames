@@ -1,8 +1,9 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using SDL2;
 using static SDL2.SDL;
 
-namespace Inferno;
+namespace BackgroundScrollingTest__DONOTREDISTURBUTE;
 
 internal class TextureWrapper
 {

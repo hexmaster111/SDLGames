@@ -14,14 +14,7 @@ public class PlayerInventory(int cap)
     /// </summary>
     public PlayerBodySlots<Item> ArmorSlots { get; } = new();
 
-    public void DropItem(int itemIndex, State state)
-    {
-        var item = Items[itemIndex];
-        var tile = Game.Assets.NewTile(item.Type, item);
-        tile.Point = Game.Inst._player.Point;
-        Game.Inst.TileObjects.Add(tile);
-        state.Player.PlayerInventory.Items.RemoveAt(itemIndex);
-    }
+
 }
 
 public class PlayerBodySlots<T> where T : struct
@@ -58,21 +51,6 @@ public enum ItemType
     Potion
 }
 
-
-
-public class Player
-{
-    public Player(string name)
-    {
-        Name = name;
-        PlayerInventory = new PlayerInventory(10);
-    }
-
-    public string Name { get; set; }
-    public PlayerInventory PlayerInventory { get; set; }
-    public PlayerStats Stats { get; set; } = new();
-}
-
 public struct PlayerStats
 {
     /*
@@ -99,16 +77,3 @@ public struct PlayerStats
     public int Rizz;
 }
 
-public class State
-{
-    public Player Player = new("D505");
-
-    public KeyboardInputLocation KeyboardInputFocus;
-
-    public enum KeyboardInputLocation
-    {
-        Game,
-        Inventory,
-        GrabDialog,
-    }
-}

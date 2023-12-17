@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VectorTd", "VectorTd\Vector
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno", "Inferno\Inferno.csproj", "{BA57540B-AE08-45F1-9AEF-785215AAF0A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundScrollingTest__DONOTREDISTURBUTE", "BackgroundScrollingTest__DONOTREDISTURBUTE\BackgroundScrollingTest__DONOTREDISTURBUTE.csproj", "{5E470D31-CAB7-4A48-8871-3D9C5B50AA06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,5 +28,9 @@ Global
 		{BA57540B-AE08-45F1-9AEF-785215AAF0A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA57540B-AE08-45F1-9AEF-785215AAF0A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA57540B-AE08-45F1-9AEF-785215AAF0A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E470D31-CAB7-4A48-8871-3D9C5B50AA06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E470D31-CAB7-4A48-8871-3D9C5B50AA06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E470D31-CAB7-4A48-8871-3D9C5B50AA06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E470D31-CAB7-4A48-8871-3D9C5B50AA06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

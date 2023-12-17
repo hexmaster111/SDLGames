@@ -1,10 +1,19 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using Inferno.GameSprites;
-using SDLApplication;
+﻿using SDLApplication;
 using static SDL2.SDL;
 
-namespace Inferno;
+namespace BackgroundScrollingTest__DONOTREDISTURBUTE;
+
+internal static class Textures
+{
+    internal static readonly TextureWrapper DotTexture;
+    internal static readonly TextureWrapper PotTexture;
+
+    static Textures()
+    {
+        DotTexture = new("dot.bmp");
+        PotTexture = new TextureWrapper("CONTAINOR_POT.png");
+    }
+}
 
 internal static class Program
 {
@@ -25,11 +34,10 @@ internal static class Program
 
     private static SDL_Rect _camera;
 
-    private static readonly List<GameSprite> _sprites = new();
+    private static readonly List<GameGridSprite> _sprites = new();
 
-    private static GameSprite _focusedSprite;
-    
-    
+    private static GameGridSprite _focusedSprite;
+
     public static void Main(string[] args)
     {
         App = new SdlApp(EventHandler, RenderHandler, UpdateHandler,
@@ -40,16 +48,16 @@ internal static class Program
 
 
         _camera = new SDL_Rect { x = 0, y = 0, w = ScreenWidthPx, h = ScreenHeightPx };
-        Player _dot = new("d505");
-        Pot _pot = new();
+        Dot _dot = new(Textures.DotTexture);
+        Pot _pot = new(Textures.PotTexture);
         _pot.PosXPx = 30;
         _pot.PosYPx = 30;
 
         _focusedSprite = _dot;
-
+        
         _sprites.Add(_dot);
         _sprites.Add(_pot);
-
+        
         App.Run();
     }
 
@@ -59,8 +67,9 @@ internal static class Program
 
     private static void RenderHandler(RenderArgs args)
     {
-        _camera.x = _focusedSprite.PosXPx + TileSizePx / 2 - ScreenWidthPx / 2;
-        _camera.y = _focusedSprite.PosYPx + TileSizePx / 2 - ScreenHeightPx / 2;
+
+        _camera.x = _focusedSprite.PosXPx + Dot.WidthPx / 2 - ScreenWidthPx / 2;
+        _camera.y = _focusedSprite.PosYPx + Dot.HeightPx / 2 - ScreenHeightPx / 2;
 
 
         //Keep the camera in bounds
@@ -79,23 +88,5 @@ internal static class Program
     private static void EventHandler(SDL_Event e)
     {
         Console.WriteLine($"X: {_camera.x:0000}, y: {_camera.y:0000}");
-        if (e.type == SDL_EventType.SDL_KEYDOWN)
-        {
-            switch (e.key.keysym.sym)
-            {
-                case SDL_Keycode.SDLK_UP:
-                    _focusedSprite.GridPosY -= 1;
-                    break;
-                case SDL_Keycode.SDLK_DOWN:
-                    _focusedSprite.GridPosY += 1;
-                    break;
-                case SDL_Keycode.SDLK_LEFT:
-                    _focusedSprite.GridPosX -= 1;
-                    break;
-                case SDL_Keycode.SDLK_RIGHT:
-                    _focusedSprite.GridPosX += 1;
-                    break;
-            }
-        }
     }
 }
