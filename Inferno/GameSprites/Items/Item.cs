@@ -1,7 +1,12 @@
 ﻿namespace Inferno.GameSprites.Items;
 
-public abstract class Item(TextureWrapper texture) : GameObject<TextureWrapper>(texture)
+public abstract class Item : GameObject<TextureWrapper>
 {
+    protected Item(TextureWrapper texture) : base(texture)
+    {
+        Solidity = Solidity.Passable;
+    }
+
     private static void ThrowHelper()
     {
         throw new Exception($"Item type did not implement this method");

@@ -2,9 +2,14 @@
 
 namespace Inferno.GameSprites;
 
-public class Slime() : GameObject<StatefulAnimatedTextureWrapper>(Textures.EntitySlimeLv0)
+public class Slime : GameObject<StatefulAnimatedTextureWrapper>
 {
     private SimpleTimer _textureTimer = new(250);
+
+    public Slime() : base(Textures.EntitySlimeLv0)
+    {
+        Solidity = Solidity.Passable;
+    }
 
     public override void Update(long now)
     {

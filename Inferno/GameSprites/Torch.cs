@@ -2,9 +2,14 @@
 
 namespace Inferno.GameSprites;
 
-public class Torch() : GameObject<StatefulAnimatedTextureWrapper>(Textures.Torch)
+public class Torch : GameObject<StatefulAnimatedTextureWrapper>
 {
     private SimpleTimer _textureTimer = new(250);
+
+    public Torch() : base(Textures.Torch)
+    {
+        Solidity = Solidity.Passable;
+    }
 
     public override void Update(long now)
     {
