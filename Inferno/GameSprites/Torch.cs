@@ -6,7 +6,7 @@ public class Torch : GameObject<StatefulAnimatedTextureWrapper>
 {
     private SimpleTimer _textureTimer = new(250);
 
-    public Torch() : base(Textures.Torch)
+    public Torch() : base(Textures.Torch, "Torch")
     {
         Solidity = Solidity.Passable;
     }

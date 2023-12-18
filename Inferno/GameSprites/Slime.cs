@@ -6,7 +6,7 @@ public class Slime : GameObject<StatefulAnimatedTextureWrapper>
 {
     private SimpleTimer _textureTimer = new(250);
 
-    public Slime() : base(Textures.EntitySlimeLv0)
+    public Slime() : base(Textures.EntitySlimeLv0, "Slime")
     {
         Solidity = Solidity.Passable;
     }

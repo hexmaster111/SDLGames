@@ -2,9 +2,10 @@
 
 public abstract class Item : GameObject<TextureWrapper>
 {
-    protected Item(TextureWrapper texture) : base(texture)
+    protected Item(TextureWrapper texture) : base(texture, "Item")
     {
         Solidity = Solidity.Passable;
+        
     }
 
     private static void ThrowHelper()

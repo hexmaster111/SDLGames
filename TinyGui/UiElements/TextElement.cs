@@ -33,8 +33,6 @@ public class Button : UiElement
         Width = _labelElement.Width;
         Height = _labelElement.Height;
     }
-    
-
 }
 
 public class TextElement : UiElement
@@ -64,13 +62,35 @@ public class TextElement : UiElement
 
         foreach (var ch in Value)
         {
+            int state = ch;
             if (ch == '\n')
             {
                 newLine();
                 continue;
             }
 
-            _texture.SetState((char)ch);
+            //Ascii upArrow
+            if (ch == '↑')
+            {
+                state = 24;
+            }
+            
+            if (ch == '↓')
+            {
+                state = 25;
+            }
+            
+            if (ch == '→')
+            {
+                state = 26;
+            }
+            
+            if (ch == '←')
+            {
+                state = 27;
+            }
+
+            _texture.SetState((char)state);
             _texture.Render(x, y);
             x += _fontSize;
             continue;

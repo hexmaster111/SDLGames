@@ -4,7 +4,7 @@ namespace Inferno.GameSprites;
 
 public class LookBox : GameObject<StatefulAnimatedTextureWrapper>
 {
-    public LookBox() : base(Textures.LookBox)
+    public LookBox() : base(Textures.LookBox, "LookBox")
     {
         Solidity = Solidity.Passable;
     }

@@ -18,7 +18,9 @@ internal static class State
         Game,
         Inventory,
         Grab,
-        LookBox
+        LookBox,
+        OpenMenu,
+        CloseMenu
     }
 }
 
@@ -48,6 +50,8 @@ internal static class Program
     private static InventoryHandler _invHandler;
     private static ItemPickupHandler _itemPickupHandler;
     private static LookBoxHandler _lookBoxHandler;
+    private static ItemOpenCloseMenuHandler _itemOpenCloseMenuHandler;
+    private static ItemOpenCloseMenuHandler _itemCloseMenuHandler;
 
     public static void AddWorldSprite(IGameObject sprite, int mapX, int mapY)
     {
@@ -86,6 +90,8 @@ internal static class Program
             Hide = true
         };
         _lookBoxHandler = new LookBoxHandler(lb);
+        _itemOpenCloseMenuHandler = new ItemOpenCloseMenuHandler();
+        _itemCloseMenuHandler = new ItemOpenCloseMenuHandler();
 
         _sprites.Add(player);
         _sprites.Add(lb);
@@ -119,6 +125,44 @@ internal static class Program
                 RenderGame(args);
                 _lookBoxHandler.Render(args);
                 break;
+            case State.UiFocusE.OpenMenu:
+                RenderGame(args);
+                _itemOpenCloseMenuHandler.Render(args);
+                break;
+            case State.UiFocusE.CloseMenu:
+                RenderGame(args);
+                _itemCloseMenuHandler.Render(args);
+                break;
+
+
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private static void EventHandler(SDL_Event e)
+    {
+        switch (State.ActiveFocus)
+        {
+            case State.UiFocusE.Game:
+                GameEventHandler(e);
+                break;
+            case State.UiFocusE.Inventory:
+                _invHandler.HandleEvent(e);
+                break;
+            case State.UiFocusE.Grab:
+                _itemPickupHandler.HandleEvent(e);
+                break;
+            case State.UiFocusE.LookBox:
+                _lookBoxHandler.HandleEvent(e);
+                break;
+            case State.UiFocusE.OpenMenu:
+                _itemOpenCloseMenuHandler.HandleEvent(e);
+                break;
+            case State.UiFocusE.CloseMenu:
+                _itemCloseMenuHandler.HandleEvent(e);
+                break;
+
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -162,27 +206,6 @@ internal static class Program
         sp.Render();
     }
 
-    private static void EventHandler(SDL_Event e)
-    {
-        switch (State.ActiveFocus)
-        {
-            case State.UiFocusE.Game:
-                GameEventHandler(e);
-                break;
-            case State.UiFocusE.Inventory:
-                _invHandler.HandleEvent(e);
-                break;
-            case State.UiFocusE.Grab:
-                _itemPickupHandler.HandleEvent(e);
-                break;
-            case State.UiFocusE.LookBox:
-                _lookBoxHandler.HandleEvent(e);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-
 
     private static void MovePlayer(SDL_Event e)
     {
@@ -220,10 +243,8 @@ internal static class Program
 
             Player.GridPosX = nextX;
             Player.GridPosY = nextY;
-
-            var nextTilesNames = string.Join(", ", nextTiles.Select(x => x.GetType().Name));
-
-            Console.WriteLine($"Player just went to tile {nextX} {nextY} and found {nextTilesNames}");
+            // var nextTilesNames = string.Join(", ", nextTiles.Select(x => x.GetType().Name));
+            // Console.WriteLine($"Player just went to tile {nextX} {nextY} and found {nextTilesNames}");
         }
     }
 
@@ -254,6 +275,17 @@ internal static class Program
                     State.ActiveFocus = State.UiFocusE.LookBox;
                     _lookBoxHandler.Focus(FocusedObject);
                     FocusedObject = _lookBoxHandler.Sprite;
+                    break;
+
+                case SDL_Keycode.SDLK_o:
+                    State.ActiveFocus = State.UiFocusE.OpenMenu;
+                    _itemOpenCloseMenuHandler.OpenMenu(_sprites.GetObjectsAround(Player.GridPosX, Player.GridPosY),
+                        true);
+                    break;
+
+                case SDL_Keycode.SDLK_c:
+                    State.ActiveFocus = State.UiFocusE.CloseMenu;
+                    _itemCloseMenuHandler.OpenMenu(_sprites.GetObjectsAround(Player.GridPosX, Player.GridPosY), false);
                     break;
             }
         }
@@ -328,10 +360,96 @@ internal static class Program
             GridPosX = 20,
             GridPosY = 21
         });
+
+        _sprites.Add(new WallStoneDoor()
+        {
+            GridPosX = 20,
+            GridPosY = 22
+        });
+        _sprites.Add(new WallStoneDoor()
+        {
+            GridPosX = 18,
+            GridPosY = 22
+        });
     }
 
     public static void RemoveWordSprite(Item item)
     {
         _sprites.Remove(item);
+    }
+}
+
+internal class ItemOpenCloseMenuHandler
+{
+    private IGameObject[] _itemsAround;
+    private StackPanel<IGameObject> _sp;
+
+    bool _open = false;
+
+    public void OpenMenu(IEnumerable<IGameObject> itemsAround, bool open)
+    {
+        _open = open;
+        var arr = itemsAround.Where(x => open ? x.CanOpen : x.CanClose).ToArray();
+        if (arr.Length == 0)
+        {
+            State.ActiveFocus = State.UiFocusE.Game;
+            return;
+        }
+
+        if (arr.Length == 1)
+        {
+            if (_open) arr[0].Open();
+            else arr[0].Close();
+            State.ActiveFocus = State.UiFocusE.Game;
+            return;
+        }
+
+
+        _itemsAround = arr;
+
+        _sp = new StackPanel<IGameObject>(() => arr,
+            o => new TextElement(o.ObjName + " " + GetDirectionArrow(Program.Player, o)));
+        _sp.X = (int)(1 / 3f * Program.ScreenWidthPx);
+        _sp.Y = (int)(1 / 3f * Program.ScreenHeightPx);
+        _sp.EnableSelection = true;
+        _sp.UpdateChildren();
+        _sp.Measure();
+    }
+
+
+    private string GetDirectionArrow(IGameObject player, IGameObject item) => player.GridPosX == item.GridPosX ? 
+            player.GridPosY > item.GridPosY ? "↑" : "↓" :
+            player.GridPosX > item.GridPosX ? "←" : "→";
+
+    public void HandleEvent(SDL_Event e)
+    {
+        if (e.type == SDL_EventType.SDL_KEYDOWN)
+        {
+            switch (e.key.keysym.sym)
+            {
+                case SDL_Keycode.SDLK_ESCAPE:
+                    State.ActiveFocus = State.UiFocusE.Game;
+                    break;
+
+                case SDL_Keycode.SDLK_UP:
+                    _sp.SelectedIndex--;
+                    break;
+                case SDL_Keycode.SDLK_DOWN:
+                    _sp.SelectedIndex++;
+                    break;
+
+                case SDL_Keycode.SDLK_RETURN:
+                    if (_open) _itemsAround[_sp.SelectedIndex].Open();
+                    else _itemsAround[_sp.SelectedIndex].Close();
+                    State.ActiveFocus = State.UiFocusE.Game;
+                    break;
+            }
+        }
+    }
+
+
+    public void Render(RenderArgs args)
+    {
+        _sp.Render();
     }
 }

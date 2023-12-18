@@ -3,7 +3,7 @@ using static SDL2.SDL;
 
 namespace Inferno.GameSprites;
 
-public class Player(string name) : GameObject<TextureWrapper>(Textures.Player)
+public class Player(string name) : GameObject<TextureWrapper>(Textures.Player, "Player")
 {
     public string Name { get; set; } = name;
     public readonly List<Item> Inventory = new();

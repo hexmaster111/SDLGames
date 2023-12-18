@@ -1,6 +1,6 @@
 ﻿namespace Inferno.GameSprites;
 
-public class ContainerChestWood() : GameObject<StatefulAnimatedTextureWrapper>(Textures.ContainerChestWood)
+public class ContainerChestWood() : GameObject<StatefulAnimatedTextureWrapper>(Textures.ContainerChestWood, "Chest")
 {
     
 }

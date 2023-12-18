@@ -2,19 +2,23 @@
 
 public class WallStoneDoor : GameObject<StatefulAnimatedTextureWrapper>
 {
-    public void Open()
+    public override void Open()
     {
         _texture.State = 1;
         Solidity = Solidity.Passable;
+        CanClose = true;
+        CanOpen = false;
     }
 
-    public void Close()
+    public sealed override void Close()
     {
         _texture.State = 0;
         Solidity = Solidity.Solid;
+        CanClose = false;
+        CanOpen = true;
     }
 
-    public WallStoneDoor() : base(Textures.WallStoneDoor)
+    public WallStoneDoor() : base(Textures.WallStoneDoor, "Door")
     {
         Close();
     }

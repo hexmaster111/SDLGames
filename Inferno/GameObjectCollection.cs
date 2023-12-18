@@ -28,4 +28,27 @@ public class GameObjectCollection : IEnumerable<IGameObject>
     {
         return GetEnumerator();
     }
+
+    //returns all items in the four directions around the player + the tile the player is standing on
+    public IEnumerable<IGameObject> GetItemsAround(int playerGridPosX, int playerGridPosY)
+    {
+        var items = new List<IGameObject>();
+        items.AddRange(GetItemsAt(playerGridPosX, playerGridPosY));
+        items.AddRange(GetItemsAt(playerGridPosX + 1, playerGridPosY));
+        items.AddRange(GetItemsAt(playerGridPosX - 1, playerGridPosY));
+        items.AddRange(GetItemsAt(playerGridPosX, playerGridPosY + 1));
+        items.AddRange(GetItemsAt(playerGridPosX, playerGridPosY - 1));
+        return items;
+    }
+    
+    public IEnumerable<IGameObject> GetObjectsAround(int playerGridPosX, int playerGridPosY)
+    {
+        var items = new List<IGameObject>();
+        items.AddRange(GetObjectsAt(playerGridPosX, playerGridPosY));
+        items.AddRange(GetObjectsAt(playerGridPosX + 1, playerGridPosY));
+        items.AddRange(GetObjectsAt(playerGridPosX - 1, playerGridPosY));
+        items.AddRange(GetObjectsAt(playerGridPosX, playerGridPosY + 1));
+        items.AddRange(GetObjectsAt(playerGridPosX, playerGridPosY - 1));
+        return items;
+    }
 }
