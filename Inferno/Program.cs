@@ -1,10 +1,32 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Collections;
 using Inferno.GameSprites;
 using SDLApplication;
 using static SDL2.SDL;
 
 namespace Inferno;
+
+public class GameObjectCollection : IEnumerable<IGameObject>
+{
+    public readonly List<IGameObject> Objects = new();
+
+    public IEnumerable<IGameObject> GetObjectsAt(int x, int y) =>
+        Objects.Where(o => o.GridPosX == x && o.GridPosY == y);
+
+    public void Add(IGameObject obj) => Objects.Add(obj);
+    public void Remove(int x, int y) => Objects.RemoveAll(o => o.GridPosX == x && o.GridPosY == y);
+
+    public IEnumerator<IGameObject> GetEnumerator()
+    {
+        return Objects.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+}
 
 internal static class Program
 {
@@ -12,8 +34,8 @@ internal static class Program
 
     internal const int TargetFps = 20;
 
-    internal const int ScreenWidthPx = 800;
-    internal const int ScreenHeightPx = 600;
+    internal const int ScreenWidthPx = 1000;
+    internal const int ScreenHeightPx = 800;
 
     internal const int TileSizePx = 32;
 
@@ -25,28 +47,13 @@ internal static class Program
 
     private static SDL_Rect _camera;
 
-    private static readonly List<IGameSprite> _sprites = new();
+    private static GameObjectCollection _sprites = new();
 
-    private static IGameSprite _focusedSprite;
+    private static IGameObject _focusedObject;
 
 
-    public static void Main(string[] args)
+    public static void AddDemoItems()
     {
-        App = new SdlApp(EventHandler, RenderHandler, UpdateHandler,
-            targetFps: TargetFps,
-            width: ScreenWidthPx,
-            height: ScreenHeightPx,
-            targetUpdatesPerSec: TargetFps);
-
-
-        _camera = new SDL_Rect { x = 0, y = 0, w = ScreenWidthPx, h = ScreenHeightPx };
-
-        Player player = new("d505")
-        {
-            GridPosX = 10,
-            GridPosY = 10
-        };
-
         Pot pot = new()
         {
             GridPosX = 15,
@@ -77,7 +84,6 @@ internal static class Program
             GridPosY = 6
         };
 
-        _focusedSprite = player;
 
         _sprites.Add(pot);
         _sprites.Add(torch);
@@ -100,9 +106,30 @@ internal static class Program
             GridPosX = 20,
             GridPosY = 21
         });
+    }
 
+    public static void Main(string[] args)
+    {
+        App = new SdlApp(EventHandler, RenderHandler, UpdateHandler,
+            targetFps: TargetFps,
+            width: ScreenWidthPx,
+            height: ScreenHeightPx,
+            targetUpdatesPerSec: TargetFps);
+
+
+        _camera = new SDL_Rect { x = 0, y = 0, w = ScreenWidthPx, h = ScreenHeightPx };
+
+        Player player = new("d505")
+        {
+            GridPosX = 10,
+            GridPosY = 10
+        };
+
+        AddDemoItems();
 
         _sprites.Add(player);
+        _focusedObject = player;
+
         App.Run();
     }
 
@@ -116,8 +143,8 @@ internal static class Program
 
     private static void RenderHandler(RenderArgs args)
     {
-        _camera.x = _focusedSprite.PosXPx + TileSizePx / 2 - ScreenWidthPx / 2;
-        _camera.y = _focusedSprite.PosYPx + TileSizePx / 2 - ScreenHeightPx / 2;
+        _camera.x = _focusedObject.PosXPx + TileSizePx / 2 - ScreenWidthPx / 2;
+        _camera.y = _focusedObject.PosYPx + TileSizePx / 2 - ScreenHeightPx / 2;
 
 
         //Keep the camera in bounds
@@ -135,22 +162,21 @@ internal static class Program
 
     private static void EventHandler(SDL_Event e)
     {
-        Console.WriteLine($"X: {_camera.x:0000}, y: {_camera.y:0000}");
         if (e.type == SDL_EventType.SDL_KEYDOWN)
         {
             switch (e.key.keysym.sym)
             {
                 case SDL_Keycode.SDLK_UP:
-                    _focusedSprite.GridPosY -= 1;
+                    _focusedObject.GridPosY -= 1;
                     break;
                 case SDL_Keycode.SDLK_DOWN:
-                    _focusedSprite.GridPosY += 1;
+                    _focusedObject.GridPosY += 1;
                     break;
                 case SDL_Keycode.SDLK_LEFT:
-                    _focusedSprite.GridPosX -= 1;
+                    _focusedObject.GridPosX -= 1;
                     break;
                 case SDL_Keycode.SDLK_RIGHT:
-                    _focusedSprite.GridPosX += 1;
+                    _focusedObject.GridPosX += 1;
                     break;
             }
         }
