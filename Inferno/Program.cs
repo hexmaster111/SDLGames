@@ -1,12 +1,24 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Inferno.GameSprites;
+using Inferno.GameSprites.Items;
 using SDLApplication;
 using TinyGui;
 using TinyGui.UiElements;
 using static SDL2.SDL;
 
 namespace Inferno;
+
+internal static class State
+{
+    public static UiFocusE ActiveFocus = UiFocusE.Game;
+
+    public enum UiFocusE
+    {
+        Game,
+        Inventory,
+    }
+}
 
 internal static class Program
 {
@@ -30,7 +42,15 @@ internal static class Program
     private static GameObjectCollection _sprites = new();
 
     private static IGameObject _focusedObject;
+    internal static Player Player;
+    private static InventoryHandler _invHandler;
 
+    public static void AddSprite(IGameObject sprite, int mapX, int mapY)
+    {
+        sprite.GridPosX = mapX;
+        sprite.GridPosY = mapY;
+        _sprites.Add(sprite);
+    }
 
     public static void Main(string[] args)
     {
@@ -48,11 +68,15 @@ internal static class Program
             GridPosX = 10,
             GridPosY = 10
         };
-
+        _focusedObject = player;
+        Player = player;
         AddDemoItems();
+        _invHandler = new InventoryHandler(player)
+        {
+            Player = player
+        };
 
         _sprites.Add(player);
-        _focusedObject = player;
 
         App.Run();
     }
@@ -66,6 +90,21 @@ internal static class Program
     }
 
     private static void RenderHandler(RenderArgs args)
+    {
+        switch (State.ActiveFocus)
+        {
+            case State.UiFocusE.Game:
+                RenderGame(args);
+                break;
+            case State.UiFocusE.Inventory:
+                _invHandler.Render(args);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private static void RenderGame(RenderArgs args)
     {
         _camera.x = _focusedObject.PosXPx + TileSizePx / 2 - ScreenWidthPx / 2;
         _camera.y = _focusedObject.PosYPx + TileSizePx / 2 - ScreenHeightPx / 2;
@@ -102,21 +141,39 @@ internal static class Program
 
     private static void EventHandler(SDL_Event e)
     {
+        switch (State.ActiveFocus)
+        {
+            case State.UiFocusE.Game:
+                GameEventHandler(e);
+                break;
+            case State.UiFocusE.Inventory:
+                _invHandler.HandleEvent(e);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private static void GameEventHandler(SDL_Event e)
+    {
         if (e.type == SDL_EventType.SDL_KEYDOWN)
         {
             switch (e.key.keysym.sym)
             {
                 case SDL_Keycode.SDLK_UP:
-                    _focusedObject.GridPosY -= 1;
+                    Player.GridPosY -= 1;
                     break;
                 case SDL_Keycode.SDLK_DOWN:
-                    _focusedObject.GridPosY += 1;
+                    Player.GridPosY += 1;
                     break;
                 case SDL_Keycode.SDLK_LEFT:
-                    _focusedObject.GridPosX -= 1;
+                    Player.GridPosX -= 1;
                     break;
                 case SDL_Keycode.SDLK_RIGHT:
-                    _focusedObject.GridPosX += 1;
+                    Player.GridPosX += 1;
+                    break;
+                case SDL_Keycode.SDLK_i:
+                    State.ActiveFocus = State.UiFocusE.Inventory;
                     break;
             }
         }
@@ -155,12 +212,23 @@ internal static class Program
             GridPosY = 6
         };
 
+        Stick stick = new()
+        {
+            GridPosX = 6,
+            GridPosY = 6
+        };
+
+        Player.AddItemToInventory(new Stick());
+        Player.AddItemToInventory(new Dagger());
+        Player.AddItemToInventory(new Ranch());
+
 
         _sprites.Add(pot);
         _sprites.Add(torch);
         _sprites.Add(slime);
         _sprites.Add(zombie);
         _sprites.Add(chest);
+        _sprites.Add(stick);
 
         for (int i = 0; i < 5; i++)
         {

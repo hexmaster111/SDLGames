@@ -1,10 +1,15 @@
-﻿using Inferno.GameFramework;
+﻿using Inferno.GameSprites.Items;
 
 namespace Inferno.GameSprites;
 
 public class Player(string name) : GameObject<TextureWrapper>(Textures.Player)
 {
     public string Name { get; set; } = name;
-    public PlayerInventory PlayerInventory { get; set; } = new(10);
-    public PlayerStats Stats { get; set; } = new();
+    public readonly List<Item> Inventory = new();
+
+    public void AddItemToInventory(Item item)
+    {
+        item.IsInInventory = true;
+        Inventory.Add(item);
+    }
 }

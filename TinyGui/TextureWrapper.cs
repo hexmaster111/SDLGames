@@ -4,7 +4,7 @@ using static SDL2.SDL;
 
 namespace TinyGui;
 
-public class TextureWrapper
+internal class TextureWrapper
 {
     public int FontWidth { get; private set; }
     public int FontHeight { get; private set; }
