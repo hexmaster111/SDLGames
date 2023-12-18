@@ -122,6 +122,8 @@ internal class InventoryHandler
             default:
                 throw new ArgumentOutOfRangeException();
         }
+
+        _activeFocus = UiFocusE.ItemsList;
     }
 
     private void HandleItemSelectedMenu(SDL_Event e)

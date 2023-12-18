@@ -23,6 +23,6 @@ public abstract class Item(TextureWrapper texture) : GameObject<TextureWrapper>(
     {
         player.Inventory.Remove(this);
         IsInInventory = false;
-        Program.AddSprite(this, player.GridPosX, player.GridPosY);
+        Program.AddWorldSprite(this, player.GridPosX, player.GridPosY);
     }
 }

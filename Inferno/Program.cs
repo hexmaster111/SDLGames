@@ -17,6 +17,7 @@ internal static class State
     {
         Game,
         Inventory,
+        Grab
     }
 }
 
@@ -44,8 +45,9 @@ internal static class Program
     private static IGameObject _focusedObject;
     internal static Player Player;
     private static InventoryHandler _invHandler;
+    private static ItemPickupHandler _itemPickupHandler;
 
-    public static void AddSprite(IGameObject sprite, int mapX, int mapY)
+    public static void AddWorldSprite(IGameObject sprite, int mapX, int mapY)
     {
         sprite.GridPosX = mapX;
         sprite.GridPosY = mapY;
@@ -76,6 +78,8 @@ internal static class Program
             Player = player
         };
 
+        _itemPickupHandler = new ItemPickupHandler();
+
         _sprites.Add(player);
 
         App.Run();
@@ -98,6 +102,10 @@ internal static class Program
                 break;
             case State.UiFocusE.Inventory:
                 _invHandler.Render(args);
+                break;
+            case State.UiFocusE.Grab:
+                RenderGame(args);
+                _itemPickupHandler.Render(args);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -128,7 +136,10 @@ internal static class Program
             Children =
             {
                 new TextElement($"@ x: {_focusedObject.GridPosX} y:{_focusedObject.GridPosY}"),
-                new TextElement($"CAM x: {_camera.x} y:{_camera.y} w:{_camera.w} h:{_camera.h}")
+                new TextElement($"CAM x: {_camera.x} y:{_camera.y} w:{_camera.w} h:{_camera.h}"),
+                new TextElement($"FPS: {args.Fps}" + $" UPS: {args.Ups}"),
+                new TextElement($"SPRITES: {_sprites.Count()}"),
+                new TextElement($"FOCUS: {State.ActiveFocus}"),
             }
         };
 
@@ -149,6 +160,11 @@ internal static class Program
             case State.UiFocusE.Inventory:
                 _invHandler.HandleEvent(e);
                 break;
+            case State.UiFocusE.Grab:
+                _itemPickupHandler.HandleEvent(e);
+                break;
+
+
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -174,6 +190,11 @@ internal static class Program
                     break;
                 case SDL_Keycode.SDLK_i:
                     State.ActiveFocus = State.UiFocusE.Inventory;
+                    break;
+
+                case SDL_Keycode.SDLK_g:
+                    State.ActiveFocus = State.UiFocusE.Grab;
+                    _itemPickupHandler.Pickup(_sprites.GetItemsAt(Player.GridPosX, Player.GridPosY));
                     break;
             }
         }
@@ -245,5 +266,76 @@ internal static class Program
             GridPosX = 20,
             GridPosY = 21
         });
+    }
+
+    public static void RemoveWordSprite(Item item)
+    {
+        _sprites.Remove(item);
+    }
+}
+
+internal class ItemPickupHandler
+{
+    private StackPanel<Item> _grabItemsSp;
+
+
+    public void Render(RenderArgs args)
+    {
+        _grabItemsSp.UpdateChildren();
+        _grabItemsSp.Measure();
+        _grabItemsSp.Render();
+    }
+
+    public void HandleEvent(SDL_Event e)
+    {
+        if (e.type == SDL_EventType.SDL_KEYDOWN)
+        {
+            switch (e.key.keysym.sym)
+            {
+                case SDL_Keycode.SDLK_ESCAPE:
+                    State.ActiveFocus = State.UiFocusE.Game;
+                    break;
+
+                case SDL_Keycode.SDLK_UP:
+                    _grabItemsSp.SelectedIndex--;
+                    break;
+                case SDL_Keycode.SDLK_DOWN:
+                    _grabItemsSp.SelectedIndex++;
+                    break;
+
+                case SDL_Keycode.SDLK_RETURN:
+                    var item = _grabItemsSp.SelectedValue;
+                    item.IsInInventory = true;
+                    Program.Player.AddItemToInventory(item);
+                    Program.RemoveWordSprite(item);
+                    State.ActiveFocus = State.UiFocusE.Game;
+                    break;
+            }
+        }
+    }
+
+    public void Pickup(IEnumerable<Item> objectsAtTile)
+    {
+        var atTile = objectsAtTile as Item[] ?? objectsAtTile.ToArray();
+        if (!atTile.Any())
+        {
+            Console.WriteLine("Hmm, nothing to pickup here");
+            State.ActiveFocus = State.UiFocusE.Game;
+            return;
+        }
+
+        var player = Program.Player;
+
+
+        _grabItemsSp = new StackPanel<Item>(() => atTile, item => new TextElement(item.Name))
+        {
+            EnableSelection = true,
+            FillColor = SdlColors.Black
+        };
+
+        _grabItemsSp.Measure();
+
+        _grabItemsSp.Y = Program.ScreenHeightPx / 2 - _grabItemsSp.Height / 2;
+        _grabItemsSp.X = Program.ScreenWidthPx / 2 - _grabItemsSp.Width / 2;
     }
 }

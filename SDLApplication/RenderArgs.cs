@@ -9,11 +9,12 @@ public struct RenderArgs
     public IntPtr RendererPtr;
     public IntPtr FontPtr;
     public int Fps;
+    public int Ups;
     public double DeltaTime;
     public int ScreenWidth_Px;
     public int ScreenHeight_px;
 
-    public RenderArgs(IntPtr windowPtr, nint rendererPtr, nint fontPtr, int fps, double deltaTime, int width_px, int height_px)
+    public RenderArgs(IntPtr windowPtr, nint rendererPtr, nint fontPtr, int fps,int ups, double deltaTime, int width_px, int height_px)
     {
         RendererPtr = rendererPtr;
         FontPtr = fontPtr;
@@ -22,7 +23,9 @@ public struct RenderArgs
         WindowPtr = windowPtr;
         ScreenWidth_Px = width_px;
         ScreenHeight_px = height_px;
+        Ups = ups;
     }
+
 
     public void DrawRect(SDL_Rect sdlRect) => SDL_RenderDrawRect(RendererPtr, ref sdlRect);
 

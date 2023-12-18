@@ -25,6 +25,8 @@ public class StackPanel<TValue> : StackPanel
         }
     }
 
+    public SDL_Color FillColor { get; set; }
+
 
     public void UpdateChildren()
     {
@@ -38,6 +40,23 @@ public class StackPanel<TValue> : StackPanel
     public override void Render()
     {
         if (!IsVisible) return;
+        if (FillColor.a > 0)
+        {
+            var bgRect = new SDL_Rect()
+            {
+                x = X,
+                y = Y,
+                w = Width,
+                h = Height,
+            };
+
+            SDL_SetRenderDrawColor(TinyGuiShared.RendererPtr,
+                FillColor.r, FillColor.g,
+                FillColor.b, FillColor.a);
+
+            SDL_RenderFillRect(TinyGuiShared.RendererPtr, ref bgRect);
+        }
+
         base.Render();
     }
 }
