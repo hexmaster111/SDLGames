@@ -15,5 +15,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TinyGui\TinyGui.csproj" />
+    </ItemGroup>
     
 </Project>

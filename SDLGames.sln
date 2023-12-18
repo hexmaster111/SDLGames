@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VectorTd", "VectorTd\Vector
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno", "Inferno\Inferno.csproj", "{BA57540B-AE08-45F1-9AEF-785215AAF0A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyGui", "TinyGui\TinyGui.csproj", "{19DCDD27-36B3-4E1D-AC91-0DF52D033770}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,5 +28,9 @@ Global
 		{BA57540B-AE08-45F1-9AEF-785215AAF0A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA57540B-AE08-45F1-9AEF-785215AAF0A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA57540B-AE08-45F1-9AEF-785215AAF0A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19DCDD27-36B3-4E1D-AC91-0DF52D033770}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19DCDD27-36B3-4E1D-AC91-0DF52D033770}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19DCDD27-36B3-4E1D-AC91-0DF52D033770}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19DCDD27-36B3-4E1D-AC91-0DF52D033770}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -46,6 +46,7 @@ public class SdlApp
         _updateHandler = updateHandler;
         _targetUpdatesPerSec = targetUpdatesPerSec;
         if (!SetupSdl()) throw new Exception("Failed to setup SDL");
+        TinyGui.TinyGuiShared.Init(RendererPtr);
     }
 
 
@@ -74,6 +75,7 @@ public class SdlApp
                 RenderFps();
                 frameCount++;
                 Render(deltaTime);
+                lastRender = currentTime;
             }
 
             if (oneSecTmr.Evaluate(currentTime))
@@ -121,11 +123,13 @@ public class SdlApp
     {
         SDL.SDL_SetRenderDrawColor(RendererPtr, 0x10, 0x10, 0x00, 0xFF);
         SDL.SDL_RenderClear(RendererPtr);
-        _renderHandler?.Invoke(new RenderArgs(WindowPtr, RendererPtr, FontPtr, frameCount, deltaTime, ScreenWidth,
+        _renderHandler?.Invoke(new RenderArgs(WindowPtr, RendererPtr, FontPtr, Fps, deltaTime, ScreenWidth,
             ScreenHeight));
         RenderFps();
         SDL.SDL_RenderPresent(RendererPtr);
     }
+
+    public int Fps { get;private set; }
 
     private int[] _fpsHistory = new int[10]; //Seconds of average
     private int _fpsHistoryIndex = 0;
@@ -157,6 +161,7 @@ public class SdlApp
     {
         var avgFps = _fpsHistory.Average();
         var avgUps = _upsHistory.Average();
+        Fps = (int)avgFps;
 
         var fpsText = $"FPS: {avgFps:00} UPS: {avgUps:00}";
         var FPSSurface = SDL2.SDL_ttf.TTF_RenderText_Solid(FontPtr, fpsText,
