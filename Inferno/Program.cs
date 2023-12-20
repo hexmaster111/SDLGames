@@ -30,8 +30,8 @@ internal static class Program
 
     internal const int TargetFps = 20;
 
-    internal const int ScreenWidthPx = 1000;
-    internal const int ScreenHeightPx = 800;
+    internal const int ScreenWidthPx = 800;
+    internal const int ScreenHeightPx = 600;
 
     internal const int TileSizePx = 32;
 
