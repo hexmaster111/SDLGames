@@ -28,7 +28,7 @@ public class Button : UiElement
 
     public override void Measure()
     {
-        _labelElement.Value = Label;
+        _labelElement.Text = Label;
         _labelElement.Measure();
         Width = _labelElement.Width;
         Height = _labelElement.Height;
@@ -37,15 +37,15 @@ public class Button : UiElement
 
 public class TextElement : UiElement
 {
-    public string Value { get; set; }
+    public string Text { get; set; }
 
 
     private readonly FontTextureWrapper _texture = TinyGuiShared.TextTexture;
     private readonly int _fontSize = TinyGuiShared.TextTexture.FontWidth;
 
-    public TextElement(string value)
+    public TextElement(string text)
     {
-        Value = value;
+        Text = text;
     }
 
 
@@ -60,7 +60,7 @@ public class TextElement : UiElement
         int y = Y;
         int xStart = x;
 
-        foreach (var ch in Value)
+        foreach (var ch in Text)
         {
             int state = ch;
             if (ch == '\n')
@@ -111,7 +111,7 @@ public class TextElement : UiElement
         var height = _fontSize;
         int maxWidth = int.MinValue;
 
-        foreach (var ch in Value)
+        foreach (var ch in Text)
         {
             if (ch == '\n') newLine();
 

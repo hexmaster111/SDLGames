@@ -13,6 +13,7 @@ public class TextureWrapper
     public TextureWrapper(string path)
     {
         LoadFromPath(path);
+        Textures.ReloadFromDiskEvent += () => LoadFromPath(path);
     }
 
     // For anamated textures
@@ -21,6 +22,13 @@ public class TextureWrapper
         LoadFromPath(path);
         Width = width;
         Height = height;
+
+        Textures.ReloadFromDiskEvent += () =>
+        {
+            LoadFromPath(path);
+            Width = width;
+            Height = height;
+        };
     }
 
     public void LoadFromPath(string path)

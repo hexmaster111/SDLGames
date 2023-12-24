@@ -51,13 +51,10 @@ public static class Program
 
 internal class SlotWheel
 {
-    private readonly TextureWrapper[] _textures;
-
-
     public SlotWheel(int x, int y, int width, int height)
     {
         SlotWindowRect = new SDL_Rect { x = x, y = y, w = width, h = height };
-        _textures = new[]
+        var textures = new[]
         {
             Textures.Seven,
             Textures.Bar,
@@ -68,13 +65,16 @@ internal class SlotWheel
             Textures.Orange,
             Textures.BarBarBar,
         };
+        
+        
+        
+        IsSpinning = true;
     }
 
 
     public SDL_Rect SlotWindowRect;
     public bool IsSpinning;
-    public float CurrentState; // 0.0f - 1.0f => floating between all textures
-    
+
     public void Render(RenderArgs args)
     {
     }

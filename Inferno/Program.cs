@@ -2,6 +2,7 @@
 
 using Inferno.GameSprites;
 using Inferno.GameSprites.Items;
+using Inferno.MapGeneration;
 using SDLApplication;
 using TinyGui;
 using TinyGui.UiElements;
@@ -11,10 +12,11 @@ namespace Inferno;
 
 internal static class State
 {
-    public static UiFocusE ActiveFocus = UiFocusE.Game;
+    public static UiFocusE ActiveFocus = UiFocusE.MapGenerator;
 
     public enum UiFocusE
     {
+        MapGenerator,
         Game,
         Inventory,
         Grab,
@@ -52,6 +54,7 @@ internal static class Program
     private static LookBoxHandler _lookBoxHandler;
     private static ItemOpenCloseMenuHandler _itemOpenCloseMenuHandler;
     private static ItemOpenCloseMenuHandler _itemCloseMenuHandler;
+    private static MapGenerator _mapGenerator;
 
     public static void AddWorldSprite(IGameObject sprite, int mapX, int mapY)
     {
@@ -66,7 +69,7 @@ internal static class Program
             targetFps: TargetFps,
             width: ScreenWidthPx,
             height: ScreenHeightPx,
-            targetUpdatesPerSec: TargetFps);
+            targetUpdatesPerSec: 100);
 
 
         _camera = new SDL_Rect { x = 0, y = 0, w = ScreenWidthPx, h = ScreenHeightPx };
@@ -79,6 +82,7 @@ internal static class Program
         FocusedObject = player;
         Player = player;
         AddDemoItems();
+
         _invHandler = new InventoryHandler(player)
         {
             Player = player
@@ -92,7 +96,7 @@ internal static class Program
         _lookBoxHandler = new LookBoxHandler(lb);
         _itemOpenCloseMenuHandler = new ItemOpenCloseMenuHandler();
         _itemCloseMenuHandler = new ItemOpenCloseMenuHandler();
-
+        _mapGenerator = new MapGenerator();
         _sprites.Add(player);
         _sprites.Add(lb);
 
@@ -101,6 +105,12 @@ internal static class Program
 
     private static void UpdateHandler(TimeSpan _, long now)
     {
+        if (State.ActiveFocus == State.UiFocusE.MapGenerator)
+        {
+            _mapGenerator.Update(now);
+            return;
+        }
+
         foreach (var sprite in _sprites)
         {
             sprite.Update(now);
@@ -133,15 +143,27 @@ internal static class Program
                 RenderGame(args);
                 _itemCloseMenuHandler.Render(args);
                 break;
-
-
+            case State.UiFocusE.MapGenerator:
+                _mapGenerator.Render(args);
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
 
+    /// <summary>
+    ///     Main Application Event Handler
+    /// </summary>
     private static void EventHandler(SDL_Event e)
     {
+        {
+            //dev stuff
+            //reload textures hotkey
+            if (e.type == SDL_EventType.SDL_KEYDOWN && e.key.keysym.sym == SDL_Keycode.SDLK_KP_MINUS)
+                Textures.ReloadFromDisk();
+        }
+
+
         switch (State.ActiveFocus)
         {
             case State.UiFocusE.Game:
@@ -161,6 +183,9 @@ internal static class Program
                 break;
             case State.UiFocusE.CloseMenu:
                 _itemCloseMenuHandler.HandleEvent(e);
+                break;
+            case State.UiFocusE.MapGenerator:
+                //The map generator has no user input
                 break;
 
             default:
@@ -294,48 +319,14 @@ internal static class Program
 
     public static void AddDemoItems()
     {
-        Pot pot = new()
-        {
-            GridPosX = 15,
-            GridPosY = 15
-        };
-
-        Torch torch = new()
-        {
-            GridPosX = 5,
-            GridPosY = 5
-        };
-
-        Slime slime = new()
-        {
-            GridPosX = 3,
-            GridPosY = 3
-        };
-
-        Zombie zombie = new()
-        {
-            GridPosX = 4,
-            GridPosY = 3
-        };
-
-        ContainerChestWood chest = new()
-        {
-            GridPosX = 5,
-            GridPosY = 6
-        };
-
-        Stick stick = new()
-        {
-            GridPosX = 6,
-            GridPosY = 6
-        };
-
-        Player.AddItemToInventory(new LesserHealingPotion());
-        Player.AddItemToInventory(new LesserManaPotion());
-        Player.AddItemToInventory(new Stick());
-        Player.AddItemToInventory(new Dagger());
-        Player.AddItemToInventory(new Ranch());
-
+        Pot pot = new() { GridPosX = 15, GridPosY = 15 };
+        Torch torch = new() { GridPosX = 5, GridPosY = 5 };
+        Slime slime = new() { GridPosX = 3, GridPosY = 3 };
+        Zombie zombie = new() { GridPosX = 4, GridPosY = 3 };
+        ContainerChestWood chest = new() { GridPosX = 5, GridPosY = 6 };
+        Stick stick = new() { GridPosX = 6, GridPosY = 6 };
+        PathGravel pg = new() { GridPosX = 7, GridPosY = 3, };
+        WallWoodenFence wallWoodenFence = new() { GridPosX = 8, GridPosY = 4, };
 
         _sprites.Add(pot);
         _sprites.Add(torch);
@@ -343,7 +334,14 @@ internal static class Program
         _sprites.Add(zombie);
         _sprites.Add(chest);
         _sprites.Add(stick);
+        _sprites.Add(pg);
+        _sprites.Add(wallWoodenFence);
 
+        Player.AddItemToInventory(new LesserHealingPotion());
+        Player.AddItemToInventory(new LesserManaPotion());
+        Player.AddItemToInventory(new Stick());
+        Player.AddItemToInventory(new Dagger());
+        Player.AddItemToInventory(new Ranch());
 
         for (int i = 0; i < 5; i++)
         {
@@ -355,22 +353,9 @@ internal static class Program
         }
 
 
-        _sprites.Add(new WallStoneDoor()
-        {
-            GridPosX = 20,
-            GridPosY = 21
-        });
-
-        _sprites.Add(new WallStoneDoor()
-        {
-            GridPosX = 20,
-            GridPosY = 22
-        });
-        _sprites.Add(new WallStoneDoor()
-        {
-            GridPosX = 18,
-            GridPosY = 22
-        });
+        _sprites.Add(new WallStoneDoor() { GridPosX = 20, GridPosY = 21 });
+        _sprites.Add(new WallStoneDoor() { GridPosX = 20, GridPosY = 22 });
+        _sprites.Add(new WallStoneDoor() { GridPosX = 18, GridPosY = 22 });
     }
 
     public static void RemoveWordSprite(Item item)
@@ -417,9 +402,11 @@ internal class ItemOpenCloseMenuHandler
     }
 
 
-    private string GetDirectionArrow(IGameObject player, IGameObject item) => player.GridPosX == item.GridPosX ? 
-            player.GridPosY > item.GridPosY ? "↑" : "↓" :
-            player.GridPosX > item.GridPosX ? "←" : "→";
+    private string GetDirectionArrow(IGameObject player, IGameObject item) => player.GridPosX == item.GridPosX
+        ? player.GridPosY > item.GridPosY ? "↑" : "↓"
+        : player.GridPosX > item.GridPosX
+            ? "←"
+            : "→";
 
     public void HandleEvent(SDL_Event e)
     {

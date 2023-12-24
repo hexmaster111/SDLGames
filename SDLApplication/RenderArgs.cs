@@ -71,6 +71,7 @@ public struct RenderArgs
             SDL_RenderDrawLine(RendererPtr, x, y + i, (int)x2, (int)y2 + i);
         }
     }
+
 }
 
 public static class Renderer
