@@ -8,6 +8,8 @@ internal interface IMapGenCore
     public int[,] CurrentMap { get; }
     public int NextEvalPtX { get; }
     public int NextEvalPtY { get; }
+    
+    public string GetDebugString();
 
     public bool TakeGenerationStep(); //returns true if generation is complete
 }
