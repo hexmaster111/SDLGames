@@ -55,7 +55,12 @@ public class TextureWrapper
 
     public virtual void Render(int x, int y)
     {
-        var rq = new SDL_Rect { x = x, y = y, w = Width, h = Height };
+        var rq = new SDL_Rect
+        {
+            x = x, y = y,
+            w = OutputWidth ?? Width,
+            h = OutputHeight ?? Height
+        };
         var srcRq = new SDL_Rect { x = 0, y = 0, w = Width, h = Height };
         SDL_RenderCopy(Program.App.RendererPtr, MTexture, ref srcRq, ref rq);
     }
@@ -70,6 +75,9 @@ public class TextureWrapper
             SDL_DestroyTexture(MTexture);
         }
     }
+
+    public int? OutputWidth { get; set; } = null;
+    public int? OutputHeight { get; set; } = null;
 }
 
 public class StatefulAnimatedTextureWrapper : TextureWrapper
@@ -114,7 +122,7 @@ public class StatefulAnimatedTextureWrapper : TextureWrapper
 
     public override void Render(int x, int y)
     {
-        var rq = new SDL_Rect { x = x, y = y, w = Width, h = Height };
+        var rq = new SDL_Rect { x = x, y = y, w = OutputWidth ?? Width, h = OutputHeight ?? Height };
         SDL_RenderCopy(Program.App.RendererPtr, MTexture, ref _srcRect, ref rq);
     }
 }

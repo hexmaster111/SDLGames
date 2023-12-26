@@ -8,7 +8,6 @@ public class SdlApp
 {
     private IntPtr WindowPtr = IntPtr.Zero;
     public IntPtr RendererPtr { get; private set; } = IntPtr.Zero;
-    private IntPtr FontPtr = IntPtr.Zero;
 
     public int ScreenWidth = 320;
     public int ScreenHeight = 240;
@@ -98,8 +97,6 @@ public class SdlApp
     {
         SDL.SDL_DestroyRenderer(RendererPtr);
         SDL.SDL_DestroyWindow(WindowPtr);
-        SDL_ttf.TTF_CloseFont(FontPtr);
-        SDL_ttf.TTF_Quit();
         SDL.SDL_Quit();
     }
 
@@ -123,14 +120,13 @@ public class SdlApp
     {
         SDL.SDL_SetRenderDrawColor(RendererPtr, 0x10, 0x10, 0x00, 0xFF);
         SDL.SDL_RenderClear(RendererPtr);
-        _renderHandler?.Invoke(new RenderArgs(WindowPtr, RendererPtr, FontPtr, Fps,Ups, deltaTime, ScreenWidth,
-            ScreenHeight));
+        _renderHandler?.Invoke(new RenderArgs(WindowPtr, RendererPtr, Fps, Ups, deltaTime, ScreenWidth, ScreenHeight));
         RenderFps();
         SDL.SDL_RenderPresent(RendererPtr);
     }
 
-    public int Fps { get;private set; }
-    public int Ups { get;private set; }
+    public int Fps { get; private set; }
+    public int Ups { get; private set; }
 
     private int[] _fpsHistory = new int[10]; //Seconds of average
     private int _fpsHistoryIndex = 0;
@@ -166,21 +162,7 @@ public class SdlApp
         Ups = (int)avgUps;
 
         var fpsText = $"FPS: {avgFps:00} UPS: {avgUps:00}";
-        var FPSSurface = SDL2.SDL_ttf.TTF_RenderText_Solid(FontPtr, fpsText,
-            new SDL.SDL_Color() { r = 0xFF, g = 0xFF, b = 0xFF, a = 0xFF });
-        var fpsTexture = SDL.SDL_CreateTextureFromSurface(RendererPtr, FPSSurface);
-        SDL.SDL_Rect fpsRect = new SDL.SDL_Rect()
-        {
-            x = 0,
-            y = 0,
-            w = 100,
-            h = 24 / 2
-        };
-
-
-        SDL.SDL_RenderCopy(RendererPtr, fpsTexture, IntPtr.Zero, ref fpsRect);
-        SDL.SDL_DestroyTexture(fpsTexture);
-        SDL.SDL_FreeSurface(FPSSurface);
+        //TODO: Render using ui elements, or move this out to a per app basis
     }
 
     private bool SetupSdl()
@@ -200,7 +182,7 @@ public class SdlApp
 
         var fullScreenFlag = fullScreenArgPresent
             ? SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN | SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN_DESKTOP
-            : SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN;
+            : SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN | SDL.SDL_WindowFlags.SDL_WINDOW_RESIZABLE;
 
 
         var res = SDL.SDL_CreateWindowAndRenderer(ScreenWidth, ScreenHeight,
@@ -218,22 +200,6 @@ public class SdlApp
 
         Debug.Assert(WindowPtr != IntPtr.Zero);
         Debug.Assert(RendererPtr != IntPtr.Zero);
-
-        if (SDL2.SDL_ttf.TTF_Init() < 0)
-        {
-            Console.WriteLine($"SDL_ttf could not initialize! SDL_ttf Error:" +
-                              $"{SDL2.SDL_ttf.TTF_GetError()}");
-            return false;
-        }
-
-        FontPtr = SDL2.SDL_ttf.TTF_OpenFont("Assets/TerminusTTF.ttf", 12);
-        if (FontPtr == IntPtr.Zero)
-        {
-            Console.WriteLine($"Failed to load font! SDL_ttf Error: {SDL2.SDL_ttf.TTF_GetError()}");
-            Console.WriteLine($"current dir {Environment.CurrentDirectory}");
-            Console.WriteLine($"Current directory: {Environment.CurrentDirectory}");
-            return false;
-        }
 
         return true;
     }

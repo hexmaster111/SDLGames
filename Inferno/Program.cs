@@ -69,7 +69,7 @@ internal static class Program
             targetFps: TargetFps,
             width: ScreenWidthPx,
             height: ScreenHeightPx,
-            targetUpdatesPerSec: 100);
+            targetUpdatesPerSec: 1000000);
 
 
         _camera = new SDL_Rect { x = 0, y = 0, w = ScreenWidthPx, h = ScreenHeightPx };
@@ -93,6 +93,7 @@ internal static class Program
         {
             Hide = true
         };
+
         _lookBoxHandler = new LookBoxHandler(lb);
         _itemOpenCloseMenuHandler = new ItemOpenCloseMenuHandler();
         _itemCloseMenuHandler = new ItemOpenCloseMenuHandler();

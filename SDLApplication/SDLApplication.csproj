@@ -9,13 +9,6 @@
     <ItemGroup>
         <PackageReference Include="Sayers.SDL2.Core" Version="1.0.11" />
     </ItemGroup>
-
-    <ItemGroup>
-      <None Update="Assets\TerminusTTF.ttf">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
     <ItemGroup>
       <ProjectReference Include="..\TinyGui\TinyGui.csproj" />
     </ItemGroup>
