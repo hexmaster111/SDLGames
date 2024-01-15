@@ -1,4 +1,5 @@
 using SDLApplication;
+using TinyGui;
 using VectorTd.Creeps;
 using VectorTd.Tiles;
 using VectorTd.Ui;
@@ -17,7 +18,7 @@ public class Game
 
     public GlobalState GlobalState = new();
     private State _state = new State(GridViewport);
-    private readonly InGameUi _inGameUi = new(SidebarViewport);
+    private readonly InGameUi _inGameUi;
     public readonly SdlApp App;
 
     //Create two viewports, one for the grid and one for the sidebar 
@@ -39,12 +40,14 @@ public class Game
 
     public Game(string mapPath)
     {
+        App = new SdlApp(EventHandler, RenderHandler, UpdateHandler, ScreenWidth, ScreenHeight);
+        TinyGuiShared.Init(App.RendererPtr);
+        _inGameUi = new(SidebarViewport); //TinyGui needs to be initialized before this
         var map = TileLoader.LoadVMap(mapPath);
         if (!string.IsNullOrEmpty(map.readErr)) throw new Exception(map.readErr);
         if (map.tiles == null) throw new Exception("Map is null");
         _state.Map = map.tiles;
         _state.SetWave(map.waves);
-        App = new SdlApp(EventHandler, RenderHandler, UpdateHandler, ScreenWidth, ScreenHeight);
     }
 
     private void UpdateHandler(TimeSpan deltaTime, long _)

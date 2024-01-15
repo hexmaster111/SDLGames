@@ -1,4 +1,5 @@
 ﻿using SDLApplication;
+using TinyGui.UiElements;
 using VectorTd.Towers;
 using static SDL2.SDL;
 
@@ -14,11 +15,20 @@ public class InGameUi
     private record TowerRenderInfo(string Name, int Cost, int Y);
 
     private TowerRenderInfo[] _towerRenderInfos;
-
+    
+    private Button _cancelButton = new Button("Cancel");
+    private Button _upgradeButton = new Button("Upgrade");
+    
     public InGameUi(SDL_Rect viewPort)
     {
         _viewPort = viewPort;
-        _towerRenderInfos = TowerFactory.RefrenceTowers.Select((t, i) => new TowerRenderInfo(t.Name, t.Cost, i * FontSpace + 20)).ToArray();
+        _towerRenderInfos = TowerFactory.RefrenceTowers
+            .Select((t, i) => new TowerRenderInfo(t.Name, t.Cost, i * FontSpace + 20))
+            .ToArray();
+        
+        _cancelButton.Measure();
+        _cancelButton.X = viewPort.w / 2 - _cancelButton.Width / 2;
+        _cancelButton.Y = viewPort.h / 4;
     }
 
 
@@ -40,7 +50,11 @@ public class InGameUi
             }
 
             var text = $"{tower.Name} - {tower.Cost}";
-            args.RenderText(text, 0, tower.Y, color, background);
+            var textElement = new TextElement(text);
+            textElement.Measure();
+            textElement.X = 0;
+            textElement.Y = tower.Y;
+            textElement.Render();
             args.SetDrawColor(SdlColors.White);
         }
     }
@@ -55,7 +69,7 @@ public class InGameUi
 
         if (GlobalState.IsPlacingTower)
         {
-            args.RenderText("Cancel", _viewPort.w / 2, _viewPort.h / 4, SdlColors.White, SdlColors.DarkRed);
+            _cancelButton.Render();
         }
     }
 
@@ -82,7 +96,5 @@ public class InGameUi
             GlobalState.PlacingTower = TowerFactory.RefrenceTowers.First(t => t.Name == tower.Name);
             Console.WriteLine($"Clicked InGameUi {x}, {y}");
         }
-
-
     }
 }
