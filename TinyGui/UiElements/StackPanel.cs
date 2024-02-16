@@ -70,7 +70,7 @@ public class StackPanel : UiElement
 
     private int _selectedIndex = 0;
 
-    //wrap around down and up
+    //wrap around down and up if you use ++ or -- on the selected index
     public int SelectedIndex
     {
         get => _selectedIndex;

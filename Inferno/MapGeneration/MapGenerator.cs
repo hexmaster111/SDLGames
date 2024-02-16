@@ -89,4 +89,20 @@ internal class MapGenerator
         _textElement.Text = $"seed:{_mapGenCore.Seed}\n" + _mapGenCore.GetDebugString();
         _textElement.Render();
     }
+
+    public void HandleEvent(SDL_Event sdlEvent)
+    {
+        if (sdlEvent.type == SDL_EventType.SDL_KEYDOWN)
+        {
+            var sym = sdlEvent.key.keysym.sym;
+            if (sym == SDL_Keycode.SDLK_ESCAPE)
+            {
+                State.ActiveFocus = State.UiFocusE.Game;
+            }
+            else if (sym == SDL_Keycode.SDLK_r)
+            {
+                NewMap();
+            }
+        }
+    }
 }

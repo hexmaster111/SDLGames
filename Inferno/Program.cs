@@ -12,7 +12,7 @@ namespace Inferno;
 
 internal static class State
 {
-    public static UiFocusE ActiveFocus = UiFocusE.MapGenerator;
+    public static UiFocusE ActiveFocus = UiFocusE.Game;
 
     public enum UiFocusE
     {
@@ -69,7 +69,7 @@ internal static class Program
             targetFps: TargetFps,
             width: ScreenWidthPx,
             height: ScreenHeightPx,
-            targetUpdatesPerSec: 1000000);
+            targetUpdatesPerSec: 20);
 
 
         _camera = new SDL_Rect { x = 0, y = 0, w = ScreenWidthPx, h = ScreenHeightPx };
@@ -186,7 +186,7 @@ internal static class Program
                 _itemCloseMenuHandler.HandleEvent(e);
                 break;
             case State.UiFocusE.MapGenerator:
-                //The map generator has no user input
+                _mapGenerator.HandleEvent(e);
                 break;
 
             default:
@@ -217,11 +217,13 @@ internal static class Program
         {
             Children =
             {
-                new TextElement($"@ x: {FocusedObject.GridPosX} y:{FocusedObject.GridPosY}"),
+                new TextElement($"@ x: {Player.GridPosX} y:{Player.GridPosY}"),
+                new TextElement($"GRID x: {FocusedObject.GridPosX} y:{FocusedObject.GridPosY}"),
                 new TextElement($"CAM x: {_camera.x} y:{_camera.y} w:{_camera.w} h:{_camera.h}"),
                 new TextElement($"FPS: {args.Fps}" + $" UPS: {args.Ups}"),
                 new TextElement($"SPRITES: {_sprites.Count()}"),
                 new TextElement($"FOCUS: {State.ActiveFocus}"),
+                new TextElement($"Focused item: {_sprites.GetObjectsAt(FocusedObject.GridPosX,FocusedObject.GridPosY).FirstOrDefault()?.ObjName}"),
             }
         };
 
