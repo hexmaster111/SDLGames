@@ -10,10 +10,12 @@ public interface IGameObject
     void Render(int camXPx, int camYPx);
     void Update(long now);
     Solidity Solidity { get; }
-    bool CanOpen { get; set; }
+    bool CanOpen { get; }
     bool CanClose { get; }
-    void Open();
-    void Close();
+    void Open(IGameObject opener);
+    void Close(IGameObject closer);
+
+    string Description { get; }
 }
 
 public enum Solidity
@@ -22,20 +24,44 @@ public enum Solidity
     Solid
 }
 
-public abstract class GameObject<T> : IGameObject
-    where T : TextureWrapper
+public abstract class GameObject<TTextureWrapper> : IGameObject
+    where TTextureWrapper : TextureWrapper
 {
-    internal GameObject(T texture, string objName)
+    internal GameObject(TTextureWrapper texture, string objName)
     {
         _texture = texture;
         ObjName = objName;
     }
 
-    internal readonly T _texture;
+    internal readonly TTextureWrapper _texture;
     public virtual string ObjName { get; set; }
-    public int PosXPx { get; set; }
-    public int PosYPx { get; set; }
-    public  Solidity Solidity { get; protected set; }
+
+    public event Action Moved;
+
+    private int _PosXPx;
+    private int _PosYPx;
+
+    public int PosXPx
+    {
+        get => _PosXPx;
+        set
+        {
+            _PosXPx = value;
+            OnMoved();
+        }
+    }
+
+    public int PosYPx
+    {
+        get => _PosYPx;
+        set
+        {
+            _PosYPx = value;
+            OnMoved();
+        }
+    }
+
+    public Solidity Solidity { get; protected set; }
 
     public virtual bool CanOpen { get; set; } = false;
 
@@ -64,7 +90,13 @@ public abstract class GameObject<T> : IGameObject
     {
     }
 
-    public virtual void Open() => throw new Exception("Cannot open this object");
-    public virtual void Close() => throw new Exception("Cannot close this object");
 
+    public virtual void Open(IGameObject closer) => throw new Exception("Cannot open this object");
+    public virtual void Close(IGameObject closer) => throw new Exception("Cannot close this object");
+    public virtual string Description => "??something??";
+
+    protected virtual void OnMoved()
+    {
+        Moved?.Invoke();
+    }
 }

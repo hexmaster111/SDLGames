@@ -2,7 +2,7 @@
 
 public class WallStoneDoor : GameObject<StatefulAnimatedTextureWrapper>
 {
-    public override void Open()
+    public override void Open(IGameObject closer)
     {
         _texture.State = 1;
         Solidity = Solidity.Passable;
@@ -10,7 +10,7 @@ public class WallStoneDoor : GameObject<StatefulAnimatedTextureWrapper>
         CanOpen = false;
     }
 
-    public sealed override void Close()
+    public sealed override void Close(IGameObject closer)
     {
         _texture.State = 0;
         Solidity = Solidity.Solid;
@@ -20,6 +20,6 @@ public class WallStoneDoor : GameObject<StatefulAnimatedTextureWrapper>
 
     public WallStoneDoor() : base(Textures.WallStoneDoor, "Door")
     {
-        Close();
+        Close(null!);
     }
 }

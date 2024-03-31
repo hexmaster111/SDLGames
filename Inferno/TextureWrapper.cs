@@ -78,6 +78,8 @@ public class TextureWrapper
 
     public int? OutputWidth { get; set; } = null;
     public int? OutputHeight { get; set; } = null;
+
+    
 }
 
 public class StatefulAnimatedTextureWrapper : TextureWrapper

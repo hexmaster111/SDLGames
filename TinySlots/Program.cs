@@ -48,6 +48,7 @@ public static class Program
 
     private static void EventHandler(SDL_Event e)
     {
+        
     }
 }
 
@@ -127,7 +128,5 @@ internal class SymbolTexture
         }
 
         SDL_SetRenderTarget(Program.App.RendererPtr, IntPtr.Zero);
-        //Debug render the texture to a file name from first 3 symbols
-        SDL_SaveBMP(TexturePtr, $"test.bmp");
     }
 }

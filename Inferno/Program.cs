@@ -2,7 +2,6 @@
 
 using Inferno.GameSprites;
 using Inferno.GameSprites.Items;
-using Inferno.MapGeneration;
 using SDLApplication;
 using TinyGui;
 using TinyGui.UiElements;
@@ -16,7 +15,6 @@ internal static class State
 
     public enum UiFocusE
     {
-        MapGenerator,
         Game,
         Inventory,
         Grab,
@@ -54,7 +52,6 @@ internal static class Program
     private static LookBoxHandler _lookBoxHandler;
     private static ItemOpenCloseMenuHandler _itemOpenCloseMenuHandler;
     private static ItemOpenCloseMenuHandler _itemCloseMenuHandler;
-    private static MapGenerator _mapGenerator;
 
     public static void AddWorldSprite(IGameObject sprite, int mapX, int mapY)
     {
@@ -97,7 +94,6 @@ internal static class Program
         _lookBoxHandler = new LookBoxHandler(lb);
         _itemOpenCloseMenuHandler = new ItemOpenCloseMenuHandler();
         _itemCloseMenuHandler = new ItemOpenCloseMenuHandler();
-        _mapGenerator = new MapGenerator();
         _sprites.Add(player);
         _sprites.Add(lb);
 
@@ -106,12 +102,6 @@ internal static class Program
 
     private static void UpdateHandler(TimeSpan _, long now)
     {
-        if (State.ActiveFocus == State.UiFocusE.MapGenerator)
-        {
-            _mapGenerator.Update(now);
-            return;
-        }
-
         foreach (var sprite in _sprites)
         {
             sprite.Update(now);
@@ -144,9 +134,7 @@ internal static class Program
                 RenderGame(args);
                 _itemCloseMenuHandler.Render(args);
                 break;
-            case State.UiFocusE.MapGenerator:
-                _mapGenerator.Render(args);
-                break;
+
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -185,9 +173,7 @@ internal static class Program
             case State.UiFocusE.CloseMenu:
                 _itemCloseMenuHandler.HandleEvent(e);
                 break;
-            case State.UiFocusE.MapGenerator:
-                _mapGenerator.HandleEvent(e);
-                break;
+
 
             default:
                 throw new ArgumentOutOfRangeException();
@@ -220,10 +206,11 @@ internal static class Program
                 new TextElement($"@ x: {Player.GridPosX} y:{Player.GridPosY}"),
                 new TextElement($"GRID x: {FocusedObject.GridPosX} y:{FocusedObject.GridPosY}"),
                 new TextElement($"CAM x: {_camera.x} y:{_camera.y} w:{_camera.w} h:{_camera.h}"),
-                new TextElement($"FPS: {args.Fps}" + $" UPS: {args.Ups}"),
+                new TextElement($"FPS: {args.Fps}" + $" UPS: {args.Ups}" + $" TB: {args.Tb}ms"),
                 new TextElement($"SPRITES: {_sprites.Count()}"),
                 new TextElement($"FOCUS: {State.ActiveFocus}"),
-                new TextElement($"Focused item: {_sprites.GetObjectsAt(FocusedObject.GridPosX,FocusedObject.GridPosY).FirstOrDefault()?.ObjName}"),
+                new TextElement(
+                    $"Focused item: {_sprites.GetObjectsAt(FocusedObject.GridPosX, FocusedObject.GridPosY).FirstOrDefault()?.ObjName}"),
             }
         };
 
@@ -326,7 +313,23 @@ internal static class Program
         Torch torch = new() { GridPosX = 5, GridPosY = 5 };
         Slime slime = new() { GridPosX = 3, GridPosY = 3 };
         Zombie zombie = new() { GridPosX = 4, GridPosY = 3 };
-        ContainerChestWood chest = new() { GridPosX = 5, GridPosY = 6 };
+        ContainerChestWood chest = new()
+        {
+            GridPosX = 5, GridPosY = 6,
+            Items = new List<Item>()
+            {
+                new Dagger(), new Ranch(), new Stick(), new ShortSward()
+            }
+        };
+        ContainerChestWood chest2 = new()
+        {
+            GridPosX = 7, GridPosY = 6,
+            Items = new List<Item>()
+            {
+                new LesserManaPotion(), new LesserHealingPotion()
+            }
+        };
+
         Stick stick = new() { GridPosX = 6, GridPosY = 6 };
         PathGravel pg = new() { GridPosX = 7, GridPosY = 3, };
         WallWoodenFence wallWoodenFence = new() { GridPosX = 8, GridPosY = 4, };
@@ -336,6 +339,7 @@ internal static class Program
         _sprites.Add(slime);
         _sprites.Add(zombie);
         _sprites.Add(chest);
+        _sprites.Add(chest2);
         _sprites.Add(stick);
         _sprites.Add(pg);
         _sprites.Add(wallWoodenFence);
@@ -386,8 +390,8 @@ internal class ItemOpenCloseMenuHandler
 
         if (arr.Length == 1)
         {
-            if (_open) arr[0].Open();
-            else arr[0].Close();
+            if (_open) arr[0].Open(Program.Player);
+            else arr[0].Close(Program.Player);
             State.ActiveFocus = State.UiFocusE.Game;
             return;
         }
@@ -396,10 +400,12 @@ internal class ItemOpenCloseMenuHandler
         _itemsAround = arr;
 
         _sp = new StackPanel<IGameObject>(() => arr,
-            o => new TextElement(o.ObjName + " " + GetDirectionArrow(Program.Player, o)));
-        _sp.X = (int)(1 / 3f * Program.ScreenWidthPx);
-        _sp.Y = (int)(1 / 3f * Program.ScreenHeightPx);
-        _sp.EnableSelection = true;
+            o => new TextElement(o.ObjName + " " + GetDirectionArrow(Program.Player, o)))
+        {
+            X = (int)(1 / 3f * Program.ScreenWidthPx),
+            Y = (int)(1 / 3f * Program.ScreenHeightPx),
+            EnableSelection = true
+        };
         _sp.UpdateChildren();
         _sp.Measure();
     }
@@ -429,8 +435,8 @@ internal class ItemOpenCloseMenuHandler
                     break;
 
                 case SDL_Keycode.SDLK_RETURN:
-                    if (_open) _itemsAround[_sp.SelectedIndex].Open();
-                    else _itemsAround[_sp.SelectedIndex].Close();
+                    if (_open) _itemsAround[_sp.SelectedIndex].Open(Program.Player);
+                    else _itemsAround[_sp.SelectedIndex].Close(Program.Player);
                     State.ActiveFocus = State.UiFocusE.Game;
                     break;
             }

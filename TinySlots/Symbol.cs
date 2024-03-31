@@ -18,23 +18,20 @@ namespace TinySlots;
 public static class WheelSymbolList
 {
     //  *  wheel 1 : or gr ch 2b or  7 or  b or gr 3b gr ch or be  b gr or gr  b
-    public static readonly Symbol[] Wheel1 = new[]
-    {
+    public static readonly Symbol[] Wheel1 = {
         Symbol.Orange, Symbol.Grape, Symbol.Cherry, Symbol.TwoBar, Symbol.Orange, Symbol.Seven, Symbol.Orange,
         Symbol.Bar, Symbol.Orange, Symbol.Grape, Symbol.ThreeBar, Symbol.Grape, Symbol.Cherry, Symbol.Orange,
         Symbol.Bell, Symbol.Bar, Symbol.Grape, Symbol.Orange, Symbol.Grape, Symbol.Bar
     };
     // *  wheel 2 : or b  be ch 2b ch be ch gr be 2b ch  7 ch be 3b be ch 2b ch
-    public static readonly Symbol[] Wheel2 = new[]
-    {
+    public static readonly Symbol[] Wheel2 = {
         Symbol.Orange, Symbol.Bar, Symbol.Bell, Symbol.Cherry, Symbol.TwoBar, Symbol.Cherry, Symbol.Bell,
         Symbol.Cherry, Symbol.Grape, Symbol.Bell, Symbol.TwoBar, Symbol.Cherry, Symbol.Seven, Symbol.Cherry,
         Symbol.Bell, Symbol.ThreeBar, Symbol.Bell, Symbol.Cherry, Symbol.TwoBar, Symbol.Cherry
     };
     
     // *  wheel 3 : or gr be 3b or be or be or 2b gr be or gr or be or  b or  7
-    public static readonly Symbol[] Wheel3 = new[]
-    {
+    public static readonly Symbol[] Wheel3 = {
         Symbol.Orange, Symbol.Grape, Symbol.Bell, Symbol.ThreeBar, Symbol.Orange, Symbol.Bell, Symbol.Orange,
         Symbol.Bell, Symbol.Orange, Symbol.TwoBar, Symbol.Grape, Symbol.Bell, Symbol.Orange, Symbol.Grape,
         Symbol.Orange, Symbol.Bell, Symbol.Orange, Symbol.Bar, Symbol.Orange, Symbol.Seven

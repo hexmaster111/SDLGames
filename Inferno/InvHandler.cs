@@ -1,4 +1,5 @@
-﻿using Inferno.GameSprites;
+﻿using System.Diagnostics;
+using Inferno.GameSprites;
 using Inferno.GameSprites.Items;
 using SDLApplication;
 using TinyGui.UiElements;
@@ -6,11 +7,54 @@ using static SDL2.SDL;
 
 namespace Inferno;
 
+internal class ItemPreview : UiElement
+{
+    private Item? _selectedItem;
+    private TextureWrapper? _selectedItemTexture;
+
+    public override void Render()
+    {
+        if (_selectedItem == null || _selectedItemTexture == null) return;
+
+
+        _savedTextureOw = _selectedItem._texture.OutputWidth;
+        _savedTextureOh = _selectedItem._texture.OutputHeight;
+
+        _selectedItem._texture.OutputWidth = Width;
+        _selectedItem._texture.OutputHeight = Height;
+
+        _selectedItemTexture.Render(X, Y);
+
+
+        _selectedItem._texture.OutputWidth = _savedTextureOw;
+        _selectedItem._texture.OutputHeight = _savedTextureOh;
+    }
+
+    public override void Measure()
+    {
+    }
+
+    private bool _hasItemSaved = false;
+    private int? _savedTextureOw;
+    private int? _savedTextureOh;
+
+
+    public void SelectItem(Item newItem)
+    {
+        _selectedItem = newItem;
+
+        //its not using its texture rn... lets borrow it...
+        _selectedItemTexture = _selectedItem._texture;
+    }
+}
+
 internal class InventoryHandler
 {
     public Player Player { get; set; }
     private readonly StackPanel<Item> _itemListSp;
     private readonly StackPanel<InvItemMenuOptionsE> _invItemMenuSp;
+
+    private readonly ItemPreview _itemPreview;
 
     private enum InvItemMenuOptionsE
     {
@@ -51,6 +95,15 @@ internal class InventoryHandler
 
         _invItemMenuSp.UpdateChildren();
         _invItemMenuSp.Measure();
+
+        _itemPreview = new ItemPreview()
+        {
+            X = 10,
+            Y = 10,
+            Width = (Program.ScreenWidthPx / 8) - 20,
+            Height = (Program.ScreenHeightPx / 4) - 20,
+            IsVisible = true
+        };
     }
 
     private IEnumerable<InvItemMenuOptionsE> GetActionsAvailableForSelectedItem()
@@ -70,6 +123,7 @@ internal class InventoryHandler
     public void Render(RenderArgs args)
     {
         _itemListSp.Render();
+        _itemPreview.Render();
 
 
         if (_activeFocus == UiFocusE.ItemSelectedMenu)
@@ -84,6 +138,7 @@ internal class InventoryHandler
         _itemListSp.Measure();
         _invItemMenuSp.UpdateChildren();
         _invItemMenuSp.Measure();
+        SelectedItemChanged(Player.Inventory[_itemListSp.SelectedIndex]);
         switch (_activeFocus)
         {
             case UiFocusE.ItemsList:
@@ -154,6 +209,12 @@ internal class InventoryHandler
         }
     }
 
+
+    private void SelectedItemChanged(Item newItem)
+    {
+        _itemPreview.SelectItem(newItem);
+    }
+
     private void HandleItemsList(SDL_Event e)
     {
         switch (e.type)
@@ -163,9 +224,11 @@ internal class InventoryHandler
                 {
                     case SDL_Keycode.SDLK_UP:
                         _itemListSp.SelectedIndex--;
+                        SelectedItemChanged(Player.Inventory[_itemListSp.SelectedIndex]);
                         break;
                     case SDL_Keycode.SDLK_DOWN:
                         _itemListSp.SelectedIndex++;
+                        SelectedItemChanged(Player.Inventory[_itemListSp.SelectedIndex]);
                         break;
                     case SDL_Keycode.SDLK_RETURN:
                         _activeFocus = UiFocusE.ItemSelectedMenu;

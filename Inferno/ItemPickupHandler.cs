@@ -48,7 +48,7 @@ internal class ItemPickupHandler
     public void Pickup(IEnumerable<Item> objectsAtTile)
     {
         var atTile = objectsAtTile as Item[] ?? objectsAtTile.ToArray();
-        if (!atTile.Any())
+        if (atTile.Length == 0)
         {
             Console.WriteLine("Hmm, nothing to pickup here");
             State.ActiveFocus = State.UiFocusE.Game;

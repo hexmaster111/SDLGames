@@ -6,7 +6,9 @@ public class Torch : GameObject<StatefulAnimatedTextureWrapper>
 {
     private SimpleTimer _textureTimer = new(250);
 
-    public Torch() : base(Textures.Torch, "Torch")
+    public override string Description => "A warm glowing fire, that entrances you, as you watch it flicker";
+
+    public Torch() : base(Textures.Torch, nameof(Torch))
     {
         Solidity = Solidity.Passable;
     }

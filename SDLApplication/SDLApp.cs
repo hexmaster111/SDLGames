@@ -17,6 +17,7 @@ public class SdlApp
     private bool Running = true;
     private int frameCount = 0;
     private int updateCount = 0;
+    private long budegetVal = 0;
 
     private readonly EventHandler _eventHandler;
     private readonly RenderHandler _renderHandler;
@@ -81,12 +82,15 @@ public class SdlApp
             {
                 FpsSample();
                 UpsSample();
+                FrameBudgetHistorySample();
                 frameCount = 0;
                 updateCount = 0;
+                budegetVal = 0;
             }
 
             var minTime = Math.Min(updateTimer.SleepTimeMs, renderTimer.SleepTimeMs);
             if (0 > minTime) continue;
+            budegetVal = minTime;
             SDL.SDL_Delay((uint)minTime);
         }
 
@@ -120,19 +124,24 @@ public class SdlApp
     {
         SDL.SDL_SetRenderDrawColor(RendererPtr, 0x10, 0x10, 0x00, 0xFF);
         SDL.SDL_RenderClear(RendererPtr);
-        _renderHandler?.Invoke(new RenderArgs(WindowPtr, RendererPtr, Fps, Ups, deltaTime, ScreenWidth, ScreenHeight));
+        _renderHandler?.Invoke(new RenderArgs(WindowPtr, RendererPtr, Fps, Ups, TimeBudget, deltaTime, ScreenWidth,
+            ScreenHeight));
         RenderFps();
         SDL.SDL_RenderPresent(RendererPtr);
     }
 
     public int Fps { get; private set; }
     public int Ups { get; private set; }
+    public long TimeBudget { get; set; }
 
     private int[] _fpsHistory = new int[10]; //Seconds of average
     private int _fpsHistoryIndex = 0;
 
     private int[] _upsHistory = new int[10]; //Seconds of average
     private int _upsHistoryIndex = 0;
+
+    private long[] _frameBudgetHistory = new long[10]; //Seconds of average
+    private int _frameBudgetHistoryIndex = 0;
 
     private void FpsSample()
     {
@@ -154,16 +163,32 @@ public class SdlApp
         }
     }
 
+    // private int[] _frameBudgetHistory = new int[10]; //Seconds of average
+    // private int _frameBudgetHistoryIndex = 0;
+    private void FrameBudgetHistorySample()
+    {
+        _frameBudgetHistory[_frameBudgetHistoryIndex] = budegetVal;
+        _frameBudgetHistoryIndex++;
+        if (_frameBudgetHistoryIndex >= _frameBudgetHistory.Length)
+        {
+            _frameBudgetHistoryIndex = 0;
+        }
+    }
+
     private void RenderFps()
     {
         var avgFps = _fpsHistory.Average();
         var avgUps = _upsHistory.Average();
+        var avgTb = _frameBudgetHistory.Average();
         Fps = (int)avgFps;
         Ups = (int)avgUps;
+        TimeBudget = (long)avgTb;
+
 
         var fpsText = $"FPS: {avgFps:00} UPS: {avgUps:00}";
         //TODO: Render using ui elements, or move this out to a per app basis
     }
+
 
     private bool SetupSdl()
     {

@@ -9,11 +9,12 @@ public struct RenderArgs
     public IntPtr RendererPtr;
     public int Fps;
     public int Ups;
+    public long Tb;
     public double DeltaTime;
     public int ScreenWidth_Px;
     public int ScreenHeight_px;
 
-    public RenderArgs(IntPtr windowPtr, nint rendererPtr, int fps, int ups, double deltaTime, int width_px,
+    public RenderArgs(IntPtr windowPtr, nint rendererPtr, int fps, int ups, long tb, double deltaTime, int width_px,
         int height_px)
     {
         RendererPtr = rendererPtr;
@@ -23,6 +24,7 @@ public struct RenderArgs
         ScreenWidth_Px = width_px;
         ScreenHeight_px = height_px;
         Ups = ups;
+        Tb = tb;
     }
 
 
