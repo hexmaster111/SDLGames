@@ -30,7 +30,7 @@ internal static class Textures
     internal static TextureWrapper WallTrees => new("Assets/GFX/WALL_TREES.png");
     internal static TextureWrapper WallWoodenFence => new("Assets/GFX/WALL_WOODEN_FENCE.png");
     internal static TextureWrapper PathGravel => new("Assets/GFX/PATH_GRAVEL.png");
-
+    internal static StatefulAnimatedTextureWrapper TrapDoor => new("Assets/GFX/TRAP_DOOR.png", 32, 1);
 
     //Items!
 

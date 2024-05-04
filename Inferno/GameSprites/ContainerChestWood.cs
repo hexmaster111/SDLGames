@@ -19,7 +19,7 @@ public class ContainerChestWood() :
     {
         foreach (var i in Items)
         {
-            Program.AddWorldSprite(i, GridPosX, GridPosY);
+            Program.AddWorldSprite(i, X, Y);
         }
 
         Items.Clear();

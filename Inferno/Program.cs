@@ -9,21 +9,6 @@ using static SDL2.SDL;
 
 namespace Inferno;
 
-internal static class State
-{
-    public static UiFocusE ActiveFocus = UiFocusE.Game;
-
-    public enum UiFocusE
-    {
-        Game,
-        Inventory,
-        Grab,
-        LookBox,
-        OpenMenu,
-        CloseMenu
-    }
-}
-
 internal static class Program
 {
     internal static SdlApp App;
@@ -53,15 +38,9 @@ internal static class Program
     private static ItemOpenCloseMenuHandler _itemOpenCloseMenuHandler;
     private static ItemOpenCloseMenuHandler _itemCloseMenuHandler;
 
-    public static void AddWorldSprite(IGameObject sprite, int mapX, int mapY)
+    static Program()
     {
-        sprite.GridPosX = mapX;
-        sprite.GridPosY = mapY;
-        _sprites.Add(sprite);
-    }
-
-    public static void Main(string[] args)
-    {
+     
         App = new SdlApp(EventHandler, RenderHandler, UpdateHandler,
             targetFps: TargetFps,
             width: ScreenWidthPx,
@@ -73,8 +52,8 @@ internal static class Program
 
         Player player = new("D505")
         {
-            GridPosX = 10,
-            GridPosY = 10
+            X = 10,
+            Y = 10
         };
         FocusedObject = player;
         Player = player;
@@ -93,12 +72,19 @@ internal static class Program
 
         _lookBoxHandler = new LookBoxHandler(lb);
         _itemOpenCloseMenuHandler = new ItemOpenCloseMenuHandler();
-        _itemCloseMenuHandler = new ItemOpenCloseMenuHandler();
+        _itemCloseMenuHandler = new ItemOpenCloseMenuHandler(); 
         _sprites.Add(player);
         _sprites.Add(lb);
 
-        App.Run();
     }
+    public static void AddWorldSprite(IGameObject sprite, int mapX, int mapY)
+    {
+        sprite.X = mapX;
+        sprite.Y = mapY;
+        _sprites.Add(sprite);
+    }
+
+    public static void Main(string[] args) => App.Run();
 
     private static void UpdateHandler(TimeSpan _, long now)
     {
@@ -203,14 +189,14 @@ internal static class Program
         {
             Children =
             {
-                new TextElement($"@ x: {Player.GridPosX} y:{Player.GridPosY}"),
-                new TextElement($"GRID x: {FocusedObject.GridPosX} y:{FocusedObject.GridPosY}"),
+                new TextElement($"@ x: {Player.X} y:{Player.Y}"),
+                new TextElement($"GRID x: {FocusedObject.X} y:{FocusedObject.Y}"),
                 new TextElement($"CAM x: {_camera.x} y:{_camera.y} w:{_camera.w} h:{_camera.h}"),
                 new TextElement($"FPS: {args.Fps}" + $" UPS: {args.Ups}" + $" TB: {args.Tb}ms"),
                 new TextElement($"SPRITES: {_sprites.Count()}"),
                 new TextElement($"FOCUS: {State.ActiveFocus}"),
                 new TextElement(
-                    $"Focused item: {_sprites.GetObjectsAt(FocusedObject.GridPosX, FocusedObject.GridPosY).FirstOrDefault()?.ObjName}"),
+                    $"Focused item: {_sprites.GetObjectsAt(FocusedObject.X, FocusedObject.Y).FirstOrDefault()?.ObjName}"),
             }
         };
 
@@ -230,20 +216,20 @@ internal static class Program
             switch (e.key.keysym.sym)
             {
                 case SDL_Keycode.SDLK_UP:
-                    nextX = Player.GridPosX;
-                    nextY = Player.GridPosY - 1;
+                    nextX = Player.X;
+                    nextY = Player.Y - 1;
                     break;
                 case SDL_Keycode.SDLK_DOWN:
-                    nextX = Player.GridPosX;
-                    nextY = Player.GridPosY + 1;
+                    nextX = Player.X;
+                    nextY = Player.Y + 1;
                     break;
                 case SDL_Keycode.SDLK_LEFT:
-                    nextX = Player.GridPosX - 1;
-                    nextY = Player.GridPosY;
+                    nextX = Player.X - 1;
+                    nextY = Player.Y;
                     break;
                 case SDL_Keycode.SDLK_RIGHT:
-                    nextX = Player.GridPosX + 1;
-                    nextY = Player.GridPosY;
+                    nextX = Player.X + 1;
+                    nextY = Player.Y;
                     break;
             }
 
@@ -256,8 +242,8 @@ internal static class Program
                 return;
             }
 
-            Player.GridPosX = nextX;
-            Player.GridPosY = nextY;
+            Player.X = nextX;
+            Player.Y = nextY;
             // var nextTilesNames = string.Join(", ", nextTiles.Select(x => x.GetType().Name));
             // Console.WriteLine($"Player just went to tile {nextX} {nextY} and found {nextTilesNames}");
         }
@@ -283,7 +269,7 @@ internal static class Program
 
                 case SDL_Keycode.SDLK_g:
                     State.ActiveFocus = State.UiFocusE.Grab;
-                    _itemPickupHandler.Pickup(_sprites.GetItemsAt(Player.GridPosX, Player.GridPosY));
+                    _itemPickupHandler.Pickup(_sprites.GetItemsAt(Player.X, Player.Y));
                     break;
 
                 case SDL_Keycode.SDLK_l:
@@ -294,13 +280,13 @@ internal static class Program
 
                 case SDL_Keycode.SDLK_o:
                     State.ActiveFocus = State.UiFocusE.OpenMenu;
-                    _itemOpenCloseMenuHandler.OpenMenu(_sprites.GetObjectsAround(Player.GridPosX, Player.GridPosY),
+                    _itemOpenCloseMenuHandler.OpenMenu(_sprites.GetObjectsAround(Player.X, Player.Y),
                         true);
                     break;
 
                 case SDL_Keycode.SDLK_c:
                     State.ActiveFocus = State.UiFocusE.CloseMenu;
-                    _itemCloseMenuHandler.OpenMenu(_sprites.GetObjectsAround(Player.GridPosX, Player.GridPosY), false);
+                    _itemCloseMenuHandler.OpenMenu(_sprites.GetObjectsAround(Player.X, Player.Y), false);
                     break;
             }
         }
@@ -309,13 +295,13 @@ internal static class Program
 
     public static void AddDemoItems()
     {
-        Pot pot = new() { GridPosX = 15, GridPosY = 15 };
-        Torch torch = new() { GridPosX = 5, GridPosY = 5 };
-        Slime slime = new() { GridPosX = 3, GridPosY = 3 };
-        Zombie zombie = new() { GridPosX = 4, GridPosY = 3 };
+        Pot pot = new() { X = 15, Y = 15 };
+        Torch torch = new() { X = 5, Y = 5 };
+        Slime slime = new() { X = 3, Y = 3 };
+        Zombie zombie = new() { X = 4, Y = 3 };
         ContainerChestWood chest = new()
         {
-            GridPosX = 5, GridPosY = 6,
+            X = 5, Y = 6,
             Items = new List<Item>()
             {
                 new Dagger(), new Ranch(), new Stick(), new ShortSward()
@@ -323,16 +309,17 @@ internal static class Program
         };
         ContainerChestWood chest2 = new()
         {
-            GridPosX = 7, GridPosY = 6,
+            X = 7, Y = 6,
             Items = new List<Item>()
             {
                 new LesserManaPotion(), new LesserHealingPotion()
             }
         };
 
-        Stick stick = new() { GridPosX = 6, GridPosY = 6 };
-        PathGravel pg = new() { GridPosX = 7, GridPosY = 3, };
-        WallWoodenFence wallWoodenFence = new() { GridPosX = 8, GridPosY = 4, };
+        Stick stick = new() { X = 6, Y = 6 };
+        PathGravel pg = new() { X = 7, Y = 3, };
+        WallWoodenFence wallWoodenFence = new() { X = 8, Y = 4, };
+        TrapDoor trapDoor = new() {X = 10, Y = 3};
 
         _sprites.Add(pot);
         _sprites.Add(torch);
@@ -343,7 +330,7 @@ internal static class Program
         _sprites.Add(stick);
         _sprites.Add(pg);
         _sprites.Add(wallWoodenFence);
-
+        _sprites.Add(trapDoor);
         Player.AddItemToInventory(new LesserHealingPotion());
         Player.AddItemToInventory(new LesserManaPotion());
         Player.AddItemToInventory(new Stick());
@@ -354,15 +341,15 @@ internal static class Program
         {
             _sprites.Add(new WallStone()
             {
-                GridPosX = 20 + i,
-                GridPosY = 20
+                X = 20 + i,
+                Y = 20
             });
         }
 
 
-        _sprites.Add(new WallStoneDoor() { GridPosX = 20, GridPosY = 21 });
-        _sprites.Add(new WallStoneDoor() { GridPosX = 20, GridPosY = 22 });
-        _sprites.Add(new WallStoneDoor() { GridPosX = 18, GridPosY = 22 });
+        _sprites.Add(new WallStoneDoor() { X = 20, Y = 21 });
+        _sprites.Add(new WallStoneDoor() { X = 20, Y = 22 });
+        _sprites.Add(new WallStoneDoor() { X = 18, Y = 22 });
     }
 
     public static void RemoveWordSprite(Item item)
@@ -411,9 +398,9 @@ internal class ItemOpenCloseMenuHandler
     }
 
 
-    private string GetDirectionArrow(IGameObject player, IGameObject item) => player.GridPosX == item.GridPosX
-        ? player.GridPosY > item.GridPosY ? "↑" : "↓"
-        : player.GridPosX > item.GridPosX
+    private string GetDirectionArrow(IGameObject player, IGameObject item) => player.X == item.X
+        ? player.Y > item.Y ? "↑" : "↓"
+        : player.X > item.X
             ? "←"
             : "→";
 

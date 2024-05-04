@@ -29,6 +29,6 @@ public abstract class Item : GameObject<TextureWrapper>
     {
         player.Inventory.Remove(this);
         IsInInventory = false;
-        Program.AddWorldSprite(this, player.GridPosX, player.GridPosY);
+        Program.AddWorldSprite(this, player.X, player.Y);
     }
 }

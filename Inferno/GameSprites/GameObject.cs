@@ -1,12 +1,14 @@
-﻿namespace Inferno.GameSprites;
+﻿using Newtonsoft.Json;
+
+namespace Inferno.GameSprites;
 
 public interface IGameObject
 {
     public string ObjName { get; set; }
     int PosXPx { get; set; }
     int PosYPx { get; set; }
-    int GridPosX { get; set; }
-    int GridPosY { get; set; }
+    int X { get; set; }
+    int Y { get; set; }
     void Render(int camXPx, int camYPx);
     void Update(long now);
     Solidity Solidity { get; }
@@ -68,13 +70,13 @@ public abstract class GameObject<TTextureWrapper> : IGameObject
     public virtual bool CanClose { get; set; } = false;
 
 
-    public int GridPosX
+    public int X
     {
         get => PosXPx / Program.TileSizePx;
         set => PosXPx = value * Program.TileSizePx;
     }
 
-    public int GridPosY
+    public int Y
     {
         get => PosYPx / Program.TileSizePx;
         set => PosYPx = value * Program.TileSizePx;

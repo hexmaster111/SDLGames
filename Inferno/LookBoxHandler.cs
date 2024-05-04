@@ -21,16 +21,16 @@ internal class LookBoxHandler(LookBox lookBox)
                     break;
 
                 case SDL.SDL_Keycode.SDLK_UP:
-                    lookBox.GridPosY -= 1;
+                    lookBox.Y -= 1;
                     break;
                 case SDL.SDL_Keycode.SDLK_DOWN:
-                    lookBox.GridPosY += 1;
+                    lookBox.Y += 1;
                     break;
                 case SDL.SDL_Keycode.SDLK_LEFT:
-                    lookBox.GridPosX -= 1;
+                    lookBox.X -= 1;
                     break;
                 case SDL.SDL_Keycode.SDLK_RIGHT:
-                    lookBox.GridPosX += 1;
+                    lookBox.X += 1;
                     break;
             }
         }
@@ -43,7 +43,7 @@ internal class LookBoxHandler(LookBox lookBox)
 
     public void Focus(IGameObject obj)
     {
-        lookBox.GridPosX = obj.GridPosX;
-        lookBox.GridPosY = obj.GridPosY;
+        lookBox.X = obj.X;
+        lookBox.Y = obj.Y;
     }
 }
