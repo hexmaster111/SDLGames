@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Inferno.GameSprites;
 using Inferno.GameSprites.Items;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Inferno;
@@ -52,4 +53,24 @@ public class GameObjectCollection : IEnumerable<IGameObject>
         items.AddRange(GetObjectsAt(playerGridPosX, playerGridPosY - 1));
         return items;
     }
+
+    private record struct GameObjectSave(string Type, int X, int Y, string? Config = null);
+    
+    public void Load(string saveStr)
+    {
+        
+    }
+
+    public string Save()
+    {
+        var retData = new GameObjectSave[Objects.Count];
+        for (var index = 0; index < Objects.Count; index++)
+        {
+            var o = Objects[index];
+            retData[index] = new GameObjectSave(o.GetType().Name, o.X, o.Y);
+        }
+
+        return JArray.FromObject(retData).ToString(Formatting.Indented);
+    }
+        
 }
